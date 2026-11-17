@@ -472,3 +472,18 @@ body:has(.healthai-theme-light-marker) .family-title {
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{
  animation:none!important;scroll-behavior:auto!important;transition:none!important;
 }}
+
+/* Persistent application-level appearance selector / utility navigation */
+.mp-workspace-bar{display:flex;align-items:center;gap:10px;color:var(--mp-muted);
+  letter-spacing:.17em;font-size:10px;font-weight:780;min-height:45px;}
+.mp-workspace-bar>span:not(.mp-workspace-dot){color:var(--mp-border-strong);}
+.mp-workspace-dot{display:inline-block;width:9px;height:9px;border-radius:50%;
+ background:var(--mp-teal);box-shadow:0 0 0 4px var(--mp-glow);}
+[data-testid="stToggle"]{padding:3px 0!important;}
+[data-testid="stToggle"] label p{font-size:12px!important;font-weight:720!important;color:var(--mp-soft)!important;}
+[data-testid="stToggle"] [role="switch"][aria-checked="true"]{
+ background:var(--mp-teal)!important;box-shadow:0 0 0 2px var(--mp-glow)!important;}
+[data-testid="stToggle"] [role="switch"][aria-checked="false"]{background:var(--mp-border-strong)!important;}
+@media(max-width:600px){
+  .mp-workspace-bar{letter-spacing:.08em;font-size:9px;gap:6px;}
+}
