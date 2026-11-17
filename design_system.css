@@ -487,3 +487,37 @@ body:has(.healthai-theme-light-marker) .family-title {
 @media(max-width:600px){
   .mp-workspace-bar{letter-spacing:.08em;font-size:9px;gap:6px;}
 }
+
+/* Rebuilt navigation — native file-index replaced by categorized page links. */
+section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {display:none!important;}
+section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+  padding:14px 13px 23px!important;overflow-y:auto!important;
+}
+section[data-testid="stSidebar"] [data-testid="stPageLink"] {
+  margin:2px 0!important;
+}
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a {
+  display:flex!important;align-items:center!important;gap:10px!important;
+  min-height:39px!important;padding:8px 12px!important;
+  border:1px solid transparent!important;border-radius:10px!important;
+  color:var(--mp-soft)!important;background:transparent!important;
+  font-size:12px!important;font-weight:620!important;
+  text-decoration:none!important;
+  transition:background .16s,border-color .16s,color .16s!important;
+}
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a p,
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a span {
+  color:inherit!important;font-size:12px!important;
+}
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover,
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-current="page"] {
+  background:var(--mp-panel-2)!important;
+  color:var(--mp-teal)!important;
+  border-color:var(--mp-border)!important;
+}
+section[data-testid="stSidebar"] .mp-side-label {
+  font-size:10px!important;letter-spacing:.15em!important;
+  font-weight:790!important;color:var(--mp-muted)!important;
+  margin:18px 6px 8px!important;
+}
+section[data-testid="stSidebar"] .mp-brand-panel {margin:0 0 22px!important;}
