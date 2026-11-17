@@ -11,19 +11,65 @@ from sklearn.pipeline import Pipeline
 
 
 
+def _mp_theme_changed():
+    """Persist appearance independently from individual Streamlit page widgets."""
+    st.session_state.healthai_theme = (
+        "light" if st.session_state.get("mp_light_switch", False) else "dark"
+    )
+
+
 def apply_custom_css():
-    """Load the shared HealthAI theme and preserve the selected theme."""
-    css_path = Path(__file__).parent / "style.css"
-    css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
+    """New unified, dark-first appearance system for every MedPredict page."""
+    st.session_state.setdefault("healthai_theme", "dark")
+    theme = st.session_state.healthai_theme
+    css_path = Path(__file__).parent / "design_system.css"
+    if css_path.is_file():
+        st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
-    design_path = Path(__file__).parent / "design_system.css"
-    design_css = design_path.read_text(encoding="utf-8") if design_path.exists() else ""
-    st.markdown(f"<style>{css}\n{design_css}</style>", unsafe_allow_html=True)
+    # The toggle is available on every feature page, not just the dashboard.
+    with st.sidebar:
+        st.markdown(
+            '<div class="mp-brand-panel"><div class="mp-brand-row">'
+            '<span class="mp-brand-mark">✳</span>'
+            '<div><div class="mp-brand-name">MedPredict</div>'
+            '<div class="mp-brand-sub">Clinical research studio</div></div>'
+            '</div></div><div class="mp-side-label">APPEARANCE</div>',
+            unsafe_allow_html=True,
+        )
+        st.toggle(
+            "Light mode",
+            value=(theme == "light"),
+            key="mp_light_switch",
+            on_change=_mp_theme_changed,
+            help="Turn on for light mode. Dark mode is the default.",
+        )
+        st.markdown(
+            '<div class="mp-sidebar-foot">Research and educational use only. '
+            'Not a diagnostic medical device.</div>',
+            unsafe_allow_html=True,
+        )
 
-    theme = st.session_state.get("healthai_theme", "light")
-    marker = "healthai-theme-dark-marker" if theme == "dark" else "healthai-theme-light-marker"
+    theme = st.session_state.healthai_theme
+    marker = ("healthai-theme-light-marker" if theme == "light"
+              else "healthai-theme-dark-marker")
     st.markdown(
-        f'<div class="{marker}" aria-hidden="true" style="display:none"></div>',
+        f'<span class="{marker}" aria-hidden="true" style="display:none"></span>',
+        unsafe_allow_html=True,
+    )
+
+
+def page_intro(title, subtitle, icon="✧", overline="MEDPREDICT / WORKSPACE"):
+    """Render an accessible, reusable premium masthead without HTML injection."""
+    from html import escape
+    st.markdown(
+        '<section class="mp-page-hero">'
+        '<div class="mp-page-copy">'
+        f'<div class="mp-overline">{escape(overline)}</div>'
+        f'<h1>{escape(title)}</h1>'
+        f'<p>{escape(subtitle)}</p>'
+        '</div>'
+        f'<div class="mp-page-glyph" aria-hidden="true">{escape(icon)}</div>'
+        '</section>',
         unsafe_allow_html=True,
     )
 
