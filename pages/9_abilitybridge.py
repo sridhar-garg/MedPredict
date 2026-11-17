@@ -7,7 +7,7 @@ from braille_tools import braille_dots, text_to_braille, braille_to_text
 from hand_tracking import LiveLandmarkState, create_detector, extract_landmarks
 from sign_recognition import load_pretrained, classify, WEIGHTS
 
-st.set_page_config(page_title="AbilityBridge | MedPredict X",page_icon="🤟",layout="wide")
+st.set_page_config(page_title="Accessibility | MedPredict",page_icon="🤟",layout="wide")
 
 
 from sidebar_compat import show_sidebar
@@ -18,10 +18,10 @@ try:
 except (ImportError, AttributeError):
     pass
 if not st.session_state.get("is_logged_in", False):
-    st.warning("Sign in to use AbilityBridge.")
+    st.warning("Sign in to use MedPredict accessibility tools.")
     st.page_link("app.py", label="Back to sign in", icon="🏠")
     st.stop()
-st.title("🤟 AbilityBridge")
+st.title("MedPredict Accessibility")
 st.caption("Pretrained ASL & ISL fingerspelling · Braille learning and conversion")
 mode=st.radio("Choose a tool",["ASL fingerspelling", "ISL fingerspelling", "Braille"],horizontal=True)
 
@@ -85,7 +85,7 @@ st.success(f"{language} pretrained A–Z classifier is ready. Press START on the
 st.caption("Source: " + WEIGHTS[language]['credit'] + ". These are third-party model weights, "
            "not trained by the MedPredict developers. Model scores are not calibrated accuracy estimates.")
 st.caption("Allow browser webcam access. Camera frames are processed on the Streamlit server and "
-           "are not saved by AbilityBridge.")
+           "are not saved by MedPredict.")
 try:
     import cv2
     import av
