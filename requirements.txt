@@ -1,3 +1,4 @@
+# Refresh Streamlit deployment after navigation and sidebar spacing updates.
 streamlit
 python-dotenv
 pandas

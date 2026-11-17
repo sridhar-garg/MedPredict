@@ -55,7 +55,7 @@ def apply_theme():
     css = (ROOT / "style.css").read_text(encoding="utf-8")
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
     theme = st.session_state.healthai_theme
-    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" aria-hidden="true"></span>')
+    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="nav-spacing-2" aria-hidden="true"></span>')
 
 
 def _change_theme():
