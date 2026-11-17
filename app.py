@@ -63,7 +63,7 @@ if _family_action and _family_token:
     if _ok:
         st.success("✓ " + _msg)
         st.info(
-            "You can now log in to HealthGuard AI and open Family Health."
+            "You can now log in to MedPredict and open Family Health."
         )
     else:
         st.warning(_msg)
@@ -340,7 +340,7 @@ hero_html = f"""
 
 components.html(
     hero_html,
-    height=660,
+    height=585,
     scrolling=False,
 )
 
@@ -551,7 +551,7 @@ render_html("""
                 <span>⚙</span>
 
                 <div>
-                    <h2>How HealthAI Works</h2>
+                    <h2>How MedPredict Works</h2>
 
                     <p>
                         From patient information to an interpretable AI result.
@@ -629,7 +629,7 @@ render_html("""
 
         <div class="healthai-footer-note">
             <span>♥</span>
-            HealthAI &nbsp;•&nbsp;
+            MedPredict &nbsp;•&nbsp;
             Research / Academic Prototype &nbsp;•&nbsp;
             AI Health Risk Assessment
         </div>
@@ -808,7 +808,7 @@ if st.button("🧪 Open Advanced Research Mode →",key="mp_open_advanced_resear
 
 render_html("""
         <div class="healthai-bottom-note">
-            HealthAI • EXHRA • Research / Academic Prototype •
+            MedPredict • EXHRA • Research / Academic Prototype •
             Not a medical diagnosis
         </div>
         """)
