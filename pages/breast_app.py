@@ -10,6 +10,7 @@ from utils import (
     readable_feature,
     breast_default,
     apply_common_style,
+    page_intro,
 )
 
 
@@ -21,7 +22,7 @@ st.set_page_config(
     page_title="Breast Cancer Risk Assessment",
     page_icon="🎗️",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 
@@ -59,18 +60,7 @@ def step_for(value):
 
 
 
-st.markdown(
-    """
-    <div class="section-heading">
-        <span class="section-number">01</span>
-        <div>
-            <h2>Breast Cancer Risk Assessment</h2>
-            <p>Enter tumor measurements from a diagnostic report.</p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+page_intro("Breast health assessment", "Explore research model estimates using measured features from a clinical report. This does not establish a diagnosis.", "✳", "SCREENING / BREAST HEALTH")
 
 st.info(
     "Enter measurements from a diagnostic report. "
