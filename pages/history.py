@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 import streamlit as st
 
 from database import get_health_assessments
-from utils import apply_custom_css
+from utils import apply_custom_css, page_intro
 
 
 
@@ -14,7 +14,7 @@ from utils import apply_custom_css
 
 
 st.set_page_config(
-    page_title="Health History | HealthAI",
+    page_title="Health History | MedPredict",
     page_icon="📜",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -30,7 +30,7 @@ show_sidebar()
 
 
 if "healthai_theme" not in st.session_state:
-    st.session_state.healthai_theme = "light"
+    st.session_state.healthai_theme = "dark"
 
 apply_custom_css()
 
@@ -55,22 +55,7 @@ if user_id is None:
 
 
 
-st.html(
-    dedent(
-        """
-        <div class="section-heading">
-            <span class="section-number">04</span>
-            <div>
-                <h2>Health History</h2>
-                <p>
-                    Review your previous health assessments and
-                    AI-generated evaluations.
-                </p>
-            </div>
-        </div>
-        """
-    ),
-)
+page_intro("Your assessment history", "Review previously saved assessments and their research-model summaries in one organized timeline.", "◷", "YOUR ACCOUNT / HEALTH HISTORY")
 
 
 
@@ -555,7 +540,7 @@ st.html(
         """
         <div class="healthai-footer-note">
             <span>♥</span>
-            HealthAI &nbsp;•&nbsp;
+            MedPredict &nbsp;•&nbsp;
             Personal Health Assessment History &nbsp;•&nbsp;
             AI Risk Assessment
         </div>

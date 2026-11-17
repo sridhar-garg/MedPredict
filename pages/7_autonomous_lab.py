@@ -4,7 +4,7 @@ import json
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from utils import apply_custom_css
+from utils import apply_custom_css, page_intro
 from adaptive_assessment import run_experiment
 from robot_simulator import run_dispatch, benchmark, SIZE
 
@@ -15,15 +15,11 @@ from sidebar_compat import show_sidebar
 show_sidebar()
 apply_custom_css()
 if not st.session_state.get('is_logged_in',False):
-    st.warning('Log in through the HealthAI Dashboard to open CARE-BOT.')
+    st.warning('Log in through the MedPredict Dashboard to open CARE-BOT.')
     if st.button('Go to Login'):st.switch_page('app.py')
     st.stop()
 
-st.markdown('''<div style="border-radius:20px;padding:25px 28px;background:linear-gradient(120deg,#102c4a,#1a4974,#106e85);color:white">
-  <div style="font-size:12px;letter-spacing:2px;opacity:.9">EXPERIMENTAL AUTONOMOUS ROBOTICS + MEDICAL AI</div>
-  <div style="font-size:37px;font-weight:900;margin-top:8px">🤖 CARE-BOT Laboratory</div>
-  <div style="font-size:16px;max-width:780px;opacity:.90;margin-top:8px">Cost-aware evidence collection, robot dispatch under uncertainty, and measured comparisons against transparent baselines.</div>
-</div>''',unsafe_allow_html=True)
+page_intro("CARE-BOT laboratory", "Investigate active measurement strategies and synthetic robot simulations with measurable, transparent experiments.", "⌘", "EXPERIMENTS / ROBOTICS")
 st.caption('Reproducible academic demonstrations. Not clinical decision support; no actual robots or patients are controlled.')
 st.info('Two independent demonstrations: real public tabular cell measurements for active feature selection, and a synthetic mobile-robot response environment. **Do not** claim clinical or physical-robot validation.')
 

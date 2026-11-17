@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 from pathlib import Path
 
-from utils import display_prediction, apply_common_style
+from utils import display_prediction, apply_common_style, page_intro
 from database import save_health_assessment
 
 
@@ -15,7 +15,7 @@ st.set_page_config(
     page_title="Diabetes Risk Assessment",
     page_icon="🩸",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 
@@ -81,18 +81,7 @@ def yes_no(value):
 
 
 
-st.markdown(
-    """
-    <div class="section-heading">
-        <span class="section-number">01</span>
-        <div>
-            <h2>Diabetes Risk Assessment</h2>
-            <p>Enter basic information and reported symptoms.</p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+page_intro("Diabetes risk assessment", "Enter reported symptoms and clinical information to explore a research-oriented screening estimate.", "◇", "SCREENING / METABOLIC HEALTH")
 
 
 

@@ -1,0 +1,40 @@
+name: Validate MedPredict UI source
+on:
+  push:
+    branches:
+      - main
+      - redesign/premium-dark-experience
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  syntax-and-theme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile Python modules without importing application secrets
+        run: python -m compileall -q app.py login.py utils.py pages
+      - name: Verify every UI page uses the shared design
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          pages = list(Path('pages').glob('*.py'))
+          assert pages, 'No Streamlit pages found'
+          for page in pages:
+              text = page.read_text(encoding='utf-8')
+              ast.parse(text, filename=str(page))
+              assert ('apply_custom_css' in text or 'apply_common_style' in text), str(page)
+          utility = Path('utils.py').read_text(encoding='utf-8')
+          assert 'healthai_theme", "dark"' in utility
+          assert 'mp_light_switch' in utility
+          assert 'page_intro' in utility
+          login = Path('login.py').read_text(encoding='utf-8')
+          assert 'mp-login-stage' in login and 'mp_light_switch' in login
+          assert Path('design_system.css').is_file()
+          print(f'Validated {len(pages)} Streamlit pages, dark default, and theme switch')
+          PY

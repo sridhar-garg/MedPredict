@@ -11,19 +11,95 @@ from sklearn.pipeline import Pipeline
 
 
 
+def _mp_theme_changed():
+    """Persist appearance independently from individual Streamlit page widgets."""
+    st.session_state.healthai_theme = (
+        "light" if st.session_state.get("mp_light_switch", False) else "dark"
+    )
+
+
 def apply_custom_css():
-    """Load the shared HealthAI theme and preserve the selected theme."""
-    css_path = Path(__file__).parent / "style.css"
-    css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
+    """New unified, dark-first appearance system for every MedPredict page."""
+    st.session_state.setdefault("healthai_theme", "dark")
+    theme = st.session_state.healthai_theme
+    css_path = Path(__file__).parent / "design_system.css"
+    if css_path.is_file():
+        st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
-    design_path = Path(__file__).parent / "design_system.css"
-    design_css = design_path.read_text(encoding="utf-8") if design_path.exists() else ""
-    st.markdown(f"<style>{css}\n{design_css}</style>", unsafe_allow_html=True)
+    # Genuine page controls, visible even when the Streamlit sidebar is collapsed.
+    with st.sidebar:
+        st.markdown(
+            '<div class="mp-brand-panel"><div class="mp-brand-row">'
+            '<span class="mp-brand-mark">✳</span>'
+            '<div><div class="mp-brand-name">MedPredict</div>'
+            '<div class="mp-brand-sub">Health research studio</div></div>'
+            '</div></div>'
+            '<div class="mp-sidebar-foot">Research and educational use only. '
+            'Not a diagnostic medical device.</div>',
+            unsafe_allow_html=True,
+        )
 
-    theme = st.session_state.get("healthai_theme", "light")
-    marker = "healthai-theme-dark-marker" if theme == "dark" else "healthai-theme-light-marker"
+    with st.sidebar:
+        st.markdown('<div class="mp-side-label">DASHBOARD</div>', unsafe_allow_html=True)
+        st.page_link("app.py", label="Overview", icon="🏠")
+
+        st.markdown('<div class="mp-side-label">HEALTH SCREENINGS</div>', unsafe_allow_html=True)
+        st.page_link("pages/heart_app.py", label="Heart health", icon="❤️")
+        st.page_link("pages/diabetes_app.py", label="Diabetes", icon="🩸")
+        st.page_link("pages/breast_app.py", label="Breast health", icon="🎗️")
+        st.page_link("pages/4_health_screenings.py", label="More screenings", icon="🩺")
+        st.page_link("pages/5_medical_imaging.py", label="Imaging & reports", icon="🔬")
+
+        st.markdown('<div class="mp-side-label">EXPLORE</div>', unsafe_allow_html=True)
+        st.page_link("pages/10_disease_atlas.py", label="Disease atlas", icon="📚")
+        st.page_link("pages/8_gemini_chatbot.py", label="AI assistant", icon="💬")
+        st.page_link("pages/9_abilitybridge.py", label="Accessibility tools", icon="🤟")
+
+        st.markdown('<div class="mp-side-label">RESEARCH</div>', unsafe_allow_html=True)
+        st.page_link("pages/11_advanced_research_mode.py", label="Advanced research", icon="🧪")
+        st.page_link("pages/6_research_hub.py", label="Model research", icon="📊")
+        st.page_link("pages/7_autonomous_lab.py", label="Robotics lab", icon="🤖")
+
+        st.markdown('<div class="mp-side-label">ACCOUNT</div>', unsafe_allow_html=True)
+        st.page_link("pages/history.py", label="Assessment history", icon="🕘")
+        st.page_link("pages/profile.py", label="Your profile", icon="👤")
+        st.page_link("pages/z_family.py", label="Family connections", icon="👥")
+
+    bar_left, bar_right = st.columns([5, 1.1], vertical_alignment="center")
+    with bar_left:
+        st.markdown(
+            '<div class="mp-workspace-bar">'
+            '<span class="mp-workspace-dot"></span>MEDPREDICT <span>/</span> WORKSPACE'
+            '</div>', unsafe_allow_html=True,
+        )
+    with bar_right:
+        st.toggle(
+            "Light mode", value=(theme == "light"),
+            key="mp_light_switch", on_change=_mp_theme_changed,
+            help="Switch between the dark and light appearances.",
+        )
+
+    theme = st.session_state.healthai_theme
+    marker = ("healthai-theme-light-marker" if theme == "light"
+              else "healthai-theme-dark-marker")
     st.markdown(
-        f'<div class="{marker}" aria-hidden="true" style="display:none"></div>',
+        f'<span class="{marker}" aria-hidden="true" style="display:none"></span>',
+        unsafe_allow_html=True,
+    )
+
+
+def page_intro(title, subtitle, icon="✧", overline="MEDPREDICT / WORKSPACE"):
+    """Render an accessible, reusable premium masthead without HTML injection."""
+    from html import escape
+    st.markdown(
+        '<section class="mp-page-hero">'
+        '<div class="mp-page-copy">'
+        f'<div class="mp-overline">{escape(overline)}</div>'
+        f'<h1>{escape(title)}</h1>'
+        f'<p>{escape(subtitle)}</p>'
+        '</div>'
+        f'<div class="mp-page-glyph" aria-hidden="true">{escape(icon)}</div>'
+        '</section>',
         unsafe_allow_html=True,
     )
 

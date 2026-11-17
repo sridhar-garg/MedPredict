@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 from pathlib import Path
 
-from utils import display_prediction, apply_common_style
+from utils import display_prediction, apply_common_style, page_intro
 from database import save_health_assessment
 
 
@@ -15,7 +15,7 @@ st.set_page_config(
     page_title="Heart Disease Risk Assessment",
     page_icon="🫀",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 
@@ -77,18 +77,7 @@ def load_features(filename):
 
 
 
-st.markdown(
-    """
-    <div class="section-heading">
-        <span class="section-number">01</span>
-        <div>
-            <h2>Heart Disease Risk Assessment</h2>
-            <p>Enter the patient's cardiovascular measurements and clinical information.</p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+page_intro("Heart health assessment", "Explore a machine-learning risk estimate using cardiovascular measurements and symptoms.", "♡", "SCREENING / CARDIOVASCULAR")
 
 
 
