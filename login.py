@@ -4,6 +4,7 @@ from pathlib import Path
 import streamlit as st
 
 from database import get_connection
+from utils import apply_custom_css
 
 from auth import (
     generate_otp,
@@ -50,676 +51,127 @@ def login_page():
 
 
 
+    apply_custom_css()
+
     st.markdown(
         """
         <style>
+        [data-testid="stSidebar"],
+        [data-testid="collapsedControl"],
+        [data-testid="stSidebarCollapsedControl"] { display: none !important; }
+        #MainMenu, footer { visibility: hidden !important; }
 
-        /* ====================================================
-           STREAMLIT CLEANUP
-        ==================================================== */
-
-        [data-testid="stSidebar"] {
-            display: none !important;
+        .block-container,
+        [data-testid="stMainBlockContainer"] {
+            max-width: 1120px !important;
+            padding-top: 56px !important;
+            padding-bottom: 40px !important;
         }
-        .verify-email-heading {
-    color: #12385f !important;
-    font-size: 24px !important;
-    font-weight: 800 !important;
-    line-height: 1.3 !important;
-    margin: 12px 0 16px 0 !important;
-    opacity: 1 !important;
-}
-        [data-testid="collapsedControl"] {
-            display: none !important;
-        }
-
-        #MainMenu,
-        header,
-        footer {
-            visibility: hidden !important;
-            height: 0 !important;
-        }
-        
-        /* ====================================================
-           PAGE BACKGROUND
-        ==================================================== */
-
-        .stApp {
-            background:
-                radial-gradient(
-                    circle at 10% 15%,
-                    rgba(174, 239, 232, 0.55),
-                    transparent 32%
-                ),
-                radial-gradient(
-                    circle at 90% 20%,
-                    rgba(181, 207, 255, 0.55),
-                    transparent 35%
-                ),
-                linear-gradient(
-                    135deg,
-                    #eefbf9 0%,
-                    #f7fbff 48%,
-                    #edf4ff 100%
-                );
-
-            min-height: 100vh;
-        }
-
-
-        /* ====================================================
-           MAIN CONTAINER
-        ==================================================== */
-
-        .block-container {
-            max-width: 1500px !important;
-            padding-top: 28px !important;
-            padding-bottom: 20px !important;
-            padding-left: 30px !important;
-            padding-right: 30px !important;
-        }
-
-
-        /* ====================================================
-           REMOVE COLUMN BACKGROUNDS
-        ==================================================== */
-
-        [data-testid="column"] {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            min-height: 0 !important;
-        }
-
-
-        /* ====================================================
-           BRAND
-        ==================================================== */
-
-        .brand-title {
-            color: #123b67;
-            font-size: 36px;
-            line-height: 1.05;
-            font-weight: 800;
-            letter-spacing: -1.2px;
-        }
-
-        .brand-title span {
-            color: #16b5b1;
-        }
-
-        .brand-subtitle {
-            color: #5f7891;
-            font-size: 16px;
-            font-weight: 500;
-            margin-top: 6px;
-        }
-
-
-        /* ====================================================
-           HERO IMAGE
-        ==================================================== */
-
-        .hero-image-wrap {
-            width: 100%;
-            overflow: hidden;
-            border-radius: 18px;
-            border: none;
-            box-shadow: none;
-            background: transparent;
-        }
-
-        .hero-image-wrap img {
-            display: block;
-            width: 100%;
-            border-radius: 18px;
-        }
-
-
-        /* ====================================================
-           STREAMLIT CARDS
-        ==================================================== */
 
         [data-testid="stVerticalBlockBorderWrapper"] {
-            background: rgba(255, 255, 255, 0.90) !important;
-            border: 1px solid #d8e5ee !important;
-            border-radius: 20px !important;
-            box-shadow: 0 12px 34px rgba(45, 91, 117, 0.08) !important;
+            background: var(--surface) !important;
+            border: 1px solid var(--line) !important;
+            border-radius: var(--radius-panel) !important;
+            box-shadow: none !important;
+            padding: 12px 8px !important;
         }
 
-
-        /* ====================================================
-           FEATURE CARD
-        ==================================================== */
-
-        .feature-icon {
-            font-size: 28px;
-            text-align: center;
-            margin-bottom: 7px;
+        .lg-brand {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 56px;
+            font-family: var(--serif); font-size: 26px; font-weight: 600;
+            color: var(--ink);
         }
-
-        .feature-title {
-            color: #12365f;
-            font-size: 18px;
-            font-weight: 800;
-            line-height: 1.2;
-            text-align: center;
+        .lg-brand svg { width: 32px; height: 32px; }
+        .lg-title {
+            margin: 0 0 16px !important;
+            font-family: var(--serif) !important;
+            font-size: clamp(2rem, 3.6vw, 2.9rem) !important;
+            line-height: 1.12 !important; font-weight: 600 !important;
+            letter-spacing: -0.02em; color: var(--ink) !important;
         }
-
-        .feature-description {
-            color: #637b91;
-            font-size: 14px;
-            line-height: 1.55;
-            text-align: center;
-            margin-top: 7px;
+        .lg-lead {
+            max-width: 46ch; margin: 0 0 36px !important;
+            font-size: 1.1rem !important; line-height: 1.6 !important;
+            color: var(--ink-2) !important;
         }
-
-
-        /* ====================================================
-           LOGIN LOGO
-        ==================================================== */
-
-        .login-logo {
-            width: 84px;
-            height: 84px;
-            margin: 4px auto 24px auto;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 1px solid #d8edf2;
-
-            box-shadow:
-                0 0 0 11px rgba(228, 250, 250, 0.72),
-                0 10px 28px rgba(34, 174, 190, 0.12);
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 43px;
+        .lg-points { list-style: none; margin: 0; padding: 0; max-width: 46ch; }
+        .lg-points li {
+            padding: 16px 0; border-top: 1px solid var(--line);
         }
-
-
-        /* ====================================================
-           LOGIN HEADING
-        ==================================================== */
+        .lg-points b { display: block; color: var(--ink); font-size: 15px; font-weight: 600; }
+        .lg-points span { display: block; margin-top: 2px; color: var(--muted); font-size: 14.5px; }
+        .lg-foot { margin-top: 32px; color: var(--muted); font-size: 13px; }
 
         .login-heading {
-            color: #12385f;
-            font-size: 32px;
-            line-height: 1.2;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            text-align: center;
-            margin-bottom: 8px;
+            margin: 4px 0 6px; color: var(--ink);
+            font-family: var(--serif); font-size: 28px; font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        .login-description { margin-bottom: 20px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+        .verify-email-heading {
+            margin: 12px 0 14px; color: var(--ink);
+            font-family: var(--serif); font-size: 22px; font-weight: 600;
         }
 
-        .login-description {
-            color: #6a8097;
-            font-size: 15px;
-            line-height: 1.65;
-            text-align: center;
-            margin-bottom: 25px;
-        }
+        div[data-testid="stTextInput"] input { height: 46px !important; padding: 0 14px !important; }
+        div[data-testid="stTextInput"] label p { color: var(--ink) !important; font-size: 14.5px !important; font-weight: 500 !important; }
 
-
-        /* ====================================================
-           INPUT
-        ==================================================== */
-
-        div[data-testid="stTextInput"] {
-            margin-bottom: 9px;
-        }
-
-        div[data-testid="stTextInput"] label {
-            color: #234c6b !important;
-            font-size: 14px !important;
-            font-weight: 600 !important;
-        }
-
-        div[data-testid="stTextInput"] input {
-            height: 50px !important;
-            min-height: 50px !important;
-            padding: 0 15px !important;
-            background: #ffffff !important;
-            color: #173c59 !important;
-            border: 1px solid #c9d9e5 !important;
-            border-radius: 11px !important;
-            font-size: 15px !important;
-            box-shadow: none !important;
-        }
-
-        div[data-testid="stTextInput"] input:focus {
-            border-color: #27b5c3 !important;
-            box-shadow: 0 0 0 3px rgba(39, 181, 195, 0.12) !important;
-        }
-
-        div[data-testid="stTextInput"] input::placeholder {
-            color: #93a7ba !important;
-            opacity: 1 !important;
-        }
-
-
-        /* ====================================================
-           BUTTON
-        ==================================================== */
-
-        div.stButton > button {
-            width: 100%;
-            min-height: 50px !important;
-            border: none !important;
-            border-radius: 11px !important;
-            font-size: 15px !important;
-            font-weight: 750 !important;
-            color: white !important;
-
-            background: linear-gradient(
-                90deg,
-                #13b7b5 0%,
-                #168fe1 100%
-            ) !important;
-
-            box-shadow:
-                0 10px 22px rgba(21, 154, 203, 0.18) !important;
-        }
-
-        div.stButton > button:hover {
-            transform: translateY(-1px);
-
-            box-shadow:
-                0 13px 28px rgba(21, 154, 203, 0.24) !important;
-        }
-
-
-        /* ====================================================
-           WHY HEALTHGUARD
-        ==================================================== */
-
-        .why-title {
-            color: #173b60;
-            font-size: 17px;
-            font-weight: 800;
-            line-height: 1.25;
-        }
-
-        .why-description {
-            color: #6d8398;
-            font-size: 14px;
-            line-height: 1.45;
-            margin-top: 4px;
-        }
-
-        .why-icon {
-            font-size: 25px;
-            line-height: 1;
-        }
-
-
-        /* ====================================================
-           FOOTER
-        ==================================================== */
-
-        .footer-text {
-            color: #70869d;
-            font-size: 13px;
-            text-align: center;
-            margin-top: 18px;
-        }
-
-
-        /* ====================================================
-           MOBILE
-        ==================================================== */
+        div[data-testid="stRadio"] [role="radiogroup"] { gap: 20px !important; }
+        div[data-testid="stRadio"] label p,
+        div[data-testid="stRadio"] label span { color: var(--ink) !important; opacity: 1 !important; font-size: 15px !important; }
 
         @media (max-width: 900px) {
-
-            .block-container {
-                padding-left: 18px !important;
-                padding-right: 18px !important;
-            }
-
-            .brand-title {
-                font-size: 30px;
-            }
-
-            .login-heading {
-                font-size: 28px;
-            }
+            .lg-brand { margin-bottom: 28px; }
+            .lg-lead { margin-bottom: 20px !important; }
         }
-
-
-        /* ====================================================
-           LOGIN METHOD RADIO — HIGH VISIBILITY
-        ==================================================== */
-
-        /* Make "Choose how you want to sign in" clearly visible */
-        div[data-testid="stRadio"] > label p,
-        div[data-testid="stRadio"] > label {
-            color: #173b60 !important;
-            opacity: 1 !important;
-            font-size: 14px !important;
-            font-weight: 700 !important;
-        }
-
-        /* Make Email / Mobile Number text clearly visible */
-        div[data-testid="stRadio"] [role="radiogroup"] label,
-        div[data-testid="stRadio"] [role="radiogroup"] label p,
-        div[data-testid="stRadio"] [role="radiogroup"] span,
-        div[data-testid="stRadio"] [data-baseweb="radio"] label,
-        div[data-testid="stRadio"] [data-baseweb="radio"] label p {
-            color: #173b60 !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            font-size: 14px !important;
-            font-weight: 700 !important;
-        }
-
-        /* Give each login option a clean, visible area */
-        div[data-testid="stRadio"] [role="radiogroup"] {
-            gap: 18px !important;
-            margin-top: 4px !important;
-        }
-
-        div[data-testid="stRadio"] [role="radiogroup"] > label {
-            color: #173b60 !important;
-            opacity: 1 !important;
-        }
-
-        /* Radio circles */
-        div[data-testid="stRadio"] [data-baseweb="radio"] > div:first-child {
-            border-color: #5c7892 !important;
-            opacity: 1 !important;
-        }
-
-        /* Selected radio circle */
-        div[data-testid="stRadio"] [data-baseweb="radio"][aria-checked="true"] > div:first-child {
-            border-color: #168fe1 !important;
-        }
-
-        /* Prevent Streamlit/theme opacity from fading the options */
-        div[data-testid="stRadio"] *,
-        div[data-testid="stRadio"] label * {
-            opacity: 1 !important;
-        }
-
-        /* Slightly separate the login method selector from the input */
-        div[data-testid="stRadio"] {
-            margin-top: 4px !important;
-            margin-bottom: 18px !important;
-        }
-
-        /* ====================================================
-           LOGIN METHOD — EXTRA HIGH VISIBILITY
-        ==================================================== */
-        div[data-testid="stRadio"] {
-            background: rgba(255, 255, 255, 0.96) !important;
-            border: 1px solid #c7dce8 !important;
-            border-radius: 14px !important;
-            padding: 12px 16px 14px 16px !important;
-            box-shadow: 0 5px 16px rgba(35, 91, 120, 0.08) !important;
-        }
-
-        div[data-testid="stRadio"] > label {
-            color: #12385f !important;
-            -webkit-text-fill-color: #12385f !important;
-            opacity: 1 !important;
-            font-size: 15px !important;
-            font-weight: 800 !important;
-        }
-
-        div[data-testid="stRadio"] [role="radiogroup"] > label {
-            background: #f4f9fc !important;
-            border: 1px solid #d4e3ec !important;
-            border-radius: 10px !important;
-            padding: 9px 14px !important;
-            min-height: 42px !important;
-            color: #12385f !important;
-            -webkit-text-fill-color: #12385f !important;
-        }
-
-        div[data-testid="stRadio"] [role="radiogroup"] > label p,
-        div[data-testid="stRadio"] [role="radiogroup"] > label span {
-            color: #12385f !important;
-            -webkit-text-fill-color: #12385f !important;
-            opacity: 1 !important;
-            font-weight: 750 !important;
-        }
-
-        div[data-testid="stRadio"] [role="radiogroup"] > label:hover {
-            background: #eaf7f8 !important;
-            border-color: #6cc6ce !important;
-        }
-
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-
-
-
-
-
-    left, right = st.columns(
-        [1.03, 0.97],
-        gap="large",
-    )
-
-
-
-
-
+    left, right = st.columns([1.05, 0.95], gap="large")
 
     with left:
-
-        brand_icon_col, brand_text_col = st.columns(
-            [0.11, 0.89],
-            vertical_alignment="center",
-        )
-
-        with brand_icon_col:
-
-            st.markdown(
-                """
-                <div style="
-                    width:62px;
-                    height:62px;
-                    border-radius:18px;
-                    background:rgba(255,255,255,.90);
-                    border:1px solid #d0e3ed;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    font-size:34px;
-                    box-shadow:0 10px 28px rgba(47,119,145,.10);
-                ">
-                    🛡️
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-        with brand_text_col:
-
-            st.markdown(
-                """
-                <div class="brand-title">
-                    HealthGuard <span>AI</span>
-                </div>
-
-                <div class="brand-subtitle">
-                    AI-powered health risk prediction &amp; monitoring
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
         st.markdown(
-            "<div style='height:24px'></div>",
+            "\n".join([
+                '<div class="lg-brand">',
+                '<svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#0E5E6F"/>'
+                '<path d="M12 6.5v11M6.5 12h11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>',
+                'HealthAI</div>',
+                '<h1 class="lg-title">Health risk assessment you can understand</h1>',
+                '<p class="lg-lead">Estimate your risk of diabetes, heart disease or breast cancer, '
+                'and see which inputs drove each result.</p>',
+                '<ul class="lg-points">',
+                '<li><b>Five models, compared</b><span>Each model gives its own estimate, '
+                'and the results are combined into one overall figure.</span></li>',
+                '<li><b>Results that explain themselves</b><span>SHAP and feature importance show '
+                'what pushed a result up or down.</span></li>',
+                '<li><b>Your history in one place</b><span>Past assessments are saved to your '
+                'account so you can review them.</span></li>',
+                '</ul>',
+                '<p class="lg-foot">Research prototype for educational use. '
+                'Not a medical diagnosis.</p>',
+            ]),
             unsafe_allow_html=True,
         )
-
-
-
-
-
-
-        image_path = (
-            Path(__file__).resolve().parent
-            / "assets"
-            / "healthguard_hero.png"
-        )
-
-        if image_path.exists():
-
-            st.markdown(
-                '<div class="hero-image-wrap">',
-                unsafe_allow_html=True,
-            )
-
-            st.image(
-                str(image_path),
-                width="stretch",
-            )
-
-            st.markdown(
-                "</div>",
-                unsafe_allow_html=True,
-            )
-
-        else:
-
-            st.warning(
-                "Hero image not found. "
-                "Put healthguard_hero.png inside the assets folder."
-            )
-
-
-        st.markdown(
-            "<div style='height:20px'></div>",
-            unsafe_allow_html=True,
-        )
-
-
-
-
-
-
-        with st.container(border=True):
-
-            c1, c2, c3 = st.columns(
-                3,
-                gap="medium",
-            )
-
-            with c1:
-
-                st.markdown(
-                    '<div class="feature-icon">🧠</div>',
-                    unsafe_allow_html=True,
-                )
-
-                st.markdown(
-                    '<div class="feature-title">'
-                    'AI-Powered<br>Prediction'
-                    '</div>',
-                    unsafe_allow_html=True,
-                )
-
-                st.markdown(
-                    '<div class="feature-description">'
-                    'Advanced machine learning for accurate risk prediction'
-                    '</div>',
-                    unsafe_allow_html=True,
-                )
-
-            with c2:
-
-                st.markdown(
-                    '<div class="feature-icon">🔐</div>',
-                    unsafe_allow_html=True,
-                )
-
-                st.markdown(
-                    '<div class="feature-title">'
-                    'Secure &amp;<br>Private'
-                    '</div>',
-                    unsafe_allow_html=True,
-                )
-
-                st.markdown(
-                    '<div class="feature-description">'
-                    'Your health data is encrypted and fully protected'
-                    '</div>',
-                    unsafe_allow_html=True,
-                )
-
-            with c3:
-
-                st.markdown(
-                    '<div class="feature-icon">📊</div>',
-                    unsafe_allow_html=True,
-                )
-
-                st.markdown(
-                    '<div class="feature-title">'
-                    'Smart<br>Insights'
-                    '</div>',
-                    unsafe_allow_html=True,
-                )
-
-                st.markdown(
-                    '<div class="feature-description">'
-                    'Personalized insights to help you live a healthier life'
-                    '</div>',
-                    unsafe_allow_html=True,
-                )
-
-
-        st.markdown(
-            '<div class="footer-text">'
-            '© 2026 HealthGuard AI. All rights reserved.'
-            '</div>',
-            unsafe_allow_html=True,
-        )
-
-
-
-
-
 
     with right:
 
         with st.container(border=True):
 
-
-
-
-
             st.markdown(
-                '<div class="login-logo">🩺</div>',
-                unsafe_allow_html=True,
-            )
-
-            st.markdown(
-                '<div class="login-heading">'
-                'Welcome back! 👋'
-                '</div>',
+                '<div class="login-heading">Welcome to HealthAI</div>',
                 unsafe_allow_html=True,
             )
 
             st.markdown(
                 '<div class="login-description">'
-                'Log in with your username and password<br>'
-                'or create your HealthGuard AI account.'
+                'Log in with your username and password, '
+                'or create an account.'
                 '</div>',
                 unsafe_allow_html=True,
             )
-
-
-
-
-
-
-
 
             auth_mode = st.radio(
                 "Choose an option",
@@ -755,7 +207,7 @@ def login_page():
                 )
 
                 if st.button(
-                    "Login  →",
+                    "Log in",
                     type="primary",
                     width="stretch",
                     key="login_with_password",
@@ -789,7 +241,7 @@ def login_page():
                             st.session_state.otp = None
                             st.session_state.otp_sent = False
 
-                            st.success("Login successful! 🎉")
+                            st.success("Login successful.")
                             st.rerun()
 
 
@@ -811,7 +263,7 @@ def login_page():
                     )
 
                     if st.button(
-                        "Send OTP  →",
+                        "Send OTP",
                         type="primary",
                         width="stretch",
                         key="send_signup_otp",
@@ -876,7 +328,7 @@ def login_page():
                     )
 
                     st.info(
-                        f"🔐 Verification code sent to "
+                        f"Verification code sent to "
                         f"**{st.session_state.user_email}**"
                     )
 
@@ -913,7 +365,7 @@ def login_page():
                                 st.session_state.otp = None
                                 st.session_state.otp_sent = False
                                 st.success(
-                                    "Email verified successfully! 🎉"
+                                    "Email verified."
                                 )
                                 st.rerun()
 
@@ -939,7 +391,7 @@ def login_page():
                                 )
 
                     if st.button(
-                        "← Use a different email",
+                        "Use a different email",
                         width="stretch",
                         key="change_signup_email",
                     ):
@@ -968,7 +420,7 @@ def login_page():
                         "signup_existing_user", False
                     ):
                         st.info(
-                            "This email already has a HealthGuard AI "
+                            "This email already has a HealthAI "
                             "account. Create a username and password "
                             "to use for future logins. Your existing "
                             "health data will remain connected to your account."
@@ -1001,7 +453,7 @@ def login_page():
                     )
 
                     if st.button(
-                        "Create Account  →",
+                        "Create account",
                         type="primary",
                         width="stretch",
                         key="create_account_button",
@@ -1073,7 +525,7 @@ def login_page():
                                 st.session_state.signup_existing_user = False
 
                                 st.success(
-                                    "Account created successfully! 🎉"
+                                    "Account created."
                                 )
                                 st.rerun()
 
@@ -1093,100 +545,14 @@ def login_page():
 
 
 
-            st.divider()
-
-            st.markdown(
-                "<h3 style='text-align:center;"
-                "color:#173b60;"
-                "font-size:17px;"
-                "margin:0 0 12px 0;'>"
-                "Why HealthGuard AI?</h3>",
-                unsafe_allow_html=True,
-            )
-
-            why_items = [
-                (
-                    "🧠",
-                    "AI-Powered Prediction",
-                    "Intelligent health risk analysis",
-                ),
-                (
-                    "📊",
-                    "Personalized Monitoring",
-                    "Track your health insights in real-time",
-                ),
-                (
-                    "🔐",
-                    "Secure Access",
-                    "Secure username and password login",
-                ),
-            ]
-
-            for index, (
-                icon,
-                title,
-                description,
-            ) in enumerate(why_items):
-
-                icon_col, text_col = st.columns(
-                    [0.13, 0.87],
-                    vertical_alignment="center",
-                )
-
-                with icon_col:
-
-                    st.markdown(
-                        f'<div class="why-icon">{icon}</div>',
-                        unsafe_allow_html=True,
-                    )
-
-                with text_col:
-
-                    st.markdown(
-                        f'<div class="why-title">'
-                        f'{title}'
-                        f'</div>',
-                        unsafe_allow_html=True,
-                    )
-
-                    st.markdown(
-                        f'<div class="why-description">'
-                        f'{description}'
-                        f'</div>',
-                        unsafe_allow_html=True,
-                    )
-
-                if index < len(why_items) - 1:
-
-                    st.markdown(
-                        "<hr style='border:none;"
-                        "border-top:1px solid #e5edf2;"
-                        "margin:10px 0 2px 0;'>",
-                        unsafe_allow_html=True,
-                    )
-
-            st.markdown(
-                "<div style='text-align:center;"
-                "color:#71869a;"
-                "font-size:12.5px;"
-                "margin-top:20px;'>"
-                "🔒 <b>Secure OTP verification</b>"
-                "&nbsp; • &nbsp;"
-                "Your health data stays protected"
-                "</div>",
-                unsafe_allow_html=True,
-            )
-
-
-
 
 
 
 if __name__ == "__main__":
 
     st.set_page_config(
-        page_title="HealthGuard AI",
-        page_icon="🩺",
+        page_title="HealthAI",
+        page_icon=str(Path(__file__).resolve().parent / "assets" / "favicon.png"),
         layout="wide",
         initial_sidebar_state="collapsed",
     )

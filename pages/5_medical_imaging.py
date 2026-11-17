@@ -13,7 +13,7 @@ from medical_addon_core import (
 from imaging_models import MODALITIES, lookup_model, infer
 from utils import apply_custom_css
 
-st.set_page_config(page_title="Medical Imaging & Reports | MedPredict", page_icon="🔬", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Medical Imaging & Reports | MedPredict", page_icon="assets/favicon.png", layout="wide", initial_sidebar_state="expanded")
 
 
 from sidebar_compat import show_sidebar
@@ -26,7 +26,7 @@ if not st.session_state.get("is_logged_in", False):
         st.switch_page("app.py")
     st.stop()
 
-st.title("🔬 Medical Imaging & Report Explorer")
+st.title("Medical Imaging & Report Explorer")
 st.info(
     "**Research / education only — not medical diagnosis.** The uploaded image might be outside a model's training distribution. "
     "Scores are uncalibrated model outputs, not disease probabilities. Results cannot confirm or rule out an illness. "
@@ -191,5 +191,5 @@ if mp_ax_last and mp_ax_last.get('route') == (modality,part):
     explain_imaging(mp_ax_last['ranked'],spec,image)
 
 st.divider()
-if st.button("← Back to MedPredict dashboard"):
+if st.button("Back to MedPredict dashboard"):
     st.switch_page("app.py")

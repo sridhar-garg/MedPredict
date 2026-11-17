@@ -3,7 +3,7 @@ from __future__ import annotations
 import streamlit as st
 from disease_information import lookup_topics,atlas_queries
 
-st.set_page_config(page_title="Disease Atlas | MedPredict X",page_icon="📚",layout="wide")
+st.set_page_config(page_title="Disease Atlas | MedPredict X",page_icon="assets/favicon.png",layout="wide")
 
 
 from sidebar_compat import show_sidebar
@@ -14,10 +14,10 @@ try:
 except (ImportError,AttributeError):pass
 if not st.session_state.get('is_logged_in',False):
     st.warning('Sign in to explore Disease Atlas.')
-    st.page_link('app.py',label='Go to sign in',icon='🏠')
+    st.page_link('app.py',label='Go to sign in')
     st.stop()
 
-st.title('📚 Disease Atlas')
+st.title('Disease Atlas')
 st.caption('Search health conditions · Learn prevention · Understand treatment and symptom management')
 st.info('Information is retrieved from the U.S. National Library of Medicine (MedlinePlus). '
         'It is educational, not a diagnosis or a personalised treatment plan. '

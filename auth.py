@@ -67,7 +67,7 @@ def send_email_otp(receiver_email, otp):
     message = EmailMessage()
 
     message["Subject"] = (
-        "HealthGuard AI - Login OTP"
+        "HealthAI - Login OTP"
     )
 
     message["From"] = sender_email
@@ -76,7 +76,7 @@ def send_email_otp(receiver_email, otp):
     message.set_content(
         f"""Hello,
 
-Your HealthGuard AI verification OTP is:
+Your HealthAI verification OTP is:
 
 {otp}
 
@@ -85,7 +85,7 @@ This OTP is valid for your account verification.
 If you did not request this OTP, please ignore this email.
 
 Regards,
-HealthGuard AI
+HealthAI
 """
     )
 
@@ -145,30 +145,30 @@ def send_family_request_email(
         print("Gmail credentials are missing from .env")
         return False
 
-    display_sender = sender_name or sender_username or "A HealthGuard AI user"
+    display_sender = sender_name or sender_username or "A HealthAI user"
 
     message = EmailMessage()
-    message["Subject"] = "HealthGuard AI - New Family Connection Request"
+    message["Subject"] = "HealthAI - New Family Connection Request"
     message["From"] = sender_email
     message["To"] = receiver_email
 
     message.set_content(
         f"""Hello,
 
-You have received a new family connection request on HealthGuard AI.
+You have received a new family connection request on HealthAI.
 
 From: {display_sender}
 Username: @{sender_username or "user"}
 Relationship: {relationship}
 
-Please log in to HealthGuard AI and open Family Health to accept or decline this request.
+Please log in to HealthAI and open Family Health to accept or decline this request.
 
 Your health information will remain private until the request is accepted.
 
 If you did not expect this request, you can simply decline it from the Family Health page.
 
 Regards,
-HealthGuard AI
+HealthAI
 """
     )
 
@@ -211,23 +211,23 @@ def send_family_acceptance_email(
     display_accepter = accepter_name or accepter_username or "Your family member"
 
     message = EmailMessage()
-    message["Subject"] = "HealthGuard AI - Family Connection Accepted"
+    message["Subject"] = "HealthAI - Family Connection Accepted"
     message["From"] = sender_email
     message["To"] = receiver_email
 
     message.set_content(
         f"""Hello,
 
-Your HealthGuard AI family connection request has been accepted.
+Your HealthAI family connection request has been accepted.
 
 Family member: {display_accepter}
 Username: @{accepter_username or "user"}
 Relationship: {relationship}
 
-You can now open Family Health in HealthGuard AI to view your accepted family connection.
+You can now open Family Health in HealthAI to view your accepted family connection.
 
 Regards,
-HealthGuard AI
+HealthAI
 """
     )
 
@@ -331,19 +331,19 @@ def send_family_request_email_with_buttons(receiver_email, sender_name, sender_u
     token = create_family_email_token(connection_id, recipient_user_id)
     accept_url = f"{base_url}/?{urlencode({'family_action':'accept','family_token':token})}"
     decline_url = f"{base_url}/?{urlencode({'family_action':'decline','family_token':token})}"
-    display = sender_name or sender_username or "A HealthGuard AI user"
+    display = sender_name or sender_username or "A HealthAI user"
     message = EmailMessage()
-    message["Subject"] = "HealthGuard AI - New Family Connection Request"
+    message["Subject"] = "HealthAI - New Family Connection Request"
     message["From"] = sender_email
     message["To"] = receiver_email
     message.set_content(
         f"Hello,\n\nYou have received a new family connection request from {display}.\n"
         f"Relationship: {relationship}\n\nAccept: {accept_url}\nDecline: {decline_url}\n\n"
-        "These links are valid for 24 hours.\n\nRegards,\nHealthGuard AI"
+        "These links are valid for 24 hours.\n\nRegards,\nHealthAI"
     )
     html_body = (
         '<html><body style="font-family:Arial,sans-serif;color:#10233f">'
-        '<h2>HealthGuard AI</h2>'
+        '<h2>HealthAI</h2>'
         '<p>You have received a new family connection request.</p>'
         f'<p><b>From:</b> {html.escape(display)}<br>'
         f'<b>Username:</b> @{html.escape(sender_username or "user")}<br>'
@@ -444,7 +444,7 @@ def hash_password(password):
 
 def _verify_legacy_custom_pbkdf2(password, password_hash):
     """
-    Verify passwords created by an older HealthGuard AI version that used:
+    Verify passwords created by an older HealthAI version that used:
     pbkdf2_sha256$200000$salt$digest
     """
     try:
@@ -629,7 +629,7 @@ def create_account(
     name=None
 ):
     """
-    Create a completely new HealthGuard AI account.
+    Create a completely new HealthAI account.
 
     Expected flow:
 

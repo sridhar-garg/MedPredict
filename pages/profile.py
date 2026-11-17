@@ -82,8 +82,8 @@ def verify_current_password(username, password):
 
 
 st.set_page_config(
-    page_title="My Profile | HealthGuard AI",
-    page_icon="👤",
+    page_title="My Profile | HealthAI",
+    page_icon="assets/favicon.png",
     layout="wide",
 )
 
@@ -107,91 +107,6 @@ st.html('<div class="healthai-current-page-profile"></div>')
 
 
 
-st.markdown(
-    """
-    <style>
-        .profile-header {
-            color: #12385f !important;
-            font-size: 34px;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .profile-subtitle {
-            color: #6a8097 !important;
-            font-size: 16px;
-            margin-bottom: 25px;
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #13b7b5, #168fe1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white !important;
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .profile-name {
-            color: #12385f !important;
-            font-size: 25px;
-            font-weight: 800;
-        }
-
-        .profile-username {
-            color: #6a8097 !important;
-            font-size: 15px;
-            margin-top: 3px;
-        }
-
-        .profile-label {
-            color: #6a8097 !important;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .profile-value {
-            color: #173c59 !important;
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 18px;
-        }
-
-        .edit-title {
-            color: #12385f !important;
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
-
-        [data-testid="stTextInput"] label {
-            color: #29445c !important;
-            font-weight: 600 !important;
-        }
-
-        [data-testid="stTextInput"] input {
-            background: #ffffff !important;
-            color: #173c59 !important;
-            border: 1px solid #cfe0e9 !important;
-        }
-
-        [data-testid="stMetricLabel"],
-        [data-testid="stMetricValue"] {
-            color: #173c59 !important;
-        }
-
-        [data-testid="stCaptionContainer"] {
-            color: #6a8097 !important;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 
@@ -247,11 +162,11 @@ except Exception:
 
 
 
-st.html('<div class="profile-header">My Profile 👤</div>')
+st.html('<div class="profile-header">My Profile</div>')
 
 st.html(
     '<div class="profile-subtitle">'
-    'Manage and view your HealthGuard AI account information.'
+    'Manage and view your HealthAI account information.'
     '</div>'
 )
 
@@ -273,9 +188,13 @@ with st.container(border=True):
 
     with left:
 
-        st.html('<div class="profile-avatar">👤</div>')
+        display_name = name if name else "HealthAI user"
 
-        display_name = name if name else "HealthGuard User"
+        st.html(
+            f'<div class="profile-avatar">'
+            f'{(display_name or "?").strip()[:1].upper()}'
+            f'</div>'
+        )
 
         st.html(f'<div class="profile-name">{display_name}</div>')
 
@@ -355,7 +274,7 @@ st.write("")
 
 with st.container(border=True):
 
-    st.html('<div class="edit-title">Edit Profile ✏️</div>')
+    st.html('<div class="edit-title">Edit Profile</div>')
 
     edited_name = st.text_input(
         "Name",
@@ -501,7 +420,7 @@ with st.container(border=True):
                             )
 
                             st.success(
-                                "Profile updated successfully! 🎉"
+                                "Profile updated successfully!"
                             )
 
                             st.rerun()
@@ -574,7 +493,7 @@ with st.container(border=True):
                             )
 
                             st.success(
-                                "Profile updated successfully! 🎉"
+                                "Profile updated successfully!"
                             )
 
                             st.rerun()
@@ -595,7 +514,7 @@ with st.container(border=True):
                 )
 
                 st.success(
-                    "Profile updated successfully! 🎉"
+                    "Profile updated successfully!"
                 )
 
                 st.rerun()

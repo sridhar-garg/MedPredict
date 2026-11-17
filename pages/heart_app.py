@@ -13,7 +13,7 @@ from database import save_health_assessment
 
 st.set_page_config(
     page_title="Heart Disease Risk Assessment",
-    page_icon="🫀",
+    page_icon="assets/favicon.png",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -111,7 +111,7 @@ except Exception as e:
 st.markdown(
     """
     <div class="assessment-section-card">
-        <div class="assessment-section-title">🩺 Clinical Information</div>
+        <div class="assessment-section-title">Clinical Information</div>
         <div class="assessment-section-subtitle">
             Basic cardiovascular and resting measurements.
         </div>
@@ -244,7 +244,7 @@ st.markdown(
 )
 
 if st.button(
-    "🧠 Analyze Heart Disease Risk →",
+    "Analyze Heart Disease Risk",
     type="primary",
     use_container_width=True,
     key="heart_analyze_button",
@@ -340,7 +340,6 @@ st.markdown(
     """
     <div class="healthai-workflow">
         <div class="workflow-title">
-            <span>⌁</span>
             <div>
                 <h2>How this assessment works</h2>
                 <p>From clinical measurements to an explainable AI result.</p>

@@ -13,7 +13,7 @@ from database import save_health_assessment
 
 st.set_page_config(
     page_title="Diabetes Risk Assessment",
-    page_icon="🩸",
+    page_icon="assets/favicon.png",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -115,7 +115,7 @@ except Exception as e:
 st.markdown(
     """
     <div class="assessment-section-card">
-        <div class="assessment-section-title">👤 Basic Information</div>
+        <div class="assessment-section-title">Basic Information</div>
         <div class="assessment-section-subtitle">
             Enter the patient's basic demographic information.
         </div>
@@ -151,7 +151,7 @@ st.markdown(
     """
     <div class="assessment-section-card">
         <div class="assessment-section-title">
-            🩺 Symptoms & Health Indicators
+            Symptoms & Health Indicators
         </div>
         <div class="assessment-section-subtitle">
             Select the symptoms or conditions reported for the patient.
@@ -268,7 +268,7 @@ st.markdown(
 )
 
 if st.button(
-    "🧠 Analyze Diabetes Risk →",
+    "Analyze Diabetes Risk",
     type="primary",
     use_container_width=True,
     key="diabetes_analyze_button",
@@ -344,7 +344,6 @@ st.markdown(
     """
     <div class="healthai-workflow">
         <div class="workflow-title">
-            <span>⌁</span>
             <div>
                 <h2>How this assessment works</h2>
                 <p>From reported information to an explainable AI result.</p>

@@ -50,7 +50,7 @@ if _family_action and _family_token:
     if _ok:
         st.success("✓ " + _msg)
         st.info(
-            "You can now log in to HealthGuard AI and open Family Health."
+            "You can now log in to HealthAI and open Family Health."
         )
     else:
         st.warning(_msg)

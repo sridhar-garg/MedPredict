@@ -11,7 +11,7 @@ from medical_addon_core import (
     assess_ldl, assess_bmi, assess_stop_bang, fib4, assess_fib4,
 )
 
-st.set_page_config(page_title="More Health Screenings | MedPredict", page_icon="🩺", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="More Health Screenings | MedPredict", page_icon="assets/favicon.png", layout="wide", initial_sidebar_state="expanded")
 
 
 from sidebar_compat import show_sidebar
@@ -25,7 +25,7 @@ if not st.session_state.get("is_logged_in", False):
         st.switch_page("app.py")
     st.stop()
 
-st.title("🩺 Seven More Health Screenings")
+st.title("Seven More Health Screenings")
 st.caption("Educational screening tools, not diagnostic AI. Inputs are not automatically saved to your existing patient database.")
 st.warning("For adult users and demonstration purposes. Do not use these results for diagnosis, medication decisions, or emergencies. A healthcare professional must interpret findings and symptoms.")
 
@@ -129,5 +129,5 @@ else:
         show_result(assess_fib4(age, value), ("FIB-4 score", f"{value:.2f}"), "liver")
 
 st.divider()
-if st.button("← Back to MedPredict home"):
+if st.button("Back to MedPredict home"):
     st.switch_page("app.py")

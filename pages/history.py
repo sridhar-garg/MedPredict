@@ -15,7 +15,7 @@ from utils import apply_custom_css
 
 st.set_page_config(
     page_title="Health History | HealthAI",
-    page_icon="📜",
+    page_icon="assets/favicon.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -95,7 +95,7 @@ if not assessments:
             """
             <div class="assessment-section-card">
                 <div class="assessment-section-title">
-                    📋 No Assessments Yet
+                    No Assessments Yet
                 </div>
                 <div class="assessment-section-subtitle">
                     You haven't completed any health assessments yet.
@@ -144,7 +144,7 @@ st.html(
         """
         <div class="assessment-section-card">
             <div class="assessment-section-title">
-                📊 Assessment Summary
+                Assessment Summary
             </div>
             <div class="assessment-section-subtitle">
                 A quick overview of your completed AI health assessments.
@@ -432,7 +432,7 @@ for assessment in filtered_assessments:
                 </div>
 
                 <div class="assessment-section-subtitle">
-                    📅 {date_value}
+                    {date_value}
                 </div>
 
                 <hr>
@@ -459,7 +459,7 @@ for assessment in filtered_assessments:
         f"View {disease} Assessment Details"
     ):
 
-        st.markdown("#### 🧾 Assessment Information")
+        st.markdown("#### Assessment Information")
 
         if input_data:
 
@@ -519,7 +519,7 @@ for assessment in filtered_assessments:
 
 
 
-        st.markdown("#### 🤖 AI Evaluation")
+        st.markdown("#### AI Evaluation")
 
         if evaluation:
             st.html(
@@ -554,7 +554,6 @@ st.html(
     dedent(
         """
         <div class="healthai-footer-note">
-            <span>♥</span>
             HealthAI &nbsp;•&nbsp;
             Personal Health Assessment History &nbsp;•&nbsp;
             AI Risk Assessment
