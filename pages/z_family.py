@@ -79,27 +79,27 @@ def send_family_email_direct(receiver_email, subject, body):
 
 
 def send_family_request_email_direct(receiver_email, sender_name, sender_username, relationship):
-    display_sender = sender_name or sender_username or "A HealthGuard AI user"
+    display_sender = sender_name or sender_username or "A MedPredict user"
     body = f"""Hello,
 
-You have received a new family connection request on HealthGuard AI.
+You have received a new family connection request on MedPredict.
 
 From: {display_sender}
 Username: @{sender_username or "user"}
 Relationship: {relationship}
 
-Please log in to HealthGuard AI and open Family Health to accept or decline this request.
+Please log in to MedPredict and open Family Health to accept or decline this request.
 
 Your health information will remain private until the request is accepted.
 
 If you did not expect this request, you can simply decline it from the Family Health page.
 
 Regards,
-HealthGuard AI
+MedPredict
 """
     return send_family_email_direct(
         receiver_email,
-        "HealthGuard AI - New Family Connection Request",
+        "MedPredict - New Family Connection Request",
         body,
     )
 
@@ -108,20 +108,20 @@ def send_family_acceptance_email_direct(receiver_email, accepter_name, accepter_
     display_accepter = accepter_name or accepter_username or "Your family member"
     body = f"""Hello,
 
-Your HealthGuard AI family connection request has been accepted.
+Your MedPredict family connection request has been accepted.
 
 Family member: {display_accepter}
 Username: @{accepter_username or "user"}
 Relationship: {relationship}
 
-You can now open Family Health in HealthGuard AI to view your accepted family connection.
+You can now open Family Health in MedPredict to view your accepted family connection.
 
 Regards,
-HealthGuard AI
+MedPredict
 """
     return send_family_email_direct(
         receiver_email,
-        "HealthGuard AI - Family Connection Accepted",
+        "MedPredict - Family Connection Accepted",
         body,
     )
 
