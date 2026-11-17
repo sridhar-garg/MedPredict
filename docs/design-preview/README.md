@@ -8,7 +8,7 @@ The restored homepage and sign-in used several HealthAI/HealthGuard identities, 
 - [Namastey AI](https://arhita536.github.io/Namastey-AI__/): a clear introduction and a visual directory of features.
 - [Kaamigo](https://arhitajain.github.io/kaamigo/): split visual/sign-in composition, typography, card hierarchy and spacing.
 
-The implementation uses native Streamlit controls for authentication, navigation, forms and actions. Shared styles cover the overview and existing feature pages, with small-screen rules and reduced-motion support. Research workspace, AI research hub, and Autonomous lab have been removed from the sidebar and overview; the remaining sidebar groups use padded headings to keep labels clear of their menu links. Models, assessment calculations, account verification and saved-data formats are retained. Accessibility tools remain integrated within MedPredict.
+The implementation uses native Streamlit controls for authentication, navigation, forms and actions. Shared styles cover the overview and existing feature pages, with small-screen rules and reduced-motion support. Research workspace, AI research hub, and Autonomous lab have been removed from the sidebar and overview; the remaining sidebar groups use padded headings to keep labels clear of their menu links. The sidebar now uses a compact navigation rail, consistent icon sizing, a dedicated current-page highlight, and separate light/dark colours. The pinned chat dock, input, message text and send control follow the selected appearance. Models, assessment calculations, account verification and saved-data formats are retained. Accessibility tools remain integrated within MedPredict.
 
 ## Preview
 
@@ -16,9 +16,11 @@ Screenshots are from the local Streamlit application with a synthetic preview se
 
 ![Sign in](signin.jpg)
 
-![Overview](overview.jpg)
+The chat screenshots use native Streamlit widgets with a local test conversation. No messages are sent to an AI service.
 
-![Dark overview](overview-dark.jpg)
+![Light chat and sidebar](chat-light.jpg)
+
+![Dark chat and sidebar](chat-dark.jpg)
 
 ## Validation
 
@@ -27,13 +29,13 @@ Screenshots are from the local Streamlit application with a synthetic preview se
 - AST comparison confirmed that the complete login/signup/OTP conditional handling matches the original, with presentation branding updated.
 - The dashboard, theme switching, search routing, assessment navigation and history page passed Streamlit AppTest checks.
 - Diabetes, heart and breast assessment calculations ran with the existing sample inputs, without application exceptions or error messages.
-- Desktop browser checks covered sign-in, the overview, assessment shortcuts, sidebar spacing and both appearances.
+- Desktop browser checks covered sign-in, the overview, assessment shortcuts, sidebar spacing and both appearances. The sidebar/chat update also checks the sticky chat dock, focused input, placeholder, character count, enabled send button and active navigation styling in both appearances.
 - Existing saved scikit-learn models emitted version warnings in the local test environment (saved with 1.9.0, executed with 1.8.0). These checks demonstrate that the presentation still runs; they do not establish clinical validity or model reproducibility across versions.
 - Real email/OTP delivery, connected AI, camera recognition and the existing production deployment were not exercised. Mobile breakpoint rules were reviewed; physical-device testing remains outstanding.
 
 ## Deployment
 
-Run the existing entry point, `streamlit run app.py`. No new Python dependencies, environment variables or data migration are required. The existing hosted app's URL and deployment configuration were not available in the project context, so this branch has not been verified on that deployment. The local preview harness is excluded from Git.
+Run the existing entry point, `streamlit run app.py`. No new Python dependencies, environment variables or data migration are required. The existing app is https://medpredictgit-gwv3verd6e57qygyixu5zs.streamlit.app/ and its source link points to `design/reference-inspired-ui`. These changes remain on that branch; `main` is not modified. The updated appearance has been verified locally, not in an authenticated session on the hosted app. The local preview harness is excluded from Git.
 
 ## Image asset
 
