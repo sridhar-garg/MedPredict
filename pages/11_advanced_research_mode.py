@@ -8,7 +8,7 @@ st.set_page_config(page_title="Advanced Research Mode | MedPredict X",page_icon=
 from sidebar_compat import show_sidebar
 show_sidebar()
 try:
-    from utils import apply_custom_css
+    from utils import apply_custom_css, page_intro
     apply_custom_css()
 except (ImportError,AttributeError):
     pass
@@ -17,8 +17,7 @@ if not st.session_state.get("is_logged_in",False):
     st.page_link("app.py",label="Back to login",icon="🏠")
     st.stop()
 
-st.title("🧪 Advanced Research Mode")
-st.caption("Optional tools for competition demonstration, model evaluation and autonomous-robot research")
+page_intro("Advanced research", "Go deeper into model evaluation, reproducible experiments and simulation-based robotics research.", "◇", "RESEARCH / ADVANCED TOOLS")
 st.info("These are separate experimental projects. Results from the robot simulation are synthetic, "
         "and model evaluation does not establish clinical safety or diagnostic approval.")
 left,right=st.columns(2,gap="large")
