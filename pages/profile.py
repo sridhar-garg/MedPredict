@@ -11,7 +11,7 @@ from database import (
 from auth import set_user_credentials
 from database import get_connection
 from werkzeug.security import check_password_hash
-from utils import apply_custom_css, page_intro
+from utils import apply_custom_css
 
 
 
@@ -82,7 +82,7 @@ def verify_current_password(username, password):
 
 
 st.set_page_config(
-    page_title="My Profile | MedPredict",
+    page_title="My Profile | HealthGuard AI",
     page_icon="👤",
     layout="wide",
 )
@@ -97,7 +97,7 @@ show_sidebar()
 
 
 if "healthai_theme" not in st.session_state:
-    st.session_state.healthai_theme = "dark"
+    st.session_state.healthai_theme = "light"
 
 apply_custom_css()
 st.html('<div class="healthai-current-page-profile"></div>')
@@ -107,7 +107,91 @@ st.html('<div class="healthai-current-page-profile"></div>')
 
 
 
+st.markdown(
+    """
+    <style>
+        .profile-header {
+            color: #12385f !important;
+            font-size: 34px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
 
+        .profile-subtitle {
+            color: #6a8097 !important;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #13b7b5, #168fe1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white !important;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .profile-name {
+            color: #12385f !important;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .profile-username {
+            color: #6a8097 !important;
+            font-size: 15px;
+            margin-top: 3px;
+        }
+
+        .profile-label {
+            color: #6a8097 !important;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .profile-value {
+            color: #173c59 !important;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .edit-title {
+            color: #12385f !important;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        [data-testid="stTextInput"] label {
+            color: #29445c !important;
+            font-weight: 600 !important;
+        }
+
+        [data-testid="stTextInput"] input {
+            background: #ffffff !important;
+            color: #173c59 !important;
+            border: 1px solid #cfe0e9 !important;
+        }
+
+        [data-testid="stMetricLabel"],
+        [data-testid="stMetricValue"] {
+            color: #173c59 !important;
+        }
+
+        [data-testid="stCaptionContainer"] {
+            color: #6a8097 !important;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 
@@ -163,372 +247,378 @@ except Exception:
 
 
 
-page_intro("Your profile", "Manage account details and preferences across your MedPredict research workspace.", "◉", "YOUR ACCOUNT / PROFILE")
+st.html('<div class="profile-header">My Profile 👤</div>')
+
+st.html(
+    '<div class="profile-subtitle">'
+    'Manage and view your HealthGuard AI account information.'
+    '</div>'
+)
 
 
-overview_tab, edit_tab = st.tabs(["Account overview", "Edit details & security"])
 
-with overview_tab:
-    with st.container(border=True):
 
-        left, right = st.columns(
-            [0.35, 0.65],
-            gap="large",
+
+
+with st.container(border=True):
+
+    left, right = st.columns(
+        [0.35, 0.65],
+        gap="large",
+    )
+
+
+
+
+
+    with left:
+
+        st.html('<div class="profile-avatar">👤</div>')
+
+        display_name = name if name else "HealthGuard User"
+
+        st.html(f'<div class="profile-name">{display_name}</div>')
+
+        if username:
+            st.html(
+                f'<div class="profile-username">@{username}</div>'
+            )
+
+
+
+
+
+    with right:
+
+        st.html('<div class="profile-label">Username</div>')
+
+        st.html(
+            f'<div class="profile-value">'
+            f'{username if username else "Not set"}'
+            f'</div>'
         )
 
+        st.html('<div class="profile-label">Email Address</div>')
 
+        st.html(f'<div class="profile-value">{email}</div>')
 
+        st.html('<div class="profile-label">Name</div>')
 
+        st.html(
+            f'<div class="profile-value">'
+            f'{name if name else "Not set"}'
+            f'</div>'
+        )
 
-        with left:
+        st.html('<div class="profile-label">Account Created</div>')
 
-            st.html('<div class="profile-avatar">👤</div>')
-
-            display_name = name if name else "MedPredict user"
-
-            st.html(f'<div class="profile-name">{display_name}</div>')
-
-            if username:
-                st.html(
-                    f'<div class="profile-username">@{username}</div>'
-                )
-
-
-
-
-
-        with right:
-
-            st.html('<div class="profile-label">Username</div>')
-
-            st.html(
-                f'<div class="profile-value">'
-                f'{username if username else "Not set"}'
-                f'</div>'
-            )
-
-            st.html('<div class="profile-label">Email Address</div>')
-
-            st.html(f'<div class="profile-value">{email}</div>')
-
-            st.html('<div class="profile-label">Name</div>')
-
-            st.html(
-                f'<div class="profile-value">'
-                f'{name if name else "Not set"}'
-                f'</div>'
-            )
-
-            st.html('<div class="profile-label">Account Created</div>')
-
-            st.html(f'<div class="profile-value">{created_at_display}</div>')
+        st.html(f'<div class="profile-value">{created_at_display}</div>')
 
 
 
 
 
+
+st.write("")
+
+st.subheader("Account Information")
+
+info1, info2, info3 = st.columns(3)
+
+with info1:
+
+    st.metric(
+        "Account Status",
+        "Active",
+    )
+
+with info2:
+
+    st.metric(
+        "Email Verified",
+        "Yes",
+    )
+
+with info3:
+
+    st.metric(
+        "Authentication",
+        "Password",
+    )
+
+
+
+
+
+
+st.write("")
+
+with st.container(border=True):
+
+    st.html('<div class="edit-title">Edit Profile ✏️</div>')
+
+    edited_name = st.text_input(
+        "Name",
+        value=name or "",
+        placeholder="Enter your name",
+        key="edit_profile_name",
+    )
+
+    edited_username = st.text_input(
+        "Username",
+        value=username or "",
+        placeholder="Enter your username",
+        key="edit_profile_username",
+    )
 
     st.write("")
 
-    st.subheader("Account Information")
+    st.markdown(
+        "**Change Password**",
+    )
 
-    info1, info2, info3 = st.columns(3)
+    st.caption(
+        "Leave the new password fields empty if you do not "
+        "want to change your password."
+    )
 
-    with info1:
+    current_password = st.text_input(
+        "Current Password",
+        type="password",
+        placeholder="Enter your current password",
+        key="edit_current_password",
+    )
 
-        st.metric(
-            "Account Status",
-            "Active",
-        )
+    new_password = st.text_input(
+        "New Password",
+        type="password",
+        placeholder="Enter new password",
+        key="edit_new_password",
+    )
 
-    with info2:
+    confirm_password = st.text_input(
+        "Confirm New Password",
+        type="password",
+        placeholder="Confirm new password",
+        key="edit_confirm_password",
+    )
 
-        st.metric(
-            "Email Verified",
-            "Yes",
-        )
-
-    with info3:
-
-        st.metric(
-            "Authentication",
-            "Password",
-        )
-
-
-
-
-
-
-    st.write("")
-
-with edit_tab:
-    with st.container(border=True):
-
-        st.html('<div class="edit-title">Edit Profile ✏️</div>')
-
-        edited_name = st.text_input(
-            "Name",
-            value=name or "",
-            placeholder="Enter your name",
-            key="edit_profile_name",
-        )
-
-        edited_username = st.text_input(
-            "Username",
-            value=username or "",
-            placeholder="Enter your username",
-            key="edit_profile_username",
-        )
-
-        st.write("")
-
-        st.markdown(
-            "**Change Password**",
-        )
-
-        st.caption(
-            "Leave the new password fields empty if you do not "
-            "want to change your password."
-        )
-
-        current_password = st.text_input(
-            "Current Password",
-            type="password",
-            placeholder="Enter your current password",
-            key="edit_current_password",
-        )
-
-        new_password = st.text_input(
-            "New Password",
-            type="password",
-            placeholder="Enter new password",
-            key="edit_new_password",
-        )
-
-        confirm_password = st.text_input(
-            "Confirm New Password",
-            type="password",
-            placeholder="Confirm new password",
-            key="edit_confirm_password",
-        )
-
-        if st.button(
-            "Save Changes",
-            type="primary",
-            width="stretch",
-            key="save_profile_changes",
-        ):
+    if st.button(
+        "Save Changes",
+        type="primary",
+        width="stretch",
+        key="save_profile_changes",
+    ):
 
 
 
 
 
-            edited_name = edited_name.strip()
-            edited_username = edited_username.strip().lower()
+        edited_name = edited_name.strip()
+        edited_username = edited_username.strip().lower()
 
-            if not edited_username:
+        if not edited_username:
 
-                st.error(
-                    "Username cannot be empty."
-                )
+            st.error(
+                "Username cannot be empty."
+            )
 
-            else:
+        else:
 
-                username_changed = (
-                    edited_username != (username or "").lower()
-                )
+            username_changed = (
+                edited_username != (username or "").lower()
+            )
 
-                password_changed = bool(
-                    new_password or confirm_password
-                )
-
-
+            password_changed = bool(
+                new_password or confirm_password
+            )
 
 
 
-                if password_changed:
 
-                    if not current_password:
+
+            if password_changed:
+
+                if not current_password:
+
+                    st.error(
+                        "Enter your current password to "
+                        "change your password."
+                    )
+
+                elif not new_password:
+
+                    st.error(
+                        "Please enter a new password."
+                    )
+
+                elif new_password != confirm_password:
+
+                    st.error(
+                        "New passwords do not match."
+                    )
+
+                elif len(new_password) < 6:
+
+                    st.error(
+                        "New password must be at least 6 characters."
+                    )
+
+                else:
+
+                    password_valid = verify_current_password(
+                        username,
+                        current_password
+                    )
+
+                    if not password_valid:
 
                         st.error(
-                            "Enter your current password to "
-                            "change your password."
-                        )
-
-                    elif not new_password:
-
-                        st.error(
-                            "Please enter a new password."
-                        )
-
-                    elif new_password != confirm_password:
-
-                        st.error(
-                            "New passwords do not match."
-                        )
-
-                    elif len(new_password) < 6:
-
-                        st.error(
-                            "New password must be at least 6 characters."
+                            "Current password is incorrect."
                         )
 
                     else:
 
-                        password_valid = verify_current_password(
-                            username,
-                            current_password
+
+
+
+
+                        update_user_name(
+                            user_id,
+                            edited_name
                         )
 
-                        if not password_valid:
 
-                            st.error(
-                                "Current password is incorrect."
+
+
+
+                        try:
+
+                            set_user_credentials(
+                                user_id,
+                                edited_username,
+                                new_password
                             )
 
-                        else:
+                            st.success(
+                                "Profile updated successfully! 🎉"
+                            )
+
+                            st.rerun()
+
+                        except ValueError as e:
+
+                            st.error(str(e))
 
 
 
 
+
+            elif username_changed:
+
+                if not current_password:
+
+                    st.error(
+                        "Enter your current password to "
+                        "change your username."
+                    )
+
+                else:
+
+                    password_valid = verify_current_password(
+                        username,
+                        current_password
+                    )
+
+                    if not password_valid:
+
+                        st.error(
+                            "Current password is incorrect."
+                        )
+
+                    else:
+
+                        try:
+
+
+                            conn = get_connection()
+                            try:
+                                cursor = conn.cursor()
+                                cursor.execute(
+                                    "SELECT password_hash FROM users WHERE id = ?",
+                                    (user_id,),
+                                )
+                                hash_row = cursor.fetchone()
+                            finally:
+                                conn.close()
+
+                            if not hash_row or not hash_row[0]:
+                                st.error(
+                                    "Your account does not have a valid password set."
+                                )
+                                st.stop()
+
+                            existing_password_hash = hash_row[0]
 
                             update_user_name(
                                 user_id,
                                 edited_name
                             )
 
+                            from database import update_user_credentials
 
-
-
-
-                            try:
-
-                                set_user_credentials(
-                                    user_id,
-                                    edited_username,
-                                    new_password
-                                )
-
-                                st.success(
-                                    "Profile updated successfully! 🎉"
-                                )
-
-                                st.rerun()
-
-                            except ValueError as e:
-
-                                st.error(str(e))
-
-
-
-
-
-                elif username_changed:
-
-                    if not current_password:
-
-                        st.error(
-                            "Enter your current password to "
-                            "change your username."
-                        )
-
-                    else:
-
-                        password_valid = verify_current_password(
-                            username,
-                            current_password
-                        )
-
-                        if not password_valid:
-
-                            st.error(
-                                "Current password is incorrect."
+                            update_user_credentials(
+                                user_id,
+                                edited_username,
+                                existing_password_hash
                             )
 
-                        else:
+                            st.success(
+                                "Profile updated successfully! 🎉"
+                            )
 
-                            try:
+                            st.rerun()
 
+                        except ValueError as e:
 
-                                conn = get_connection()
-                                try:
-                                    cursor = conn.cursor()
-                                    cursor.execute(
-                                        "SELECT password_hash FROM users WHERE id = ?",
-                                        (user_id,),
-                                    )
-                                    hash_row = cursor.fetchone()
-                                finally:
-                                    conn.close()
-
-                                if not hash_row or not hash_row[0]:
-                                    st.error(
-                                        "Your account does not have a valid password set."
-                                    )
-                                    st.stop()
-
-                                existing_password_hash = hash_row[0]
-
-                                update_user_name(
-                                    user_id,
-                                    edited_name
-                                )
-
-                                from database import update_user_credentials
-
-                                update_user_credentials(
-                                    user_id,
-                                    edited_username,
-                                    existing_password_hash
-                                )
-
-                                st.success(
-                                    "Profile updated successfully! 🎉"
-                                )
-
-                                st.rerun()
-
-                            except ValueError as e:
-
-                                st.error(str(e))
+                            st.error(str(e))
 
 
 
 
 
-                else:
+            else:
 
-                    update_user_name(
-                        user_id,
-                        edited_name
-                    )
+                update_user_name(
+                    user_id,
+                    edited_name
+                )
 
-                    st.success(
-                        "Profile updated successfully! 🎉"
-                    )
+                st.success(
+                    "Profile updated successfully! 🎉"
+                )
 
-                    st.rerun()
+                st.rerun()
 
 
 
 
 
 
-    st.write("")
+st.write("")
 
-    if st.button(
-        "Logout",
-        type="secondary",
-        width="stretch",
-        key="profile_logout",
-    ):
+if st.button(
+    "Logout",
+    type="secondary",
+    width="stretch",
+    key="profile_logout",
+):
 
-        st.session_state["is_logged_in"] = False
-        st.session_state["user_id"] = None
-        st.session_state["user_email"] = ""
-        st.session_state["verified"] = False
-        st.session_state["otp"] = None
-        st.session_state["otp_sent"] = False
+    st.session_state["is_logged_in"] = False
+    st.session_state["user_id"] = None
+    st.session_state["user_email"] = ""
+    st.session_state["verified"] = False
+    st.session_state["otp"] = None
+    st.session_state["otp_sent"] = False
 
-        st.switch_page("app.py")
+    st.switch_page("app.py")

@@ -11,130 +11,19 @@ from sklearn.pipeline import Pipeline
 
 
 
-def _mp_theme_changed():
-    """Persist appearance independently from individual Streamlit page widgets."""
-    st.session_state.healthai_theme = (
-        "light" if st.session_state.get("mp_light_switch", False) else "dark"
-    )
-
-
 def apply_custom_css():
-    """New unified, dark-first appearance system for every MedPredict page."""
-    st.session_state.setdefault("healthai_theme", "dark")
-    theme = st.session_state.healthai_theme
-    css_path = Path(__file__).parent / "design_system.css"
-    if css_path.is_file():
-        st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+    """Load the shared HealthAI theme and preserve the selected theme."""
+    css_path = Path(__file__).parent / "style.css"
+    css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
 
-    # Genuine page controls, visible even when the Streamlit sidebar is collapsed.
-    with st.sidebar:
-        st.markdown(
-            '<div class="mp-brand-panel"><div class="mp-brand-row">'
-            '<span class="mp-brand-mark">✳</span>'
-            '<div><div class="mp-brand-name">MedPredict</div>'
-            '<div class="mp-brand-sub">Health research studio</div></div>'
-            '</div></div>'
-            '<div class="mp-sidebar-foot">Research and educational use only. '
-            'Not a diagnostic medical device.</div>',
-            unsafe_allow_html=True,
-        )
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
-    with st.sidebar:
-        st.markdown('<div class="mp-side-label">DASHBOARD</div>', unsafe_allow_html=True)
-        st.page_link("app.py", label="Overview", icon="🏠")
-
-        st.markdown('<div class="mp-side-label">HEALTH SCREENINGS</div>', unsafe_allow_html=True)
-        st.page_link("pages/heart_app.py", label="Heart health", icon="❤️")
-        st.page_link("pages/diabetes_app.py", label="Diabetes", icon="🩸")
-        st.page_link("pages/breast_app.py", label="Breast health", icon="🎗️")
-        st.page_link("pages/4_health_screenings.py", label="More screenings", icon="🩺")
-        st.page_link("pages/5_medical_imaging.py", label="Imaging & reports", icon="🔬")
-
-        st.markdown('<div class="mp-side-label">EXPLORE</div>', unsafe_allow_html=True)
-        st.page_link("pages/10_disease_atlas.py", label="Disease atlas", icon="📚")
-        st.page_link("pages/8_gemini_chatbot.py", label="AI assistant", icon="💬")
-        st.page_link("pages/9_abilitybridge.py", label="Accessibility tools", icon="🤟")
-
-        st.markdown('<div class="mp-side-label">RESEARCH</div>', unsafe_allow_html=True)
-        st.page_link("pages/11_advanced_research_mode.py", label="Advanced research", icon="🧪")
-        st.page_link("pages/6_research_hub.py", label="Model research", icon="📊")
-        st.page_link("pages/7_autonomous_lab.py", label="Robotics lab", icon="🤖")
-
-        st.markdown('<div class="mp-side-label">ACCOUNT</div>', unsafe_allow_html=True)
-        st.page_link("pages/history.py", label="Assessment history", icon="🕘")
-        st.page_link("pages/profile.py", label="Your profile", icon="👤")
-        st.page_link("pages/z_family.py", label="Family connections", icon="👥")
-
-    bar_left, bar_right = st.columns([5, 1.1], vertical_alignment="center")
-    with bar_left:
-        st.markdown(
-            '<div class="mp-workspace-bar">'
-            '<span class="mp-workspace-dot"></span>MEDPREDICT <span>/</span> WORKSPACE'
-            '</div>', unsafe_allow_html=True,
-        )
-    with bar_right:
-        st.toggle(
-            "Light mode", value=(theme == "light"),
-            key="mp_light_switch", on_change=_mp_theme_changed,
-            help="Switch between the dark and light appearances.",
-        )
-
-    theme = st.session_state.healthai_theme
-    marker = ("healthai-theme-light-marker" if theme == "light"
-              else "healthai-theme-dark-marker")
+    theme = st.session_state.get("healthai_theme", "light")
+    marker = "healthai-theme-dark-marker" if theme == "dark" else "healthai-theme-light-marker"
     st.markdown(
-        f'<span class="{marker}" aria-hidden="true" style="display:none"></span>',
+        f'<div class="{marker}" aria-hidden="true" style="display:none"></div>',
         unsafe_allow_html=True,
     )
-
-
-def page_intro(title, subtitle, icon="✧", overline="MEDPREDICT / WORKSPACE"):
-    """Purpose-led page heading, contextual workflow rail, and accessible HTML."""
-    from html import escape
-
-    category = overline.split("/")[0].strip().upper()
-    if category in {"SCREENING", "SCREENINGS"}:
-        steps = (
-            ("01", "Enter or review measurements"),
-            ("02", "Explore educational outputs"),
-            ("03", "Interpret model limitations"),
-        )
-    elif category in {"RESEARCH", "ADVANCED", "EXPERIMENTS"}:
-        steps = (
-            ("01", "Choose a research tool"),
-            ("02", "Run a transparent experiment"),
-            ("03", "Review evidence and limits"),
-        )
-    elif category in {"YOUR ACCOUNT", "PLATFORM"}:
-        steps = (
-            ("01", "View your workspace"),
-            ("02", "Manage your information"),
-            ("03", "Stay in control"),
-        )
-    else:
-        steps = (
-            ("01", "Choose what to explore"),
-            ("02", "Review sourced information"),
-            ("03", "Learn with context"),
-        )
-
-    safe_title, safe_subtitle = escape(title), escape(subtitle)
-    rail = "".join(
-        '<div class="mp-page-utility-item">'
-        f'<span>{num}</span>{escape(label)}</div>'
-        for num, label in steps
-    )
-    st.markdown(
-        '<div class="mp-page-topline"><strong>MEDPREDICT</strong>'
-        f' / {escape(overline)}</div>'
-        '<div class="mp-page-heading"><div>'
-        f'<h1>{safe_title}</h1><p>{safe_subtitle}</p></div>'
-        f'<div class="mp-page-marker">{escape(icon)} &nbsp; RESEARCH TOOL</div>'
-        '</div>'
-        f'<div class="mp-page-utility">{rail}</div>',
-        unsafe_allow_html=True,
-    )
-
 
 
 def readable_feature(feature):

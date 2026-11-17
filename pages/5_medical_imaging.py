@@ -11,7 +11,7 @@ from medical_addon_core import (
     assess_egfr, assess_haemoglobin, assess_ldl, egfr_2021, extract_candidate_lab_values,
 )
 from imaging_models import MODALITIES, lookup_model, infer
-from utils import apply_custom_css, page_intro
+from utils import apply_custom_css
 
 st.set_page_config(page_title="Medical Imaging & Reports | MedPredict", page_icon="🔬", layout="wide", initial_sidebar_state="expanded")
 
@@ -26,7 +26,7 @@ if not st.session_state.get("is_logged_in", False):
         st.switch_page("app.py")
     st.stop()
 
-page_intro("Medical imaging & reports", "Explore research-only image classifiers and de-identified health documents in a guided workspace.", "⌁", "RESEARCH / MEDICAL IMAGING")
+st.title("🔬 Medical Imaging & Report Explorer")
 st.info(
     "**Research / education only — not medical diagnosis.** The uploaded image might be outside a model's training distribution. "
     "Scores are uncalibrated model outputs, not disease probabilities. Results cannot confirm or rule out an illness. "
