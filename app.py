@@ -6,7 +6,7 @@ import streamlit as st
 
 
 st.set_page_config(
-    page_title="HealthAI | EXHRA",
+    page_title="Dashboard | MedPredict",
     page_icon="🏥",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -871,3 +871,7 @@ st.write("Ask Gemini 3.8 Flash educational health and AI research questions, wit
 if st.button("💬 Open Gemini Chatbot →", key="medpredict_gemini38_home", use_container_width=True):
     st.switch_page("pages/8_gemini_chatbot.py")
 st.caption("Educational assistance only, not clinical diagnosis. Chat history remains in your browser session.")
+
+
+# Keep the new feedback page discoverable from the dashboard.
+st.page_link("pages/12_reviews.py", label="Reviews & experience", icon=":material/rate_review:")
