@@ -23,7 +23,7 @@ from health_assistant import (
 )
 
 try:
-    from utils import apply_custom_css
+    from utils import apply_custom_css, page_intro
     apply_custom_css()
 except ImportError:
     pass
@@ -33,8 +33,7 @@ if not st.session_state.get("is_logged_in", False):
     st.page_link("app.py", label="Return to login", icon="🏠")
     st.stop()
 
-st.title("💬 MedPredict AI Assistant")
-st.caption("Powered by Gemini 3.8 Flash · Educational health and research Q&A")
+page_intro("Your AI research assistant", "Explore medical terminology, public research concepts, and machine-learning limitations in conversation.", "✦", "TOOLS / CONVERSATIONAL AI")
 st.info(
     "This chatbot provides general educational information, not a medical diagnosis. "
     "Do not paste names, contact details, identifiable health records, or private patient information. "
