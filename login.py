@@ -35,7 +35,7 @@ def _login_theme_changed():
 
 
 def login_page():
-    """A fresh premium sign-in experience; existing authentication remains unchanged."""
+    """Centered authentication workspace, no illustration or legacy split-panel."""
     defaults = {
         "otp_sent": False,
         "verified": False,
@@ -53,84 +53,62 @@ def login_page():
 
     design_file = Path(__file__).parent / "design_system.css"
     if design_file.is_file():
-        st.markdown(f"<style>{design_file.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
-
-    brand_col, appearance_col = st.columns([6, 1.5], vertical_alignment="center")
-    with brand_col:
-        st.markdown('''
-          <div class="mp-login-top" style="margin:0;border:0;padding:8px 0 15px">
-            <div class="mp-brand-row">
-              <span class="mp-brand-mark">✳</span>
-              <div><div class="mp-brand-name">MedPredict</div>
-                   <div class="mp-brand-sub">HEALTH RESEARCH, REIMAGINED</div></div>
-            </div>
-          </div>
-        ''', unsafe_allow_html=True)
-    with appearance_col:
-        st.toggle(
-            "Light mode",
-            value=(st.session_state.healthai_theme == "light"),
-            key="mp_light_switch",
-            on_change=_login_theme_changed,
+        st.markdown(
+            f"<style>{design_file.read_text(encoding='utf-8')}</style>",
+            unsafe_allow_html=True,
         )
 
-    theme_marker = ("healthai-theme-light-marker" if st.session_state.healthai_theme == "light"
-                    else "healthai-theme-dark-marker")
+    marker = (
+        "healthai-theme-light-marker"
+        if st.session_state.healthai_theme == "light"
+        else "healthai-theme-dark-marker"
+    )
     st.markdown(
-        f'<div class="mp-login-root {theme_marker}" style="display:none"></div>',
+        f'<span class="mp-auth-root {marker}" aria-hidden="true" '
+        'style="display:none"></span>',
         unsafe_allow_html=True,
     )
 
-    left, right = st.columns([1.07, .93], gap="large", vertical_alignment="center")
-    with left:
-        st.markdown('''
-          <section class="mp-login-stage">
-            <div class="mp-login-eyebrow">◈ &nbsp; MEDPREDICT PLATFORM / 01</div>
-            <h1>Health intelligence.<br><span>A new perspective.</span></h1>
-            <p class="mp-login-lead">Discover a clearer way to explore health screening models,
-              understand research outputs, and learn how modern AI interprets data.
-              Built for curiosity. Designed for clarity.</p>
-            <div class="mp-login-visual">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 245" role="img"
-                   aria-label="Abstract medical signal graphic, for illustration only">
-                <defs>
-                  <radialGradient id="login-glow"><stop stop-color="#53d5c5" stop-opacity=".2"/>
-                    <stop offset="1" stop-color="#53d5c5" stop-opacity="0"/></radialGradient>
-                  <linearGradient id="login-wave" x1="0" y1="0" x2="1" y2="0">
-                    <stop stop-color="#55d4c7"/><stop offset=".55" stop-color="#76ead5"/>
-                    <stop offset="1" stop-color="#8b9efb"/></linearGradient>
-                </defs>
-                <circle cx="290" cy="120" r="126" fill="url(#login-glow)"/>
-                <g fill="none" stroke="#66889b" stroke-opacity=".25">
-                  <circle cx="288" cy="121" r="42"/><circle cx="288" cy="121" r="75"/>
-                  <circle cx="288" cy="121" r="106" stroke-dasharray="3 7"/>
-                  <path d="M0 61H560M0 122H560M0 184H560M112 0V245M224 0V245M336 0V245M448 0V245"/>
-                </g>
-                <path d="M20 126H110L135 117L156 130L177 85L202 175L226 123H269L290 103L311 137L341 51L366 202L391 126H445L462 118L476 127H540"
-                  fill="none" stroke="url(#login-wave)" stroke-width="5"
-                  stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="341" cy="51" r="6" fill="#6ce1d0" stroke="#132331" stroke-width="3"/>
-                <text x="22" y="28" fill="#89a6b4" font-size="11" font-family="Arial" letter-spacing="2">EXPLAINABLE SIGNALS</text>
-                <text x="22" y="225" fill="#89a6b4" font-size="10" font-family="Arial">Concept illustration • No medical measurements</text>
-              </svg>
-            </div>
-            <div class="mp-login-benefits">
-              <span>◈ &nbsp; Research-driven</span><span>✧ &nbsp; Interactive tools</span>
-              <span>↗ &nbsp; Clear explanations</span>
-            </div>
-          </section>
-        ''', unsafe_allow_html=True)
+    # A slim, fully functional site header and explicit appearance control.
+    brand, theme = st.columns([5, 1.2], vertical_alignment="center")
+    with brand:
+        st.markdown(
+            '<div class="mp-auth-brand"><div class="mp-auth-brand-symbol">✳</div>'
+            '<span>MedPredict</span><small>/ RESEARCH STUDIO</small></div>',
+            unsafe_allow_html=True,
+        )
+    with theme:
+        st.toggle(
+            "Light mode",
+            key="mp_light_switch",
+            value=st.session_state.healthai_theme == "light",
+            on_change=_login_theme_changed,
+            help="Switch between high-contrast dark and light palettes",
+        )
 
-    with right:
+    # Unlike the former two-column page, authentication is the centered focus.
+    st.markdown(
+        '<section class="mp-auth-intro">'
+        '<div class="mp-auth-kicker"><span class="mp-status-dot"></span>'
+        ' EXPLORE WITH CLARITY</div>'
+        '<h1>Your health research<br><em>starts here.</em></h1>'
+        '<p>One account. All your screening, medical learning and'
+        ' explainable-AI tools in one organized workspace.</p>'
+        '</section>',
+        unsafe_allow_html=True,
+    )
+
+    side_left, center, side_right = st.columns([1, 1.25, 1], gap="large")
+    with center:
         with st.container(border=True):
-            st.markdown('''
-                <div class="mp-auth-pane" style="padding:9px 10px 0">
-                  <div class="mp-auth-icon">✳</div>
-                  <div class="mp-overline">YOUR WORKSPACE STARTS HERE</div>
-                  <h2>Welcome to MedPredict.</h2>
-                  <p class="mp-auth-sub">Sign in to continue, or create an account to explore the platform.</p>
-                </div>
-            ''', unsafe_allow_html=True)
+            st.markdown(
+                '<div class="mp-auth-card-head">'
+                '<div class="mp-auth-card-label">ACCOUNT ACCESS <span>01 / 02</span></div>'
+                '<h2>Welcome to MedPredict</h2>'
+                '<p>Sign in with your account or start with email verification.</p>'
+                '</div>',
+                unsafe_allow_html=True,
+            )
 
             auth_mode = st.radio(
                 "Choose an option",
@@ -504,11 +482,20 @@ def login_page():
 
 
 
+
             st.markdown(
-                '<div class="mp-auth-foot">Educational and research use only. '
-                'Model outputs are not medical diagnoses.</div>',
+                '<div class="mp-auth-trust">🔒 &nbsp; Secure account access'
+                ' <span>·</span> Educational &amp; research use only</div>',
                 unsafe_allow_html=True,
             )
+
+    st.markdown(
+        '<footer class="mp-auth-page-footer">'
+        '<span>MEDPREDICT · EXPLAINABLE AI</span>'
+        '<span>Not a medical diagnostic service. Consult a qualified professional'
+        ' for medical decisions.</span></footer>',
+        unsafe_allow_html=True,
+    )
 
 
 if __name__ == "__main__":
