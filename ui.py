@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parent
 
 _ICONS = {
     "arrow": '<path d="M7 17 17 7M7 7h10v10"/>',
+    'case': '<rect x="3" y="6" width="18" height="15" rx="3"/><path d="M8 6V3h8v3M12 10v7M8.5 13.5h7"/>',
     "pulse": '<path d="M2 12h5l3-8 4 16 3-8h5"/>',
     "heart": '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>',
     "drop": '<path d="M12 3C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-12Z"/><path d="M8 15a4 4 0 0 0 4 4"/>',
@@ -39,14 +40,14 @@ def html(markup):
 
 
 def brand():
-    return (f'<div class="mp-brand"><span class="mp-brand-mark">{icon("pulse")}</span>'
-            '<span>MedPredict<span class="mp-brand-dot">.</span></span></div>')
+    return (f'<div class="mp-brand"><span class="mp-brand-mark">{icon("case")}</span>'
+            '<span>MedPredict</span></div>')
 
 
 @lru_cache(maxsize=1)
 def studio_image():
     return "data:image/webp;base64," + base64.b64encode(
-        (ROOT / "assets" / "medpredict-studio.webp").read_bytes()
+        (ROOT / "assets" / "journal-still-life.webp").read_bytes()
     ).decode("ascii")
 
 
@@ -55,7 +56,7 @@ def apply_theme():
     css = (ROOT / "style.css").read_text(encoding="utf-8")
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
     theme = st.session_state.healthai_theme
-    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="sidebar-chat-3" aria-hidden="true"></span>')
+    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="clinical-journal-v4" aria-hidden="true"></span>')
 
 
 def _change_theme():
@@ -63,8 +64,8 @@ def _change_theme():
 
 
 def theme_switch():
-    st.session_state.setdefault("mp_dark_mode", st.session_state.get("healthai_theme") == "dark")
-    st.toggle("Dark appearance", key="mp_dark_mode", on_change=_change_theme)
+    st.toggle("Dark mode", value=st.session_state.get("healthai_theme") == "dark",
+              key="mp_dark_mode", on_change=_change_theme)
 
 
 def section(title, description="", eyebrow=""):

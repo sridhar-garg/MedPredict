@@ -32,13 +32,13 @@ def login_page():
     apply_theme()
     html('<span class="mp-auth-marker" aria-hidden="true"></span>')
 
-    left, right = st.columns([1.08, 1], gap="large")
+    right, left = st.columns([0.94, 1.06], gap="large")
     with left:
         html(f'''<section class="mp-auth-visual" aria-label="About MedPredict">
-        <img src="{studio_image()}" alt="Silver stethoscope on a deep violet studio surface">
-        <div><span class="mp-auth-pill">{icon("spark", 13)} A little insight. A healthier tomorrow.</span></div>
+        <img src="{studio_image()}" alt="Forest-green stethoscope on an ivory linen surface">
+        <div><span class="mp-auth-pill">{icon("spark", 13)} A considered approach to health.</span></div>
         <div class="mp-auth-copy">
-        <h1>Your health.<br>A clearer <span class="mp-heading-accent">perspective.</span></h1>
+        <h1>Good care starts<br>with <span class="mp-heading-accent">understanding.</span></h1>
         <p>Explore your health with explainable AI, thoughtful assessments, and insights you can understand.</p>
         <div class="mp-auth-features">
         <div><b>3 assessments</b><small>One connected workspace</small></div>
@@ -51,7 +51,7 @@ def login_page():
         with st.container(border=True):
             html('''<span class="mp-auth-form-marker" aria-hidden="true"></span>
             <span class="mp-eyebrow">WELCOME TO MEDPREDICT</span>
-            <h2 class="mp-auth-heading">Your next step starts here.</h2>
+            <h2 class="mp-auth-heading">Welcome to your journal.</h2>
             <p class="mp-auth-description">Sign in to your personal health workspace,<br>or create an account to get started.</p>''')
             auth_mode = st.radio(
                 "Choose an option",

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@500;600;650;700;750;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
 
 :root {
   --bg:#f7f8fc; --surface:#fff; --surface-soft:#f1f2f9; --text:#1c2038;
@@ -327,3 +327,105 @@ body .mp-hero-copy {padding:28px 36px}
 [data-testid="stRadioOption"] p, [data-testid="stCheckbox"] p {color:var(--text-2) !important}
 [data-testid="stSelectbox"] [role="combobox"],
 [data-testid="stMultiSelect"] [role="combobox"] {color:var(--text) !important; background:var(--surface-soft) !important; border-color:var(--border) !important}
+
+
+/* Version four: Clinical Journal. Warm paper, forest ink and editorial composition. */
+:root {
+ --bg:#f6f4ee; --surface:#fffefa; --surface-soft:#efeee6; --text:#253c35; --text-2:#53645b; --muted:#718078; --border:#dddcd0;
+ --accent:#245f50; --accent-hover:#194d40; --accent-soft:#e2ece5;
+ --nav-bg:#fffefa; --nav-text:#53645b; --nav-muted:#7c887e; --nav-hover:#efeee6; --nav-active:#e5eee7; --nav-active-ink:#214f42; --nav-border:#dedfd4;
+}
+body:has(.healthai-theme-dark-marker) {
+ --bg:#141e19; --surface:#1c2a22; --surface-soft:#27372d; --text:#e9ede5; --text-2:#c3cec1; --muted:#a4b2a3; --border:#35473b;
+ --accent:#aec9a6; --accent-hover:#c3dbbd; --accent-soft:#304635;
+ --nav-bg:#18251d; --nav-text:#c0cfbd; --nav-muted:#96ac93; --nav-hover:#25392b; --nav-active:#304635; --nav-active-ink:#e0eddc; --nav-border:#35473b;
+}
+h1,h2 {font-family:Lora,Georgia,serif !important; letter-spacing:-.045em; font-weight:500 !important}
+h3,h4 {letter-spacing:-.025em}
+[data-testid="stMainBlockContainer"] {max-width:1440px; padding:1.5rem 3.5rem 3rem}
+[data-testid="stVerticalBlock"][style*="border: 1px"] {border-radius:9px !important; box-shadow:none}
+[data-testid="stButton"] button, [data-testid="stFormSubmitButton"] button {border-radius:7px; box-shadow:none}
+[data-testid="stButton"] button[kind="primary"], [data-testid="stFormSubmitButton"] button[kind="primary"] {background:#245f50 !important; border-color:#245f50 !important; color:#fff !important}
+[data-testid="stChatInputSubmitButton"], [data-testid="stChatMessageAvatarAssistant"] {background:#245f50 !important}
+.mp-brand {font-size:23px; font-weight:750; letter-spacing:-1.1px}
+.mp-brand-mark {background:#245f50; color:#fffefa; border-radius:8px; box-shadow:none}
+.st-key-journal_header {border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:10px}
+.st-key-journal_header [data-testid="stPageLink"] a {padding:8px 9px; background:transparent !important; border-radius:0; color:var(--text-2) !important; border-bottom:2px solid transparent}
+.st-key-journal_header [data-testid="stPageLink"] a p {font-size:12px !important; font-weight:500; color:var(--text-2) !important}
+.st-key-journal_header [class*="st-key-journal_active_"] [data-testid="stPageLink"] a {border-bottom-color:var(--accent)}
+.st-key-journal_header [class*="st-key-journal_active_"] [data-testid="stPageLink"] a p {color:var(--accent) !important; font-weight:700}
+.st-key-journal_header [data-testid="stToggle"] p {font-size:10px !important; color:var(--muted) !important}
+.journal-eyebrow {font-size:9px; font-weight:700; letter-spacing:.16em; color:var(--accent); display:block}
+.journal-hero {display:grid; grid-template-columns:1.2fr .9fr; gap:7%; align-items:center; padding:38px 0 30px}
+.journal-hero h1 {font-size:clamp(40px,4.5vw,64px) !important; line-height:1.12 !important; margin:18px 0; padding:0; color:var(--text)}
+body .journal-hero p {font-size:14px !important; line-height:1.9; color:var(--muted) !important; max-width:480px; margin:0 0 26px}
+.journal-start {display:inline-flex; gap:25px; align-items:center; padding:12px 18px; border-radius:5px; background:#245f50; color:#fffefa !important; text-decoration:none; font-size:12px; font-weight:650}
+.journal-hero-note {font-size:9px; color:var(--muted); margin-top:18px; line-height:1.8}
+.journal-hero-photo {position:relative; overflow:hidden; border-radius:5px; background:#e8e1d3; height:330px; border:1px solid var(--border)}
+.journal-hero-photo img {width:100% !important; height:100% !important; object-fit:cover !important; object-position:65% 50% !important; display:block}
+.journal-hero-photo > span {position:absolute; bottom:12px; left:15px; font-size:8px; letter-spacing:.15em; color:#334c3f; background:#fffef0cc; padding:6px 9px}
+.journal-facts {display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:19px 0; margin:0 0 15px}
+.journal-facts > div {display:flex; gap:15px; align-items:center; padding:0 22px; border-right:1px solid var(--border)}
+.journal-facts > div:first-child {padding-left:0}
+.journal-facts > div:last-child {border-right:0}
+.journal-facts b {font:500 29px Lora,serif; color:var(--accent)}
+.journal-facts span {font-size:10px; color:var(--muted)}
+.journal-section {margin:26px 0 22px}
+.journal-section h2 {font-size:27px !important; padding:0; margin:8px 0}
+body .journal-section p {font-size:12px !important; color:var(--muted) !important; margin:0}
+.journal-assessment-icon {display:grid; place-items:center; color:var(--accent); width:33px; height:40px}
+.journal-assessment {padding:10px 0}
+.journal-assessment > span {font-size:8px; font-weight:650; letter-spacing:.12em; color:var(--muted)}
+.journal-assessment h3 {font-size:17px !important; padding:0; margin:4px 0 8px; font-weight:650 !important; color:var(--text)}
+body .journal-assessment p {font-size:11px !important; color:var(--muted) !important; margin:0}
+.journal-quiet-card {padding:10px 0}
+.journal-quiet-card h3 {font:500 22px Lora,serif !important; margin:12px 0; padding:0}
+body .journal-quiet-card p {font-size:12px !important; line-height:1.8; color:var(--muted) !important}
+.journal-method {border-top:1px solid var(--border); margin-top:38px; padding-top:28px}
+.journal-method h2 {font-size:30px !important; margin:12px 0}
+.journal-step {padding:15px 20px 15px 0}
+.journal-step > b {font:500 26px Lora,serif; color:var(--accent)}
+.journal-step h3 {font-size:14px !important; margin:12px 0; padding:0}
+body .journal-step p {font-size:12px !important; color:var(--muted) !important; line-height:1.9}
+.journal-footer {border-top:1px solid var(--border); display:flex; justify-content:space-between; gap:20px; padding-top:20px; margin-top:30px; color:var(--muted); font-size:10px}
+.mp-auth-visual {background:var(--surface-soft); border-radius:5px; min-height:690px; color:var(--text); padding:27px; border:1px solid var(--border)}
+.mp-auth-visual > img {height:48% !important; width:100% !important; object-fit:cover !important; object-position:60% 50% !important}
+.mp-auth-visual:after {display:none}
+.mp-auth-pill {color:#214f42; border-color:#ffffff99; background:#fffefaee; border-radius:4px; font-size:9px}
+.mp-auth-copy h1 {font:500 38px/1.2 Lora,serif !important; color:var(--text); letter-spacing:-.05em; margin:16px 0}
+.mp-auth-copy h1 [data-heading-text], .mp-auth-copy h1 .mp-heading-accent {color:var(--text)}
+body .mp-auth-copy > p {color:var(--muted) !important; font-size:12px !important; margin:0 0 17px}
+.mp-auth-features {border-color:var(--border); gap:20px; padding-top:15px}
+.mp-auth-features b {color:var(--text); font-size:11px}
+.mp-auth-features small, .mp-auth-copyright {color:var(--muted); font-size:9px}
+.mp-auth-copyright {margin-top:18px}
+[data-testid="stVerticalBlock"]:has(> [data-testid="stElementContainer"] .mp-auth-form-marker) {border-radius:8px; box-shadow:none; padding:34px !important; margin:65px auto 0}
+body:has(.mp-auth-marker) .mp-auth-heading {font-family:Lora,serif !important; font-size:32px !important; line-height:1.25; font-weight:500 !important}
+@media(max-width:1000px) {
+ [data-testid="stMainBlockContainer"] {padding:1rem 1.5rem 2rem}
+ .journal-hero {gap:5%; grid-template-columns:1.2fr .9fr}
+ .journal-hero-photo {height:290px}
+ .journal-facts > div {padding:0 12px; gap:9px}
+}
+@media(max-width:768px) {
+ .journal-hero {grid-template-columns:1fr; gap:22px; padding-top:20px}
+ .journal-hero h1 {font-size:43px !important}
+ .journal-hero-photo {height:240px}
+ .journal-facts {grid-template-columns:1fr; gap:14px}
+ .journal-facts > div {padding:0; border:0}
+ .journal-footer {flex-direction:column; gap:7px}
+ .mp-auth-visual {min-height:430px}
+ .mp-auth-copy h1 {font-size:29px !important}
+ .mp-auth-visual > img {height:45% !important}
+ [data-testid="stVerticalBlock"]:has(> [data-testid="stElementContainer"] .mp-auth-form-marker) {margin-top:0; padding:25px !important}
+}
+
+/* Keep the interactive journal bar below Streamlit's fixed toolbar. */
+[data-testid="stMainBlockContainer"] {padding-top:4rem}
+.st-key-journal_header [data-testid="stCheckbox"] p {font-size:11px !important; white-space:nowrap}
+
+/* Native React Aria feedback tabs share the active app palette. */
+[role="tablist"] {border-color:var(--border) !important}
+[role="tab"], [role="tab"] p {color:var(--text-2) !important}
+[role="tab"][aria-selected="true"], [role="tab"][aria-selected="true"] p {color:var(--accent) !important}
+[role="tab"][aria-selected="true"] {border-bottom-color:var(--accent) !important}
