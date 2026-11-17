@@ -89,19 +89,52 @@ def apply_custom_css():
 
 
 def page_intro(title, subtitle, icon="✧", overline="MEDPREDICT / WORKSPACE"):
-    """Render an accessible, reusable premium masthead without HTML injection."""
+    """Purpose-led page heading, contextual workflow rail, and accessible HTML."""
     from html import escape
+
+    category = overline.split("/")[0].strip().upper()
+    if category in {"SCREENING", "SCREENINGS"}:
+        steps = (
+            ("01", "Enter or review measurements"),
+            ("02", "Explore educational outputs"),
+            ("03", "Interpret model limitations"),
+        )
+    elif category in {"RESEARCH", "ADVANCED", "EXPERIMENTS"}:
+        steps = (
+            ("01", "Choose a research tool"),
+            ("02", "Run a transparent experiment"),
+            ("03", "Review evidence and limits"),
+        )
+    elif category in {"YOUR ACCOUNT", "PLATFORM"}:
+        steps = (
+            ("01", "View your workspace"),
+            ("02", "Manage your information"),
+            ("03", "Stay in control"),
+        )
+    else:
+        steps = (
+            ("01", "Choose what to explore"),
+            ("02", "Review sourced information"),
+            ("03", "Learn with context"),
+        )
+
+    safe_title, safe_subtitle = escape(title), escape(subtitle)
+    rail = "".join(
+        '<div class="mp-page-utility-item">'
+        f'<span>{num}</span>{escape(label)}</div>'
+        for num, label in steps
+    )
     st.markdown(
-        '<section class="mp-page-hero">'
-        '<div class="mp-page-copy">'
-        f'<div class="mp-overline">{escape(overline)}</div>'
-        f'<h1>{escape(title)}</h1>'
-        f'<p>{escape(subtitle)}</p>'
+        '<div class="mp-page-topline"><strong>MEDPREDICT</strong>'
+        f' / {escape(overline)}</div>'
+        '<div class="mp-page-heading"><div>'
+        f'<h1>{safe_title}</h1><p>{safe_subtitle}</p></div>'
+        f'<div class="mp-page-marker">{escape(icon)} &nbsp; RESEARCH TOOL</div>'
         '</div>'
-        f'<div class="mp-page-glyph" aria-hidden="true">{escape(icon)}</div>'
-        '</section>',
+        f'<div class="mp-page-utility">{rail}</div>',
         unsafe_allow_html=True,
     )
+
 
 
 def readable_feature(feature):
