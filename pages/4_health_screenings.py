@@ -4,7 +4,7 @@ No trained ML is claimed here: these are transparent, source-linked formulas
 and classifications. Results are not diagnoses or treatment advice.
 """
 
-from utils import apply_custom_css
+from utils import apply_custom_css, page_intro
 import streamlit as st
 from medical_addon_core import (
     SOURCES, assess_bp, egfr_2021, assess_egfr, assess_haemoglobin,
@@ -25,8 +25,7 @@ if not st.session_state.get("is_logged_in", False):
         st.switch_page("app.py")
     st.stop()
 
-st.title("🩺 Seven More Health Screenings")
-st.caption("Educational screening tools, not diagnostic AI. Inputs are not automatically saved to your existing patient database.")
+page_intro("Additional health screenings", "Explore seven transparent, evidence-informed screening tools. Results are educational, not medical diagnoses.", "◈", "SCREENINGS / EXPLORE")
 st.warning("For adult users and demonstration purposes. Do not use these results for diagnosis, medication decisions, or emergencies. A healthcare professional must interpret findings and symptoms.")
 
 CONDITIONS = [
