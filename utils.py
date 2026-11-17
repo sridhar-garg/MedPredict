@@ -39,6 +39,32 @@ def apply_custom_css():
             unsafe_allow_html=True,
         )
 
+    with st.sidebar:
+        st.markdown('<div class="mp-side-label">DASHBOARD</div>', unsafe_allow_html=True)
+        st.page_link("app.py", label="Overview", icon="🏠")
+
+        st.markdown('<div class="mp-side-label">HEALTH SCREENINGS</div>', unsafe_allow_html=True)
+        st.page_link("pages/heart_app.py", label="Heart health", icon="❤️")
+        st.page_link("pages/diabetes_app.py", label="Diabetes", icon="🩸")
+        st.page_link("pages/breast_app.py", label="Breast health", icon="🎗️")
+        st.page_link("pages/4_health_screenings.py", label="More screenings", icon="🩺")
+        st.page_link("pages/5_medical_imaging.py", label="Imaging & reports", icon="🔬")
+
+        st.markdown('<div class="mp-side-label">EXPLORE</div>', unsafe_allow_html=True)
+        st.page_link("pages/10_disease_atlas.py", label="Disease atlas", icon="📚")
+        st.page_link("pages/8_gemini_chatbot.py", label="AI assistant", icon="💬")
+        st.page_link("pages/9_abilitybridge.py", label="Accessibility tools", icon="🤟")
+
+        st.markdown('<div class="mp-side-label">RESEARCH</div>', unsafe_allow_html=True)
+        st.page_link("pages/11_advanced_research_mode.py", label="Advanced research", icon="🧪")
+        st.page_link("pages/6_research_hub.py", label="Model research", icon="📊")
+        st.page_link("pages/7_autonomous_lab.py", label="Robotics lab", icon="🤖")
+
+        st.markdown('<div class="mp-side-label">ACCOUNT</div>', unsafe_allow_html=True)
+        st.page_link("pages/history.py", label="Assessment history", icon="🕘")
+        st.page_link("pages/profile.py", label="Your profile", icon="👤")
+        st.page_link("pages/z_family.py", label="Family connections", icon="👥")
+
     bar_left, bar_right = st.columns([5, 1.1], vertical_alignment="center")
     with bar_left:
         st.markdown(
