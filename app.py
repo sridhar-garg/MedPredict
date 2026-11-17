@@ -85,7 +85,7 @@ if not st.session_state.get("is_logged_in", False):
 
 
 if "healthai_theme" not in st.session_state:
-    st.session_state.healthai_theme = "light"
+    st.session_state.healthai_theme = "dark"
 
 apply_custom_css()
 
@@ -114,24 +114,22 @@ st.markdown(
 
 
 
-left, search_col, theme_col = st.columns(
-    [4.6, 2.5, 0.65],
+left, search_col = st.columns(
+    [4.8, 3.2],
     vertical_alignment="center",
 )
 
 with left:
     render_html("""
             <div class="healthai-native-chips">
-                <span class="healthai-chip active">
-                    ✦ <b>Research Prototype</b>
+                <span class="healthai-chip active">✳ <b>MEDPREDICT STUDIO</b></span>
+
+                <span class="healthai-chip">
+                    Explainable predictions
                 </span>
 
                 <span class="healthai-chip">
-                    • Explainable AI
-                </span>
-
-                <span class="healthai-chip">
-                    • Machine Learning
+                    Research tools
                 </span>
             </div>
             """)
@@ -147,7 +145,7 @@ with search_col:
         with q_col:
             search_query = st.text_input(
                 "Disease search",
-                placeholder="Search disease…",
+                placeholder="Find a screening or tool…",
                 label_visibility="collapsed",
                 key="healthai_search",
             )
@@ -196,31 +194,7 @@ if submitted and search_query.strip():
         )
 
 
-with theme_col:
-    theme_icon = (
-        "☀"
-        if st.session_state.healthai_theme == "dark"
-        else "☾"
-    )
-
-    if st.button(
-        theme_icon,
-        key="healthai_theme_toggle",
-        help="Switch light / dark theme",
-        use_container_width=True,
-    ):
-        st.session_state.healthai_theme = (
-            "light"
-            if st.session_state.healthai_theme == "dark"
-            else "dark"
-        )
-
-        st.rerun()
-
-
-
-
-
+# Theme selection is globally available from the navigation sidebar.
 
 PAGE_CSS = (Path(__file__).parent / "style.css").read_text(encoding="utf-8")
 DESIGN_CSS = (Path(__file__).parent / "design_system.css").read_text(encoding="utf-8")
@@ -266,18 +240,18 @@ hero_html = f"""
         <div class="healthai-hero-copy">
 
             <div class="healthai-eyebrow">
-                <span>✦</span> MEDPREDICT · RESEARCH PLATFORM
+                <span>✦</span> THE FUTURE OF ACCESSIBLE HEALTH RESEARCH
             </div>
 
             <h1>
-                Smarter Health<br>
-                <span>Risk Screening</span>
+                Health insights.<br>
+                <span>Reimagined.</span>
             </h1>
 
             <p class="healthai-lead">
-                Explore educational health screenings with machine-learning
-                insights and clear explanations. Understand patterns,
-                ask better questions, and make informed next steps.
+                An intelligent workspace for understanding health data.
+                Explore interactive screening models, explainable
+                insights, and research tools in one beautiful place.
             </p>
 
             <div class="healthai-actions">
@@ -287,7 +261,7 @@ hero_html = f"""
                     target="_top"
                     class="healthai-btn primary"
                 >
-                    Explore Screenings&nbsp; →
+                    Explore assessments&nbsp; ↗
                 </a>
 
                 <a
@@ -295,60 +269,66 @@ hero_html = f"""
                     target="_top"
                     class="healthai-btn secondary"
                 >
-                    ▥&nbsp; How It Works
+                    Explore the science
                 </a>
 
             </div>
 
             <div class="healthai-mini-note">
                 <span>✓</span>
-                Research and educational use only&nbsp;&nbsp;•&nbsp;&nbsp;
-                Not a medical diagnosis
+                Research prototype&nbsp;&nbsp; / &nbsp;&nbsp; For education only&nbsp;&nbsp; / &nbsp;&nbsp; Not medical advice
             </div>
 
         </div>
 
 
-        <div class="healthai-hero-art" aria-label="Research dashboard illustration">
-            <div class="mp-float-label top">✦ &nbsp; Explainable insights</div>
-            <div class="mp-demo-window">
-                <div class="mp-window-header">
-                    <span>MEDPREDICT &nbsp; / &nbsp; MODEL OVERVIEW</span>
-                    <span class="mp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div class="healthai-hero-art">
+            <div class="mp-floating-pill top">✦ &nbsp; THE RESEARCH WORKSPACE</div>
+            <div class="mp-diagnostic-graphic">
+                <div class="mp-graphic-bar">
+                    <span>MEDPREDICT / EXPLORER</span>
+                    <span>◉ &nbsp; DEMO VIEW</span>
                 </div>
-                <div class="mp-window-content">
-                    <span class="mp-window-caption">A clearer view of your health data</span>
-                    <h3>Screening workspace</h3>
-                    <svg class="mp-ecg" viewBox="0 0 380 150" role="img"
-                         aria-label="Illustrative heartbeat waveform, not patient data">
-                        <g stroke="#d6e9e7" stroke-width="1" opacity=".7">
-                            <path d="M0 30 H380 M0 60 H380 M0 90 H380 M0 120 H380"/>
-                            <path d="M38 0 V150 M76 0 V150 M114 0 V150 M152 0 V150 M190 0 V150 M228 0 V150 M266 0 V150 M304 0 V150 M342 0 V150"/>
+                <div class="mp-signal">
+                    <svg viewBox="0 0 460 275" xmlns="http://www.w3.org/2000/svg" role="img"
+                         aria-label="Illustrative medical data visualization. Not actual patient measurements.">
+                        <defs>
+                          <radialGradient id="mp-orb" cx="50%" cy="50%" r="50%">
+                            <stop offset="0" stop-color="#56f0d8" stop-opacity=".36"/>
+                            <stop offset="1" stop-color="#1e9b96" stop-opacity="0"/>
+                          </radialGradient>
+                          <linearGradient id="mp-line" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0" stop-color="#4dd3c7"/>
+                            <stop offset=".55" stop-color="#7be4d2"/>
+                            <stop offset="1" stop-color="#9bb6ff"/>
+                          </linearGradient>
+                        </defs>
+                        <circle cx="230" cy="137" r="133" fill="url(#mp-orb)"/>
+                        <g fill="none" stroke="#568294" stroke-opacity=".22">
+                          <circle cx="230" cy="137" r="56"/>
+                          <circle cx="230" cy="137" r="90"/>
+                          <circle cx="230" cy="137" r="122" stroke-dasharray="4 7"/>
+                          <path d="M0 68 H460 M0 137 H460 M0 205 H460 M115 0 V275 M230 0 V275 M345 0 V275"/>
                         </g>
-                        <path d="M0 80 H50 L65 76 L79 83 L92 78 L108 80 L123 103 L140 23 L158 118 L175 80 L203 80 L218 76 L235 83 L247 80 L264 80 L278 102 L294 29 L311 115 L328 80 H380"
-                              fill="none" stroke="#0b8984" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-                        <circle cx="294" cy="29" r="6" fill="#0b8984" stroke="white" stroke-width="3"/>
+                        <g fill="none" stroke="#66e1ce" stroke-opacity=".65" stroke-width="1.6">
+                          <path d="M230 61 C182 28 128 80 146 137 C156 173 204 208 230 230 C256 208 304 173 314 137 C332 80 278 28 230 61Z"/>
+                          <path d="M230 79 C193 56 160 92 169 133 C180 161 213 186 230 202 C250 187 280 159 291 133 C302 92 265 53 230 79Z"/>
+                        </g>
+                        <path d="M26 146 H116 L130 142 L141 153 L159 112 L175 180 L190 145 H210 L229 126 L250 158 L271 90 L289 197 L307 146 H343 L357 137 L370 147 H435"
+                          stroke="url(#mp-line)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+                        <circle cx="271" cy="90" r="7" fill="#66e1ce" stroke="#0d2330" stroke-width="3"/>
+                        <g fill="#74d9cd"><circle cx="95" cy="44" r="3"/><circle cx="372" cy="65" r="3"/><circle cx="386" cy="210" r="3"/></g>
+                        <text x="30" y="32" fill="#99b8c9" font-family="Arial" font-size="10" letter-spacing="2">SIGNAL EXPLORATION</text>
+                        <text x="31" y="250" fill="#8ba9bb" font-family="Arial" font-size="10">Visual representation · no patient data</text>
                     </svg>
-                    <div class="mp-measures">
-                        <div class="mp-measure">
-                            <span class="mp-measure-icon">♥</span>
-                            <b>Heart health</b>
-                            <small>Explore model</small>
-                        </div>
-                        <div class="mp-measure">
-                            <span class="mp-measure-icon">◈</span>
-                            <b>Diabetes</b>
-                            <small>Explore model</small>
-                        </div>
-                        <div class="mp-measure">
-                            <span class="mp-measure-icon">✳</span>
-                            <b>Breast health</b>
-                            <small>Explore model</small>
-                        </div>
-                    </div>
+                </div>
+                <div class="mp-graphic-foot">
+                    <div class="mp-diagnostic-tile"><strong>HEART HEALTH</strong><small>Explore screening ↗</small></div>
+                    <div class="mp-diagnostic-tile"><strong>DIABETES</strong><small>Explore screening ↗</small></div>
+                    <div class="mp-diagnostic-tile"><strong>BREAST HEALTH</strong><small>Explore screening ↗</small></div>
                 </div>
             </div>
-            <div class="mp-float-label bottom">✓ &nbsp; Research prototype</div>
+            <div class="mp-floating-pill bottom">◇ &nbsp; EXPLAINABLE BY DESIGN</div>
         </div>
 
     </section>
@@ -360,7 +340,7 @@ hero_html = f"""
 
 components.html(
     hero_html,
-    height=575,
+    height=660,
     scrolling=False,
 )
 
@@ -786,7 +766,8 @@ with card3:
 
 
 
-st.markdown("### Explore more health tools")
+st.markdown('<div class="mp-section-kicker">EXPLORE THE PLATFORM</div>', unsafe_allow_html=True)
+st.markdown("### Expand your capabilities")
 more_col_1, more_col_2 = st.columns(2)
 with more_col_1:
     if st.button("🩺 Explore 7 more health screenings →", key="open_addon_screenings", use_container_width=True):
@@ -804,7 +785,7 @@ st.caption("Extra screenings are formula-based educational tools. Imaging models
 
 
 
-st.markdown('### 🌍 Discover & Connect')
+st.markdown("### Discover & connect")
 mp_ax_col1, mp_ax_col2=st.columns(2)
 with mp_ax_col1:
     if st.button('🤟 AbilityBridge — ASL, ISL & Braille',key='mp_ax_open_ability',use_container_width=True):
@@ -817,7 +798,7 @@ st.caption('Accessibility and medically sourced educational information. No new 
 
 
 
-st.markdown("### 🧪 Advanced Research Mode")
+st.markdown("### Advanced research")
 st.write("Optional AI validation and autonomous robotics experiments, organised together.")
 if st.button("🧪 Open Advanced Research Mode →",key="mp_open_advanced_research",use_container_width=True):
     st.switch_page("pages/11_advanced_research_mode.py")
@@ -836,7 +817,7 @@ render_html("""
 
 
 
-st.markdown("### 💬 MedPredict AI Assistant")
+st.markdown("### Your AI research assistant")
 st.write("Ask Gemini 3.8 Flash educational health and AI research questions, with multi-turn conversation support.")
 if st.button("💬 Open Gemini Chatbot →", key="medpredict_gemini38_home", use_container_width=True):
     st.switch_page("pages/8_gemini_chatbot.py")
