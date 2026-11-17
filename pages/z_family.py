@@ -79,27 +79,27 @@ def send_family_email_direct(receiver_email, subject, body):
 
 
 def send_family_request_email_direct(receiver_email, sender_name, sender_username, relationship):
-    display_sender = sender_name or sender_username or "A MedPredict user"
+    display_sender = sender_name or sender_username or "A HealthGuard AI user"
     body = f"""Hello,
 
-You have received a new family connection request on MedPredict.
+You have received a new family connection request on HealthGuard AI.
 
 From: {display_sender}
 Username: @{sender_username or "user"}
 Relationship: {relationship}
 
-Please log in to MedPredict and open Family Health to accept or decline this request.
+Please log in to HealthGuard AI and open Family Health to accept or decline this request.
 
 Your health information will remain private until the request is accepted.
 
 If you did not expect this request, you can simply decline it from the Family Health page.
 
 Regards,
-MedPredict
+HealthGuard AI
 """
     return send_family_email_direct(
         receiver_email,
-        "MedPredict - New Family Connection Request",
+        "HealthGuard AI - New Family Connection Request",
         body,
     )
 
@@ -108,20 +108,20 @@ def send_family_acceptance_email_direct(receiver_email, accepter_name, accepter_
     display_accepter = accepter_name or accepter_username or "Your family member"
     body = f"""Hello,
 
-Your MedPredict family connection request has been accepted.
+Your HealthGuard AI family connection request has been accepted.
 
 Family member: {display_accepter}
 Username: @{accepter_username or "user"}
 Relationship: {relationship}
 
-You can now open Family Health in MedPredict to view your accepted family connection.
+You can now open Family Health in HealthGuard AI to view your accepted family connection.
 
 Regards,
-MedPredict
+HealthGuard AI
 """
     return send_family_email_direct(
         receiver_email,
-        "MedPredict - Family Connection Accepted",
+        "HealthGuard AI - Family Connection Accepted",
         body,
     )
 
@@ -131,7 +131,7 @@ MedPredict
 
 
 st.set_page_config(
-    page_title="Family Health | MedPredict",
+    page_title="Family Health | HealthAI",
     page_icon="👨‍👩‍👧‍👦",
     layout="wide",
 )
@@ -183,55 +183,55 @@ st.markdown(
         align-items:center;
         justify-content:center;
         border-radius:17px;
-        background:linear-gradient(145deg,var(--accent-soft),var(--accent-soft));
+        background:linear-gradient(145deg,#dff9fb,#eae5ff);
         font-size:27px;
     }
 
     .family-title {
-        color:var(--text) !important;
+        color:#10233f !important;
         font-size:36px !important;
         font-weight:900 !important;
         margin:0 !important;
     }
 
     .family-subtitle {
-        color:var(--muted) !important;
+        color:#7186a0 !important;
         font-size:15px !important;
         margin:0 0 22px !important;
     }
 
     .family-card {
         padding:22px;
-        border:1px solid var(--border);
+        border:1px solid rgba(151,187,207,.32);
         border-radius:21px;
-        background:var(--surface);
-        box-shadow:0 13px 31px transparent;
+        background:rgba(255,255,255,.84);
+        box-shadow:0 13px 31px rgba(31,74,104,.10);
         min-height:150px;
     }
 
     .family-card h3 {
         margin:0 0 7px !important;
-        color:var(--text) !important;
+        color:#10233f !important;
         font-size:20px !important;
         font-weight:900 !important;
     }
 
     .family-card p {
         margin:0 !important;
-        color:var(--muted) !important;
+        color:#7186a0 !important;
         font-size:13px !important;
         line-height:1.5 !important;
     }
 
     .family-member-name {
-        color:var(--text) !important;
+        color:#10233f !important;
         font-size:20px !important;
         font-weight:900 !important;
         margin:0 !important;
     }
 
     .family-member-meta {
-        color:var(--muted) !important;
+        color:#7186a0 !important;
         font-size:13px !important;
         margin:5px 0 0 !important;
     }
@@ -249,9 +249,9 @@ st.markdown(
 
     .family-request {
         padding:17px 18px;
-        border:1px solid var(--border);
+        border:1px solid rgba(151,187,207,.32);
         border-radius:17px;
-        background:var(--surface);
+        background:rgba(255,255,255,.72);
         margin-bottom:10px;
     }
 
@@ -262,18 +262,18 @@ st.markdown(
     body:has(.healthai-theme-dark-marker) .family-title,
     body:has(.healthai-theme-dark-marker) .family-member-name,
     body:has(.healthai-theme-dark-marker) .family-card h3 {
-        color:var(--text) !important;
+        color:#edf6ff !important;
     }
 
     body:has(.healthai-theme-dark-marker) .family-card,
     body:has(.healthai-theme-dark-marker) .family-request {
-        background:var(--surface) !important;
-        border-color:var(--border) !important;
+        background:rgba(17,28,47,.84) !important;
+        border-color:rgba(117,160,191,.28) !important;
     }
 
     body:has(.healthai-theme-dark-marker) .family-card p,
     body:has(.healthai-theme-dark-marker) .family-member-meta {
-        color:var(--muted) !important;
+        color:#91a8c0 !important;
     }
     </style>
     """,

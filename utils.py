@@ -12,9 +12,18 @@ from sklearn.pipeline import Pipeline
 
 
 def apply_custom_css():
-    """Apply the shared MedPredict theme on every feature page."""
-    from ui import apply_theme
-    apply_theme()
+    """Load the shared HealthAI theme and preserve the selected theme."""
+    css_path = Path(__file__).parent / "style.css"
+    css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
+
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
+    theme = st.session_state.get("healthai_theme", "light")
+    marker = "healthai-theme-dark-marker" if theme == "dark" else "healthai-theme-light-marker"
+    st.markdown(
+        f'<div class="{marker}" aria-hidden="true" style="display:none"></div>',
+        unsafe_allow_html=True,
+    )
 
 
 def readable_feature(feature):

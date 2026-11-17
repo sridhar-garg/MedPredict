@@ -1,6 +1,0 @@
-__pycache__/
-*.py[cod]
-*.db
-.env
-.streamlit/secrets.toml
-node_modules/
