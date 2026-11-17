@@ -22,7 +22,7 @@ from database import (
     get_family_assessments,
     get_user_profile,
 )
-from utils import apply_custom_css
+from utils import apply_custom_css, page_intro
 from auth import (send_family_request_email, send_family_acceptance_email, send_family_request_email_with_buttons)
 
 
@@ -131,7 +131,7 @@ HealthGuard AI
 
 
 st.set_page_config(
-    page_title="Family Health | HealthAI",
+    page_title="Family Health | MedPredict",
     page_icon="👨‍👩‍👧‍👦",
     layout="wide",
 )
@@ -166,141 +166,14 @@ apply_custom_css()
 
 
 
-st.markdown(
-    """
-    <style>
-    .family-header {
-        display:flex;
-        align-items:center;
-        gap:14px;
-        margin:18px 0 5px;
-    }
-
-    .family-header-icon {
-        width:52px;
-        height:52px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        border-radius:17px;
-        background:linear-gradient(145deg,#dff9fb,#eae5ff);
-        font-size:27px;
-    }
-
-    .family-title {
-        color:#10233f !important;
-        font-size:36px !important;
-        font-weight:900 !important;
-        margin:0 !important;
-    }
-
-    .family-subtitle {
-        color:#7186a0 !important;
-        font-size:15px !important;
-        margin:0 0 22px !important;
-    }
-
-    .family-card {
-        padding:22px;
-        border:1px solid rgba(151,187,207,.32);
-        border-radius:21px;
-        background:rgba(255,255,255,.84);
-        box-shadow:0 13px 31px rgba(31,74,104,.10);
-        min-height:150px;
-    }
-
-    .family-card h3 {
-        margin:0 0 7px !important;
-        color:#10233f !important;
-        font-size:20px !important;
-        font-weight:900 !important;
-    }
-
-    .family-card p {
-        margin:0 !important;
-        color:#7186a0 !important;
-        font-size:13px !important;
-        line-height:1.5 !important;
-    }
-
-    .family-member-name {
-        color:#10233f !important;
-        font-size:20px !important;
-        font-weight:900 !important;
-        margin:0 !important;
-    }
-
-    .family-member-meta {
-        color:#7186a0 !important;
-        font-size:13px !important;
-        margin:5px 0 0 !important;
-    }
-
-    .family-badge {
-        display:inline-block;
-        padding:5px 10px;
-        border-radius:999px;
-        background:#e8fbf6;
-        color:#0ca78d;
-        font-size:11px;
-        font-weight:850;
-        margin-top:9px;
-    }
-
-    .family-request {
-        padding:17px 18px;
-        border:1px solid rgba(151,187,207,.32);
-        border-radius:17px;
-        background:rgba(255,255,255,.72);
-        margin-bottom:10px;
-    }
-
-    .family-section-space {
-        margin-top:25px;
-    }
-
-    body:has(.healthai-theme-dark-marker) .family-title,
-    body:has(.healthai-theme-dark-marker) .family-member-name,
-    body:has(.healthai-theme-dark-marker) .family-card h3 {
-        color:#edf6ff !important;
-    }
-
-    body:has(.healthai-theme-dark-marker) .family-card,
-    body:has(.healthai-theme-dark-marker) .family-request {
-        background:rgba(17,28,47,.84) !important;
-        border-color:rgba(117,160,191,.28) !important;
-    }
-
-    body:has(.healthai-theme-dark-marker) .family-card p,
-    body:has(.healthai-theme-dark-marker) .family-member-meta {
-        color:#91a8c0 !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 
 
 
 
-st.markdown(
-    """
-    <div class="family-header">
-        <div class="family-header-icon">👨‍👩‍👧‍👦</div>
-        <div>
-            <h1 class="family-title">Family Health</h1>
-            <p class="family-subtitle">
-                Connect with family members and view their health assessments
-                only after they accept your connection.
-            </p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
+page_intro("Family health connections", "Connect with registered family members and view shared assessments only after permission is granted.", "◎", "YOUR ACCOUNT / FAMILY")
 
 
 accept_notice = st.session_state.pop("family_accept_notice", None)
