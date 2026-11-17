@@ -540,7 +540,7 @@ st.html(
         """
         <div class="healthai-footer-note">
             <span>♥</span>
-            HealthAI &nbsp;•&nbsp;
+            MedPredict &nbsp;•&nbsp;
             Personal Health Assessment History &nbsp;•&nbsp;
             AI Risk Assessment
         </div>
