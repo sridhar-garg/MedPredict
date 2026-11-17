@@ -11,7 +11,7 @@ import pandas as pd
 import streamlit as st
 from PIL import Image
 
-from utils import apply_custom_css
+from utils import apply_custom_css, page_intro
 from research_quality import (quality_report, research_abstention, softmax_entropy,
                                model_saliency, blur_robustness, overlay_from_bytes)
 from research_metrics import binary_report, bootstrap_auroc, ks_stat, psi
@@ -30,8 +30,7 @@ if not st.session_state.get('is_logged_in', False):
     if st.button('Go to Dashboard / Login'):st.switch_page('app.py')
     st.stop()
 
-st.title('🧪 MedPredict X — AI Research Hub')
-st.caption('Research-only tools · not a medical device · use public de-identified datasets, not real patient records')
+page_intro("AI research laboratory", "Explore model explanations, validation, robustness and evidence using research-only datasets and transparent experiments.", "◉", "ADVANCED / MODEL RESEARCH")
 st.warning('Model outputs, heatmaps, screening formulas and distribution-shift warnings cannot diagnose or exclude disease. No clinical recommendation should be based on this prototype.')
 
 tabs=st.tabs(['🔍 Explainability','📊 Validation Lab','🧬 Multimodal Workspace',
