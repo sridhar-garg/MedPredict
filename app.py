@@ -1,7 +1,7 @@
 """MedPredict overview: assessments, insights, and connected health tools."""
 import streamlit as st
 
-st.set_page_config(page_title="MedPredict | Your health workspace", page_icon="assets/favicon.svg",
+st.set_page_config(page_title="Dashboard | MedPredict", page_icon="assets/favicon.svg",
                    layout="wide", initial_sidebar_state="expanded")
 
 from auth import verify_family_email_token
@@ -138,3 +138,7 @@ for col, (number, title, copy) in zip(st.columns(3), steps):
     with col:
         html(f'<div class="mp-step"><span class="mp-step-number">{number}</span><div><h4>{title}</h4><p>{copy}</p></div></div>')
 html('<div class="mp-footer"><span>MedPredict. A clearer perspective.</span><span>Research &amp; education · Not a medical diagnosis</span></div>')
+
+
+# Keep the new feedback page discoverable from the dashboard.
+st.page_link("pages/12_reviews.py", label="Reviews & experience", icon=":material/rate_review:")

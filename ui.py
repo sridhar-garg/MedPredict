@@ -63,8 +63,8 @@ def _change_theme():
 
 
 def theme_switch():
-    st.session_state.setdefault("mp_dark_mode", st.session_state.get("healthai_theme") == "dark")
-    st.toggle("Dark appearance", key="mp_dark_mode", on_change=_change_theme)
+    st.toggle("Dark appearance", value=st.session_state.get("healthai_theme") == "dark",
+              key="mp_dark_mode", on_change=_change_theme)
 
 
 def section(title, description="", eyebrow=""):

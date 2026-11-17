@@ -8,7 +8,7 @@ from ui import brand, html, theme_switch
 
 _NAV_GROUPS = [
     ("WORKSPACE", [
-        ("app.py", "Overview", "space_dashboard"),
+        ("app.py", "Dashboard", "space_dashboard"),
         ("pages/history.py", "Assessment history", "history"),
     ]),
     ("ASSESSMENTS", [
@@ -22,6 +22,9 @@ _NAV_GROUPS = [
         ("pages/8_gemini_chatbot.py", "AI assistant", "chat_bubble_outline"),
         ("pages/10_disease_atlas.py", "Disease atlas", "menu_book"),
         ("pages/9_abilitybridge.py", "Accessibility tools", "accessibility_new"),
+    ]),
+    ("FEEDBACK", [
+        ("pages/12_reviews.py", "Reviews", "rate_review"),
     ]),
     ("YOUR ACCOUNT", [
         ("pages/z_family.py", "Family health", "group"),

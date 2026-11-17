@@ -327,3 +327,9 @@ body .mp-hero-copy {padding:28px 36px}
 [data-testid="stRadioOption"] p, [data-testid="stCheckbox"] p {color:var(--text-2) !important}
 [data-testid="stSelectbox"] [role="combobox"],
 [data-testid="stMultiSelect"] [role="combobox"] {color:var(--text) !important; background:var(--surface-soft) !important; border-color:var(--border) !important}
+
+/* Native React Aria feedback tabs share the active app palette. */
+[role="tablist"] {border-color:var(--border) !important}
+[role="tab"], [role="tab"] p {color:var(--text-2) !important}
+[role="tab"][aria-selected="true"], [role="tab"][aria-selected="true"] p {color:var(--accent) !important}
+[role="tab"][aria-selected="true"] {border-bottom-color:var(--accent) !important}
