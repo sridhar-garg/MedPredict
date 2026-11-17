@@ -302,7 +302,7 @@ def _simple_risk_text(probability, category):
 
 def _show_plain_language_explanation(disease_name, probability, category, explanation=None):
     st.markdown('<div class="plain-language-box">', unsafe_allow_html=True)
-    st.markdown("### 🧑‍⚕️ What does this mean in simple words?")
+    st.markdown("### What does this mean in simple words?")
     st.write(_simple_risk_text(probability, category))
 
     if explanation is not None and not explanation.empty:
@@ -325,7 +325,7 @@ def _show_plain_language_explanation(disease_name, probability, category, explan
 
 
 def display_shap(models, patient, disease_name, probability=None, category=None, show_simple=True):
-    st.subheader("🔎 Explainable AI")
+    st.subheader("Explainable AI")
 
     values, names = generate_shap_explanation(models, patient)
 
@@ -366,7 +366,7 @@ def display_shap(models, patient, disease_name, probability=None, category=None,
         hide_index=True,
     )
 
-    st.subheader("📌 SHAP Feature Contribution")
+    st.subheader("SHAP Feature Contribution")
     chart = (
         explanation.head(10)
         .sort_values("SHAP Impact")
@@ -385,7 +385,7 @@ def display_shap(models, patient, disease_name, probability=None, category=None,
 
 def display_prediction(models, patient, disease_name):
     st.divider()
-    st.subheader("📊 Risk Assessment")
+    st.subheader("Risk Assessment")
 
     predictions = []
     model_results = {}
@@ -450,7 +450,7 @@ def display_prediction(models, patient, disease_name):
 
     _show_plain_language_explanation(disease_name, overall_probability, risk_category)
 
-    st.subheader("🤖 Model Predictions")
+    st.subheader("Model Predictions")
     rows = []
     for model_name, result in model_results.items():
         try:

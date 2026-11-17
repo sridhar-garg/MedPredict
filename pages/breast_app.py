@@ -19,7 +19,7 @@ from utils import (
 
 st.set_page_config(
     page_title="Breast Cancer Risk Assessment",
-    page_icon="🎗️",
+    page_icon="assets/favicon.png",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -167,7 +167,7 @@ st.markdown(
 )
 
 if st.button(
-    "🧠 Analyze Breast Cancer Risk →",
+    "Analyze Breast Cancer Risk",
     type="primary",
     use_container_width=True,
 ):
@@ -234,7 +234,6 @@ if st.button(
 st.markdown(
     """
     <div class="workflow-heading-fixed">
-        <span class="workflow-heading-icon">⌁</span>
         <div>
             <h2>How this assessment works</h2>
             <p>From diagnostic measurements to an explainable AI result.</p>

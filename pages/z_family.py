@@ -79,27 +79,27 @@ def send_family_email_direct(receiver_email, subject, body):
 
 
 def send_family_request_email_direct(receiver_email, sender_name, sender_username, relationship):
-    display_sender = sender_name or sender_username or "A HealthGuard AI user"
+    display_sender = sender_name or sender_username or "A HealthAI user"
     body = f"""Hello,
 
-You have received a new family connection request on HealthGuard AI.
+You have received a new family connection request on HealthAI.
 
 From: {display_sender}
 Username: @{sender_username or "user"}
 Relationship: {relationship}
 
-Please log in to HealthGuard AI and open Family Health to accept or decline this request.
+Please log in to HealthAI and open Family Health to accept or decline this request.
 
 Your health information will remain private until the request is accepted.
 
 If you did not expect this request, you can simply decline it from the Family Health page.
 
 Regards,
-HealthGuard AI
+HealthAI
 """
     return send_family_email_direct(
         receiver_email,
-        "HealthGuard AI - New Family Connection Request",
+        "HealthAI - New Family Connection Request",
         body,
     )
 
@@ -108,20 +108,20 @@ def send_family_acceptance_email_direct(receiver_email, accepter_name, accepter_
     display_accepter = accepter_name or accepter_username or "Your family member"
     body = f"""Hello,
 
-Your HealthGuard AI family connection request has been accepted.
+Your HealthAI family connection request has been accepted.
 
 Family member: {display_accepter}
 Username: @{accepter_username or "user"}
 Relationship: {relationship}
 
-You can now open Family Health in HealthGuard AI to view your accepted family connection.
+You can now open Family Health in HealthAI to view your accepted family connection.
 
 Regards,
-HealthGuard AI
+HealthAI
 """
     return send_family_email_direct(
         receiver_email,
-        "HealthGuard AI - Family Connection Accepted",
+        "HealthAI - Family Connection Accepted",
         body,
     )
 
@@ -132,7 +132,7 @@ HealthGuard AI
 
 st.set_page_config(
     page_title="Family Health | HealthAI",
-    page_icon="👨‍👩‍👧‍👦",
+    page_icon="assets/favicon.png",
     layout="wide",
 )
 
@@ -166,119 +166,6 @@ apply_custom_css()
 
 
 
-st.markdown(
-    """
-    <style>
-    .family-header {
-        display:flex;
-        align-items:center;
-        gap:14px;
-        margin:18px 0 5px;
-    }
-
-    .family-header-icon {
-        width:52px;
-        height:52px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        border-radius:17px;
-        background:linear-gradient(145deg,#dff9fb,#eae5ff);
-        font-size:27px;
-    }
-
-    .family-title {
-        color:#10233f !important;
-        font-size:36px !important;
-        font-weight:900 !important;
-        margin:0 !important;
-    }
-
-    .family-subtitle {
-        color:#7186a0 !important;
-        font-size:15px !important;
-        margin:0 0 22px !important;
-    }
-
-    .family-card {
-        padding:22px;
-        border:1px solid rgba(151,187,207,.32);
-        border-radius:21px;
-        background:rgba(255,255,255,.84);
-        box-shadow:0 13px 31px rgba(31,74,104,.10);
-        min-height:150px;
-    }
-
-    .family-card h3 {
-        margin:0 0 7px !important;
-        color:#10233f !important;
-        font-size:20px !important;
-        font-weight:900 !important;
-    }
-
-    .family-card p {
-        margin:0 !important;
-        color:#7186a0 !important;
-        font-size:13px !important;
-        line-height:1.5 !important;
-    }
-
-    .family-member-name {
-        color:#10233f !important;
-        font-size:20px !important;
-        font-weight:900 !important;
-        margin:0 !important;
-    }
-
-    .family-member-meta {
-        color:#7186a0 !important;
-        font-size:13px !important;
-        margin:5px 0 0 !important;
-    }
-
-    .family-badge {
-        display:inline-block;
-        padding:5px 10px;
-        border-radius:999px;
-        background:#e8fbf6;
-        color:#0ca78d;
-        font-size:11px;
-        font-weight:850;
-        margin-top:9px;
-    }
-
-    .family-request {
-        padding:17px 18px;
-        border:1px solid rgba(151,187,207,.32);
-        border-radius:17px;
-        background:rgba(255,255,255,.72);
-        margin-bottom:10px;
-    }
-
-    .family-section-space {
-        margin-top:25px;
-    }
-
-    body:has(.healthai-theme-dark-marker) .family-title,
-    body:has(.healthai-theme-dark-marker) .family-member-name,
-    body:has(.healthai-theme-dark-marker) .family-card h3 {
-        color:#edf6ff !important;
-    }
-
-    body:has(.healthai-theme-dark-marker) .family-card,
-    body:has(.healthai-theme-dark-marker) .family-request {
-        background:rgba(17,28,47,.84) !important;
-        border-color:rgba(117,160,191,.28) !important;
-    }
-
-    body:has(.healthai-theme-dark-marker) .family-card p,
-    body:has(.healthai-theme-dark-marker) .family-member-meta {
-        color:#91a8c0 !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 
@@ -288,7 +175,6 @@ st.markdown(
 st.markdown(
     """
     <div class="family-header">
-        <div class="family-header-icon">👨‍👩‍👧‍👦</div>
         <div>
             <h1 class="family-title">Family Health</h1>
             <p class="family-subtitle">
@@ -318,7 +204,7 @@ if accept_notice:
 st.markdown(
     """
     <div class="family-card">
-        <h3>➕ Add Family Member</h3>
+        <h3>Add Family Member</h3>
         <p>
             Send a connection request using a registered username or email.
             Health information is never shared before the request is accepted.
@@ -412,13 +298,13 @@ if send_request:
                     st.success(
                         f"Family request sent to {target_name}."
                     )
-                    st.info(f"📧 {email_detail}")
+                    st.info(f"{email_detail}")
                 else:
                     st.warning(
                         f"Family request was created for {target_name}, "
                         f"but the notification email could not be sent."
                     )
-                    st.error(f"📧 Email error: {email_detail}")
+                    st.error(f"Email error: {email_detail}")
             else:
                 st.warning(message)
 
@@ -460,14 +346,14 @@ if send_request:
 
                         if email_sent:
                             st.success(
-                                f"📧 Family request email sent successfully to {pending_email}."
+                                f"Family request email sent successfully to {pending_email}."
                             )
                             st.info(email_detail)
                         else:
                             st.error(
-                                f"❌ The pending request exists, but the email could not be sent."
+                                f"The pending request exists, but the email could not be sent."
                             )
-                            st.error(f"📧 Email error: {email_detail}")
+                            st.error(f"Email error: {email_detail}")
 
 
 
@@ -482,7 +368,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.subheader("📩 Pending Requests")
+st.subheader("Pending Requests")
 
 if not pending_requests:
     st.info("You have no pending family requests.")
@@ -572,7 +458,7 @@ else:
                     if requester is not None and acceptance_email_sent:
                         st.session_state["family_accept_notice"] = (
                             f"✓ Family connection accepted. "
-                            f"📧 {requester[0]} was notified by email."
+                            f"{requester[0]} was notified by email."
                         )
                     elif requester is not None:
                         st.session_state["family_accept_notice"] = (
@@ -613,7 +499,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.subheader("👨‍👩‍👧‍👦 My Family")
+st.subheader("My Family")
 
 if not connections:
     st.info(
@@ -688,7 +574,7 @@ if selected_member_id is not None:
     )
 
     st.subheader(
-        f"🩺 Health Assessments — {selected_member_name or 'Family Member'}"
+        f"Health Assessments — {selected_member_name or 'Family Member'}"
     )
 
 

@@ -4,7 +4,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="MedPredict AI Assistant | Gemini 3.8 Flash",
-    page_icon="💬",
+    page_icon="assets/favicon.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -30,10 +30,10 @@ except ImportError:
 
 if not st.session_state.get("is_logged_in", False):
     st.warning("Please log in on the Dashboard before using MedPredict AI.")
-    st.page_link("app.py", label="Return to login", icon="🏠")
+    st.page_link("app.py", label="Return to login")
     st.stop()
 
-st.title("💬 MedPredict AI Assistant")
+st.title("MedPredict AI Assistant")
 st.caption("Powered by Gemini 3.8 Flash · Educational health and research Q&A")
 st.info(
     "This chatbot provides general educational information, not a medical diagnosis. "
@@ -61,7 +61,7 @@ left, right = st.columns([4, 1])
 with left:
     st.markdown("**Ask about medical terminology, public research, or the limitations of AI models.**")
 with right:
-    if st.button("🗑️ Clear chat", use_container_width=True):
+    if st.button("Clear chat", use_container_width=True):
         st.session_state.medpredict_gemini_messages = []
         st.rerun()
 

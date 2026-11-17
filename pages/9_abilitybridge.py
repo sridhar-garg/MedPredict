@@ -7,7 +7,7 @@ from braille_tools import braille_dots, text_to_braille, braille_to_text
 from hand_tracking import LiveLandmarkState, create_detector, extract_landmarks
 from sign_recognition import load_pretrained, classify, WEIGHTS
 
-st.set_page_config(page_title="AbilityBridge | MedPredict X",page_icon="🤟",layout="wide")
+st.set_page_config(page_title="AbilityBridge | MedPredict X",page_icon="assets/favicon.png",layout="wide")
 
 
 from sidebar_compat import show_sidebar
@@ -19,9 +19,9 @@ except (ImportError, AttributeError):
     pass
 if not st.session_state.get("is_logged_in", False):
     st.warning("Sign in to use AbilityBridge.")
-    st.page_link("app.py", label="Back to sign in", icon="🏠")
+    st.page_link("app.py", label="Back to sign in")
     st.stop()
-st.title("🤟 AbilityBridge")
+st.title("AbilityBridge")
 st.caption("Pretrained ASL & ISL fingerspelling · Braille learning and conversion")
 mode=st.radio("Choose a tool",["ASL fingerspelling", "ISL fingerspelling", "Braille"],horizontal=True)
 
@@ -42,8 +42,8 @@ if mode=="Braille":
     with left:
         for a,b in ((1,4),(2,5),(3,6)):
             a1,a2=st.columns(2)
-            with a1:st.markdown(f"### {'🔵' if a in active else '⚪'}")
-            with a2:st.markdown(f"### {'🔵' if b in active else '⚪'}")
+            with a1:st.markdown(f"### {'●' if a in active else '○'}")
+            with a2:st.markdown(f"### {'●' if b in active else '○'}")
     with right:
         st.metric(f"Letter {selected}",char)
         st.write("Raised dots:",", ".join(map(str,sorted(active))))
@@ -53,7 +53,7 @@ if mode=="Braille":
 
 
 language = "ASL" if mode.startswith("ASL") else "ISL"
-st.subheader("📷 " + ("American Sign Language" if language == "ASL" else "Indian Sign Language"))
+st.subheader(("American Sign Language" if language == "ASL" else "Indian Sign Language"))
 st.write("Show a letter to the camera. The **already-trained landmark AI** recognises it, "
          "then types it after **0.4 seconds of stable detection**. No training or sample recording required.")
 st.caption("The live camera is clean: no bounding boxes or landmark drawings. "

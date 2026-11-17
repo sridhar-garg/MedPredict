@@ -550,6 +550,73 @@ button[title="Switch light / dark theme"] { white-space: nowrap; }
 .healthai-footer-note { margin: 16px 0 0; text-align: center; color: var(--muted); font-size: 13px; }
 
 /* ==========================================================================
+   Assessment pages (diabetes, heart, breast)
+   ========================================================================== */
+.assessment-section-card {
+  margin: 28px 0 12px;
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--line);
+}
+.assessment-section-title {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+.assessment-section-subtitle { margin-top: 2px; color: var(--muted); font-size: 14.5px; }
+.workflow-title > span, .workflow-heading-icon { display: none; }
+.plain-language-box {
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--brand);
+  border-radius: var(--radius-control);
+  color: var(--ink-2);
+}
+
+/* ==========================================================================
+   Profile
+   ========================================================================== */
+.profile-header { margin: 0 0 4px; color: var(--ink); font-family: var(--serif); font-size: 2.2rem; font-weight: 600; letter-spacing: -0.01em; }
+.profile-subtitle { margin-bottom: 24px; color: var(--muted); font-size: 16px; }
+.profile-avatar {
+  width: 88px; height: 88px; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--brand); color: var(--on-brand);
+  font-family: var(--serif); font-size: 38px; font-weight: 600;
+}
+.profile-name { color: var(--ink); font-family: var(--serif); font-size: 1.5rem; font-weight: 600; }
+.profile-username { margin-top: 2px; color: var(--muted); font-size: 15px; }
+.profile-label { margin-bottom: 2px; color: var(--muted); font-size: 13px; font-weight: 500; }
+.profile-value { margin-bottom: 18px; color: var(--ink); font-size: 16px; font-weight: 500; }
+.edit-title { margin-bottom: 14px; color: var(--ink); font-family: var(--serif); font-size: 1.35rem; font-weight: 600; }
+
+/* ==========================================================================
+   Family
+   ========================================================================== */
+.family-header { margin: 16px 0 4px; }
+.family-title { margin: 0 !important; font-size: 2.2rem !important; }
+.family-subtitle { max-width: 62ch; margin: 6px 0 24px !important; color: var(--muted) !important; font-size: 15px !important; }
+.family-card, .family-request {
+  padding: 20px 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+}
+.family-request { margin-bottom: 10px; }
+.family-card h3 { margin: 0 0 6px !important; font-size: 1.2rem !important; }
+.family-card p { margin: 0 !important; color: var(--muted) !important; font-size: 14px !important; line-height: 1.5 !important; }
+.family-member-name { margin: 0 !important; color: var(--ink) !important; font-family: var(--serif); font-size: 1.2rem !important; font-weight: 600 !important; }
+.family-member-meta { margin: 4px 0 0 !important; color: var(--muted) !important; font-size: 13.5px !important; }
+.family-badge {
+  display: inline-block; margin-top: 8px; padding: 3px 10px;
+  border-radius: 4px; background: var(--risk-low-tint); color: var(--risk-low);
+  font-size: 12.5px; font-weight: 600;
+}
+.family-section-space { margin-top: 24px; }
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 @media (max-width: 900px) {
