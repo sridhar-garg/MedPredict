@@ -13,7 +13,7 @@ st.set_page_config(page_title="AbilityBridge | MedPredict X",page_icon="🤟",la
 from sidebar_compat import show_sidebar
 show_sidebar()
 try:
-    from utils import apply_custom_css
+    from utils import apply_custom_css, page_intro
     apply_custom_css()
 except (ImportError, AttributeError):
     pass
@@ -21,8 +21,7 @@ if not st.session_state.get("is_logged_in", False):
     st.warning("Sign in to use AbilityBridge.")
     st.page_link("app.py", label="Back to sign in", icon="🏠")
     st.stop()
-st.title("🤟 AbilityBridge")
-st.caption("Pretrained ASL & ISL fingerspelling · Braille learning and conversion")
+page_intro("Accessibility tools", "Explore fingerspelling recognition and Grade 1 Braille learning tools within MedPredict.", "✳", "PLATFORM / ACCESSIBILITY")
 mode=st.radio("Choose a tool",["ASL fingerspelling", "ISL fingerspelling", "Braille"],horizontal=True)
 
 if mode=="Braille":
