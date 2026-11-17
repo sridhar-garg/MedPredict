@@ -14,7 +14,7 @@ from utils import apply_custom_css
 
 
 st.set_page_config(
-    page_title="Health History | HealthAI",
+    page_title="Health History | MedPredict",
     page_icon="📜",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -555,7 +555,7 @@ st.html(
         """
         <div class="healthai-footer-note">
             <span>♥</span>
-            HealthAI &nbsp;•&nbsp;
+            MedPredict &nbsp;•&nbsp;
             Personal Health Assessment History &nbsp;•&nbsp;
             AI Risk Assessment
         </div>
