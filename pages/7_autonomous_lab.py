@@ -15,7 +15,7 @@ from sidebar_compat import show_sidebar
 show_sidebar()
 apply_custom_css()
 if not st.session_state.get('is_logged_in',False):
-    st.warning('Log in through the HealthAI Dashboard to open CARE-BOT.')
+    st.warning('Log in through the MedPredict Dashboard to open CARE-BOT.')
     if st.button('Go to Login'):st.switch_page('app.py')
     st.stop()
 
