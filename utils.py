@@ -16,7 +16,9 @@ def apply_custom_css():
     css_path = Path(__file__).parent / "style.css"
     css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
 
-    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    design_path = Path(__file__).parent / "design_system.css"
+    design_css = design_path.read_text(encoding="utf-8") if design_path.exists() else ""
+    st.markdown(f"<style>{css}\n{design_css}</style>", unsafe_allow_html=True)
 
     theme = st.session_state.get("healthai_theme", "light")
     marker = "healthai-theme-dark-marker" if theme == "dark" else "healthai-theme-light-marker"

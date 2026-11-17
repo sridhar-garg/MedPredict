@@ -498,6 +498,12 @@ def login_page():
 
 
 
+    # Apply the shared clinical visual language after the legacy login stylesheet.
+    st.markdown('<div class="medpredict-login-marker" style="display:none"></div>', unsafe_allow_html=True)
+    design_path = Path(__file__).parent / "design_system.css"
+    if design_path.exists():
+        st.markdown(f"<style>{design_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+
     left, right = st.columns(
         [1.03, 0.97],
         gap="large",
@@ -542,7 +548,7 @@ def login_page():
             st.markdown(
                 """
                 <div class="brand-title">
-                    HealthGuard <span>AI</span>
+                    MedPredict <span>AI</span>
                 </div>
 
                 <div class="brand-subtitle">
@@ -709,7 +715,7 @@ def login_page():
             st.markdown(
                 '<div class="login-description">'
                 'Log in with your username and password<br>'
-                'or create your HealthGuard AI account.'
+                'or create your MedPredict account.'
                 '</div>',
                 unsafe_allow_html=True,
             )

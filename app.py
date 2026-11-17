@@ -6,8 +6,8 @@ import streamlit as st
 
 
 st.set_page_config(
-    page_title="HealthAI | EXHRA",
-    page_icon="🏥",
+    page_title="MedPredict | Health Research",
+    page_icon="🩺",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -222,9 +222,8 @@ with theme_col:
 
 
 
-PAGE_CSS = (
-    Path(__file__).parent / "style.css"
-).read_text(encoding="utf-8")
+PAGE_CSS = (Path(__file__).parent / "style.css").read_text(encoding="utf-8")
+DESIGN_CSS = (Path(__file__).parent / "design_system.css").read_text(encoding="utf-8")
 
 dark = st.session_state.healthai_theme == "dark"
 iframe_theme = "dark" if dark else "light"
@@ -238,6 +237,7 @@ hero_html = f"""
 
     <style>
         {PAGE_CSS}
+        {DESIGN_CSS}
 
         :root {{
             color-scheme: {iframe_theme};
@@ -256,7 +256,7 @@ hero_html = f"""
 <body class="hero-iframe-body {iframe_theme}">
 
     <div
-        class="healthai-theme-dark-marker"
+        class="{theme_marker}"
         aria-hidden="true"
         style="display:none"
     ></div>
@@ -266,18 +266,18 @@ hero_html = f"""
         <div class="healthai-hero-copy">
 
             <div class="healthai-eyebrow">
-                <span>✦</span> EXPLAINABLE AI
+                <span>✦</span> MEDPREDICT · RESEARCH PLATFORM
             </div>
 
             <h1>
-                Multi-Disease Health<br>
-                <span>Risk Assessment</span>
+                Smarter Health<br>
+                <span>Risk Screening</span>
             </h1>
 
             <p class="healthai-lead">
-                A modern AI-powered research prototype that uses
-                multiple machine-learning models to predict health
-                risks and explain the reasons behind each prediction.
+                Explore educational health screenings with machine-learning
+                insights and clear explanations. Understand patterns,
+                ask better questions, and make informed next steps.
             </p>
 
             <div class="healthai-actions">
@@ -287,7 +287,7 @@ hero_html = f"""
                     target="_top"
                     class="healthai-btn primary"
                 >
-                    Get Started&nbsp; →
+                    Explore Screenings&nbsp; →
                 </a>
 
                 <a
@@ -295,90 +295,60 @@ hero_html = f"""
                     target="_top"
                     class="healthai-btn secondary"
                 >
-                    ▥&nbsp; Explore Models
+                    ▥&nbsp; How It Works
                 </a>
 
             </div>
 
             <div class="healthai-mini-note">
                 <span>✓</span>
-                Three health assessments&nbsp;&nbsp;•&nbsp;&nbsp;
-                Five ML models&nbsp;&nbsp;•&nbsp;&nbsp;
-                Explainable results
+                Research and educational use only&nbsp;&nbsp;•&nbsp;&nbsp;
+                Not a medical diagnosis
             </div>
 
         </div>
 
 
-        <div class="healthai-hero-art">
-
-            <div class="healthai-orbit orbit-one"></div>
-            <div class="healthai-orbit orbit-two"></div>
-            <div class="healthai-glow"></div>
-
-            <div
-                class="heart-stage anatomical-heart-stage"
-                aria-label="Anatomical heart visual"
-            >
-
-                <img
-                    class="anatomical-heart"
-                    src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Human_Heart_(NIH_BioArt_228_-_630872).png"
-                    alt="Human anatomical heart"
-                />
-
-                <div class="heart-caption">
-                    <b>Heart Health</b>
-
-                    <small>
-                        Explore our AI-powered risk assessments
-                    </small>
+        <div class="healthai-hero-art" aria-label="Research dashboard illustration">
+            <div class="mp-float-label top">✦ &nbsp; Explainable insights</div>
+            <div class="mp-demo-window">
+                <div class="mp-window-header">
+                    <span>MEDPREDICT &nbsp; / &nbsp; MODEL OVERVIEW</span>
+                    <span class="mp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
                 </div>
-
-            </div>
-
-
-            <div class="healthai-float-card diabetes">
-
-                <span class="float-icon diabetes-icon">●</span>
-
-                <div>
-                    <strong>Diabetes</strong>
-                    <small>Risk Assessment</small>
+                <div class="mp-window-content">
+                    <span class="mp-window-caption">A clearer view of your health data</span>
+                    <h3>Screening workspace</h3>
+                    <svg class="mp-ecg" viewBox="0 0 380 150" role="img"
+                         aria-label="Illustrative heartbeat waveform, not patient data">
+                        <g stroke="#d6e9e7" stroke-width="1" opacity=".7">
+                            <path d="M0 30 H380 M0 60 H380 M0 90 H380 M0 120 H380"/>
+                            <path d="M38 0 V150 M76 0 V150 M114 0 V150 M152 0 V150 M190 0 V150 M228 0 V150 M266 0 V150 M304 0 V150 M342 0 V150"/>
+                        </g>
+                        <path d="M0 80 H50 L65 76 L79 83 L92 78 L108 80 L123 103 L140 23 L158 118 L175 80 L203 80 L218 76 L235 83 L247 80 L264 80 L278 102 L294 29 L311 115 L328 80 H380"
+                              fill="none" stroke="#0b8984" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+                        <circle cx="294" cy="29" r="6" fill="#0b8984" stroke="white" stroke-width="3"/>
+                    </svg>
+                    <div class="mp-measures">
+                        <div class="mp-measure">
+                            <span class="mp-measure-icon">♥</span>
+                            <b>Heart health</b>
+                            <small>Explore model</small>
+                        </div>
+                        <div class="mp-measure">
+                            <span class="mp-measure-icon">◈</span>
+                            <b>Diabetes</b>
+                            <small>Explore model</small>
+                        </div>
+                        <div class="mp-measure">
+                            <span class="mp-measure-icon">✳</span>
+                            <b>Breast health</b>
+                            <small>Explore model</small>
+                        </div>
+                    </div>
                 </div>
-
-                <b>→</b>
-
             </div>
-
-
-            <div class="healthai-float-card breast">
-
-                <span class="float-icon breast-icon">🎗</span>
-
-                <div>
-                    <strong>Breast Cancer</strong>
-                    <small>Risk Assessment</small>
-                </div>
-
-                <b>→</b>
-
-            </div>
-
-
-            <div class="healthai-float-card heart">
-
-                <span class="float-icon heart-icon">♥</span>
-
-                <div>
-                    <strong>Heart Disease</strong>
-                    <small>Risk Assessment</small>
-                </div>
-
-                <b>→</b>
-
-            </div>
-
+            <div class="mp-float-label bottom">✓ &nbsp; Research prototype</div>
         </div>
 
     </section>
@@ -390,7 +360,7 @@ hero_html = f"""
 
 components.html(
     hero_html,
-    height=585,
+    height=575,
     scrolling=False,
 )
 
@@ -439,8 +409,8 @@ render_html("""
                 <div class="stat-symbol teal">▥</div>
 
                 <div>
-                    <strong>100%</strong>
-                    <span>Interactive</span>
+                    <strong>Interactive</strong>
+                    <span>Visual Learning</span>
                     <small>Visual Explanations</small>
                 </div>
             </div>
