@@ -20,11 +20,6 @@ _NAV_GROUPS = [
         ("pages/10_disease_atlas.py", "Disease atlas", "menu_book"),
         ("pages/9_abilitybridge.py", "Accessibility tools", "accessibility_new"),
     ]),
-    ("RESEARCH", [
-        ("pages/11_advanced_research_mode.py", "Research workspace", "science"),
-        ("pages/6_research_hub.py", "AI research hub", "biotech"),
-        ("pages/7_autonomous_lab.py", "Autonomous lab", "precision_manufacturing"),
-    ]),
     ("YOUR ACCOUNT", [
         ("pages/z_family.py", "Family health", "group"),
         ("pages/profile.py", "My profile", "person_outline"),

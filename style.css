@@ -89,7 +89,8 @@ hr {border-color:var(--border)}
 .mp-brand-mark {display:inline-flex; align-items:center; justify-content:center; width:37px; height:37px; border-radius:12px; background:linear-gradient(135deg,#8775ef,#6146c5); color:#fff; box-shadow:0 4px 12px #6d54d425}
 .mp-brand-dot {color:var(--accent)}
 .mp-side-caption {font-size:10px; color:var(--muted); margin:7px 0 24px 47px; letter-spacing:.08em; text-transform:uppercase}
-.mp-nav-label {font-size:10px; font-weight:750; letter-spacing:.13em; color:var(--muted); margin:23px 0 7px 10px}
+.mp-nav-label {display:block; font-size:10px; font-weight:750; line-height:1.4; letter-spacing:.13em; color:var(--muted); margin:0; padding:20px 10px 14px}
+[data-testid="stSidebar"] [data-testid="stElementContainer"]:has(.mp-nav-label) {min-height:48px !important}
 [data-testid="stSidebar"] [data-testid="stPageLink"] a {padding:9px 11px; border-radius:9px; color:var(--text-2); font-size:13px}
 [data-testid="stSidebar"] [data-testid="stPageLink"] a p {font-size:13px; font-weight:550}
 [data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {background:var(--surface-soft); color:var(--accent)}

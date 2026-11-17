@@ -8,7 +8,7 @@ The restored homepage and sign-in used several HealthAI/HealthGuard identities, 
 - [Namastey AI](https://arhita536.github.io/Namastey-AI__/): a clear introduction and a visual directory of features.
 - [Kaamigo](https://arhitajain.github.io/kaamigo/): split visual/sign-in composition, typography, card hierarchy and spacing.
 
-The implementation uses native Streamlit controls for authentication, navigation, forms and actions. Shared styles cover the overview and existing feature pages, with small-screen rules and reduced-motion support. Models, assessment calculations, account verification and saved-data formats are retained. Accessibility tools remain integrated within MedPredict.
+The implementation uses native Streamlit controls for authentication, navigation, forms and actions. Shared styles cover the overview and existing feature pages, with small-screen rules and reduced-motion support. Research workspace, AI research hub, and Autonomous lab have been removed from the sidebar and overview; the remaining sidebar groups use padded headings to keep labels clear of their menu links. Models, assessment calculations, account verification and saved-data formats are retained. Accessibility tools remain integrated within MedPredict.
 
 ## Preview
 
@@ -27,7 +27,7 @@ Screenshots are from the local Streamlit application with a synthetic preview se
 - AST comparison confirmed that the complete login/signup/OTP conditional handling matches the original, with presentation branding updated.
 - The dashboard, theme switching, search routing, assessment navigation and history page passed Streamlit AppTest checks.
 - Diabetes, heart and breast assessment calculations ran with the existing sample inputs, without application exceptions or error messages.
-- Desktop browser checks covered sign-in, the overview, assessment shortcuts, tabs and both appearances.
+- Desktop browser checks covered sign-in, the overview, assessment shortcuts, sidebar spacing and both appearances.
 - Existing saved scikit-learn models emitted version warnings in the local test environment (saved with 1.9.0, executed with 1.8.0). These checks demonstrate that the presentation still runs; they do not establish clinical validity or model reproducibility across versions.
 - Real email/OTP delivery, connected AI, camera recognition and the existing production deployment were not exercised. Mobile breakpoint rules were reviewed; physical-device testing remains outstanding.
 

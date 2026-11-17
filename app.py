@@ -1,4 +1,4 @@
-"""MedPredict overview: assessments, insights, and the existing research tools."""
+"""MedPredict overview: assessments, insights, and connected health tools."""
 import streamlit as st
 
 st.set_page_config(page_title="MedPredict | Your health workspace", page_icon="assets/favicon.svg",
@@ -110,33 +110,23 @@ with c3:
               "ribbon", "pages/breast_app.py", "open_breast", "blue", "Assess breast health")
 
 section("More ways to understand your health", "Explore your information, find answers, and keep everything connected.", "BEYOND THE ASSESSMENT")
-care_tab, research_tab = st.tabs(["Care & insights", "Research workspace"])
-with care_tab:
-    tools = [
-        ("More health screenings", "Seven additional educational screenings, from blood pressure to kidney health.", "pulse", "pages/4_health_screenings.py", "open_addon_screenings", "teal", "Explore screenings"),
-        ("Imaging & reports", "Explore medical images and make sense of the information in health reports.", "scan", "pages/5_medical_imaging.py", "open_addon_imaging", "blue", "Explore reports"),
-        ("AI assistant", "Ask questions about health terms, medical information, and AI research.", "chat", "pages/8_gemini_chatbot.py", "medpredict_gemini38_home", "violet", "Start a conversation"),
-        ("Disease atlas", "Discover conditions and learn from medically sourced educational information.", "book", "pages/10_disease_atlas.py", "mp_ax_open_atlas", "blue", "Browse the atlas"),
-        ("Your assessment history", "Revisit your saved assessments and explore how your results compare.", "history", "pages/history.py", "mp_open_history", "violet", "View your history"),
-        ("Family health", "Manage family connections and the health information you choose to share.", "people", "pages/z_family.py", "mp_open_family", "teal", "Open family health"),
-    ]
-    for start in range(0, len(tools), 3):
-        for col, tool in zip(st.columns(3, gap="medium"), tools[start:start+3]):
-            with col:
-                tool_card(*tool)
-    with st.expander("Accessibility in MedPredict"):
-        st.write("Use fingerspelling recognition and text-to-Braille tools within your MedPredict workspace.")
-        if st.button("Open accessibility tools →", key="mp_ax_open_ability"):
-            st.switch_page("pages/9_abilitybridge.py")
-    st.caption("Additional screenings use educational formulas. Imaging models are experimental; neither replaces clinical assessment.")
-with research_tab:
-    r1, r2, r3 = st.columns(3, gap="medium")
-    with r1:
-        tool_card("Advanced research", "A connected workspace for AI validation and autonomous robotics experiments.", "flask", "pages/11_advanced_research_mode.py", "mp_open_advanced_research", "violet", "Explore research")
-    with r2:
-        tool_card("AI research hub", "Explore benchmarks, model evaluation, and the evidence behind AI research.", "book", "pages/6_research_hub.py", "mp_open_research_hub", "blue", "Open research hub")
-    with r3:
-        tool_card("Autonomous lab", "Investigate evidence gathering and experimental care robotics simulations.", "flask", "pages/7_autonomous_lab.py", "mp_open_autonomous_lab", "teal", "Open autonomous lab")
+tools = [
+    ("More health screenings", "Seven additional educational screenings, from blood pressure to kidney health.", "pulse", "pages/4_health_screenings.py", "open_addon_screenings", "teal", "Explore screenings"),
+    ("Imaging & reports", "Explore medical images and make sense of the information in health reports.", "scan", "pages/5_medical_imaging.py", "open_addon_imaging", "blue", "Explore reports"),
+    ("AI assistant", "Ask questions about health terms, medical information, and AI research.", "chat", "pages/8_gemini_chatbot.py", "medpredict_gemini38_home", "violet", "Start a conversation"),
+    ("Disease atlas", "Discover conditions and learn from medically sourced educational information.", "book", "pages/10_disease_atlas.py", "mp_ax_open_atlas", "blue", "Browse the atlas"),
+    ("Your assessment history", "Revisit your saved assessments and explore how your results compare.", "history", "pages/history.py", "mp_open_history", "violet", "View your history"),
+    ("Family health", "Manage family connections and the health information you choose to share.", "people", "pages/z_family.py", "mp_open_family", "teal", "Open family health"),
+]
+for start in range(0, len(tools), 3):
+    for col, tool in zip(st.columns(3, gap="medium"), tools[start:start+3]):
+        with col:
+            tool_card(*tool)
+with st.expander("Accessibility in MedPredict"):
+    st.write("Use fingerspelling recognition and text-to-Braille tools within your MedPredict workspace.")
+    if st.button("Open accessibility tools →", key="mp_ax_open_ability"):
+        st.switch_page("pages/9_abilitybridge.py")
+st.caption("Additional screenings use educational formulas. Imaging models are experimental; neither replaces clinical assessment.")
 
 section("A clearer path from information to insight", eyebrow="HOW IT WORKS")
 steps = [
