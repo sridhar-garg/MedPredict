@@ -3,7 +3,7 @@ from pathlib import Path
 import streamlit as st
 
 st.set_page_config(
-    page_title="HealthAI | EXHRA",
+    page_title="Dashboard | MedPredict",
     page_icon=str(Path(__file__).parent / "assets" / "favicon.png"),
     layout="wide",
     initial_sidebar_state="expanded",
@@ -290,3 +290,7 @@ st.caption(
 render_html("""
 <p class="hx-disclaimer">HealthAI (EXHRA) is a research and academic prototype. Results are not a medical diagnosis.</p>
 """)
+
+
+# Keep the new feedback page discoverable from the dashboard.
+st.page_link("pages/12_reviews.py", label="Reviews & experience", icon=":material/rate_review:")
