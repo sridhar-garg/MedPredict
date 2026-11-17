@@ -9,7 +9,7 @@ st.set_page_config(page_title="Disease Atlas | MedPredict X",page_icon="📚",la
 from sidebar_compat import show_sidebar
 show_sidebar()
 try:
-    from utils import apply_custom_css
+    from utils import apply_custom_css, page_intro
     apply_custom_css()
 except (ImportError,AttributeError):pass
 if not st.session_state.get('is_logged_in',False):
@@ -17,8 +17,7 @@ if not st.session_state.get('is_logged_in',False):
     st.page_link('app.py',label='Go to sign in',icon='🏠')
     st.stop()
 
-st.title('📚 Disease Atlas')
-st.caption('Search health conditions · Learn prevention · Understand treatment and symptom management')
+page_intro("Disease atlas", "Search dependable medical information, understand conditions and follow links to original public references.", "⊞", "KNOWLEDGE / DISEASE ATLAS")
 st.info('Information is retrieved from the U.S. National Library of Medicine (MedlinePlus). '
         'It is educational, not a diagnosis or a personalised treatment plan. '
         'Some diseases cannot be prevented or cured, and not every rare disease is indexed.')
