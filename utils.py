@@ -26,27 +26,31 @@ def apply_custom_css():
     if css_path.is_file():
         st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
-    # The toggle is available on every feature page, not just the dashboard.
+    # Genuine page controls, visible even when the Streamlit sidebar is collapsed.
     with st.sidebar:
         st.markdown(
             '<div class="mp-brand-panel"><div class="mp-brand-row">'
             '<span class="mp-brand-mark">✳</span>'
             '<div><div class="mp-brand-name">MedPredict</div>'
-            '<div class="mp-brand-sub">Clinical research studio</div></div>'
-            '</div></div><div class="mp-side-label">APPEARANCE</div>',
-            unsafe_allow_html=True,
-        )
-        st.toggle(
-            "Light mode",
-            value=(theme == "light"),
-            key="mp_light_switch",
-            on_change=_mp_theme_changed,
-            help="Turn on for light mode. Dark mode is the default.",
-        )
-        st.markdown(
+            '<div class="mp-brand-sub">Health research studio</div></div>'
+            '</div></div>'
             '<div class="mp-sidebar-foot">Research and educational use only. '
             'Not a diagnostic medical device.</div>',
             unsafe_allow_html=True,
+        )
+
+    bar_left, bar_right = st.columns([5, 1.1], vertical_alignment="center")
+    with bar_left:
+        st.markdown(
+            '<div class="mp-workspace-bar">'
+            '<span class="mp-workspace-dot"></span>MEDPREDICT <span>/</span> WORKSPACE'
+            '</div>', unsafe_allow_html=True,
+        )
+    with bar_right:
+        st.toggle(
+            "Light mode", value=(theme == "light"),
+            key="mp_light_switch", on_change=_mp_theme_changed,
+            help="Switch between the dark and light appearances.",
         )
 
     theme = st.session_state.healthai_theme
