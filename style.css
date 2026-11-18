@@ -97,7 +97,15 @@ hr {border-color:var(--border)}
 .mp-brand-dot {color:var(--accent)}
 [data-testid="stSidebar"] .mp-brand {font-size:21px; gap:10px}
 [data-testid="stSidebar"] .mp-brand-mark {width:34px; height:34px; border-radius:11px; box-shadow:none}
-.mp-side-caption {font-size:9px; color:var(--nav-muted); margin:6px 0 0 44px; letter-spacing:.08em; text-transform:uppercase}
+.mp-side-caption {
+  margin:9px 0 0;
+  color:var(--nav-muted);
+  font-size:11px;
+  line-height:1.4;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
 .mp-sidebar-brand {padding:3px 5px 12px}
 [data-testid="stSidebar"] [data-testid="stElementContainer"]:has(.mp-sidebar-brand) {min-height:66px}
 .mp-nav-label {display:block; font-size:9px; font-weight:700; line-height:1.4; letter-spacing:.14em; color:var(--nav-muted); margin:0; padding:16px 12px 10px}
@@ -197,7 +205,7 @@ body:has(.healthai-theme-dark-marker) .mp-teal {background:#213e3e; color:#8ae3d
 
 /* Sign-in: a full-height branded image with a real native authentication form. */
 body:has(.mp-auth-marker) [data-testid="stSidebar"],
-body:has(.mp-auth-marker) [data-testid="stSidebarCollapsedControl"] {display:none !important}
+body:has(.mp-auth-marker) [data-testid="stExpandSidebarButton"] {display:none !important}
 body:has(.mp-auth-marker) [data-testid="stMainBlockContainer"] {max-width:1440px; padding:24px 34px 20px}
 body:has(.mp-auth-marker) [data-testid="stHeader"] {height:0}
 .mp-auth-top {margin:0 0 15px}
@@ -368,9 +376,9 @@ body .mp-page-intro p {color:var(--text-2) !important;font-size:16px !important}
 [data-testid="stPopoverBody"] [data-testid="stCaptionContainer"] p {font-size:12px !important}
 [data-testid="stSidebar"] [data-testid="stPageLink"] a {min-height:44px}
 [data-testid="stSidebar"] [data-testid="stPageLink"] a p {font-size:14px !important;white-space:normal;overflow-wrap:anywhere}
-.mp-nav-label {font-size:11px}.mp-side-caption,.mp-sidebar-note {font-size:11px}
+.mp-nav-label,.mp-sidebar-note {font-size:11px}
 [data-testid="stSidebarHeader"] {min-height:48px;height:48px}
-[data-testid="stSidebarCollapsedControl"] button, [data-testid="stSidebarHeader"] button {min-height:44px;min-width:44px}
+[data-testid="stExpandSidebarButton"], [data-testid="stSidebarHeader"] button {min-height:44px;min-width:44px}
 body:has(.mp-route[data-route="5_medical_imaging"]) .stMain {border-top:4px solid #4d8bbf}
 body:has(.mp-route[data-route="8_gemini_chatbot"]) .stMain {border-top:4px solid #9875d0}
 body:has(.mp-route[data-route="9_abilitybridge"]) .stMain {border-top:4px solid #278778}
@@ -388,15 +396,34 @@ body:has(.mp-locale[data-language="ar"]) pre, body:has(.mp-locale[data-language=
  .mp-hero-copy {min-width:0}
 }
 @media(max-width:768px) {
- [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {display:none !important}
  [data-testid="stMain"] {margin-left:0 !important;width:100% !important}
  [data-testid="stMainBlockContainer"] {padding:1.25rem 1rem max(1.5rem,env(safe-area-inset-bottom))}
- [data-testid="stHeader"] {display:none}
+ body:has(.mp-route) [data-testid="stHeader"] {height:3.25rem;min-height:3.25rem;background:var(--bg)}
+ body:has(.mp-route) [data-testid="stMainBlockContainer"] {padding-top:4rem}
+ body:has(.mp-auth-marker) [data-testid="stHeader"] {display:none}
+ /* Let the native sidebar open over the page so the workspace keeps its width. */
+ body:has(.mp-route) [data-testid="stSidebar"] {
+   position:fixed;
+   inset:0 auto 0 0;
+   height:100dvh !important;
+   max-width:min(270px,90vw);
+ }
+ body:has(.mp-route) [data-testid="stSidebarCollapseButton"] {visibility:visible}
+ [data-testid="stExpandSidebarButton"], [data-testid="stExpandSidebarButton"] [data-testid="stIconMaterial"],
+ [data-testid="stSidebarCollapseButton"] button, [data-testid="stSidebarCollapseButton"] [data-testid="stIconMaterial"] {
+   color:var(--nav-text) !important;
+ }
  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]) {flex-direction:column;gap:1rem}
  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {width:100% !important;min-width:0 !important;flex:1 1 auto !important}
- .st-key-mp_workspace_header > [data-testid="stLayoutWrapper"] > [data-testid="stHorizontalBlock"] {flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px}
- .st-key-mp_workspace_header > [data-testid="stLayoutWrapper"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child {flex:1 0 100% !important}
- .st-key-mp_workspace_header > [data-testid="stLayoutWrapper"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:not(:first-child) {width:calc(50% - 4px) !important;flex:1 1 40% !important}
+ .st-key-mp_workspace_header [data-testid="stHorizontalBlock"] {
+   display:grid;
+   grid-template-columns:repeat(2,minmax(0,1fr));
+   align-items:start;
+   gap:14px 8px;
+ }
+ .st-key-mp_workspace_header [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child {
+   grid-column:1 / -1;
+ }
  .mp-brand {font-size:22px;gap:9px}
  .mp-welcome h1 {font-size:30px}
  .mp-topbar {font-size:12px;flex-wrap:wrap;line-height:1.6}
