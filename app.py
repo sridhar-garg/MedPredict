@@ -68,6 +68,11 @@ with search_col:
 
 if submitted and search_query.strip():
     query = search_query.strip().lower()
+    from condition_library import search_topics
+    matches = search_topics(query, limit=1)
+    if matches:
+        st.session_state["mp_atlas_query"] = query
+        st.switch_page("pages/10_disease_atlas.py")
     destinations = [
         (["breast", "cancer", "tumor", "tumour"], "pages/breast_app.py"),
         (["diabetes", "diabetic", "sugar"], "pages/diabetes_app.py"),
@@ -80,10 +85,20 @@ if submitted and search_query.strip():
     for terms, page in destinations:
         if any(term in query for term in terms):
             st.switch_page(page)
-    st.info("Try diabetes, heart disease, breast cancer, blood pressure, or medical imaging. For other conditions, open Disease atlas in the sidebar.")
+    st.session_state["mp_atlas_query"] = query
+    st.switch_page("pages/10_disease_atlas.py")
 
 html('''<div class="mp-welcome"><h1>Your health, in focus.</h1>
 <p>A little understanding today. More informed decisions tomorrow.</p></div>''')
+
+from condition_library import counts
+_, common_conditions = counts()
+with st.container(border=True, key="dashboard_condition_library"):
+    html(f'<div class="mp-condition-callout"><span class="mp-eyebrow">YOUR CONDITION LIBRARY</span>'
+         f'<h2>{common_conditions} common conditions. A clearer starting point.</h2>'
+         '<p>Search by name, browse body systems, read source-linked guides and open related tools.</p></div>')
+    if st.button("Explore the condition library →", key="dashboard_open_library", type="primary"):
+        st.switch_page("pages/10_disease_atlas.py")
 
 html(f'''<section class="mp-hero" aria-label="Welcome to your health workspace">
 <img class="mp-hero-art" src="{studio_image()}" alt="Stethoscope on an indigo surface">
@@ -94,7 +109,7 @@ html(f'''<section class="mp-hero" aria-label="Welcome to your health workspace">
 <div class="mp-hero-footnote">Educational insights. Always guided by clinical advice.</div></div></section>''')
 
 html(f'''<div class="mp-capabilities">
-<div class="mp-capability">{icon("pulse",22)}<div><b>3 focused assessments</b><small>Heart, diabetes &amp; breast health</small></div></div>
+<div class="mp-capability">{icon("pulse",22)}<div><b>3 focused assessments</b><small>Heart, diabetes &amp; breast cancer</small></div></div>
 <div class="mp-capability">{icon("spark",22)}<div><b>Understand the factors</b><small>Model comparisons &amp; SHAP explanations</small></div></div>
 <div class="mp-capability">{icon("history",22)}<div><b>Your progress, together</b><small>Saved assessments &amp; family health</small></div></div>
 </div>''')
@@ -109,19 +124,19 @@ with c2:
     tool_card("Heart health", "Understand cardiovascular risk using clinical measurements and symptoms.",
               "heart", "pages/heart_app.py", "open_heart", "coral", "Assess heart health")
 with c3:
-    tool_card("Breast health", "Explore model estimates from diagnostic tumour measurements.",
-              "ribbon", "pages/breast_app.py", "open_breast", "rose", "Assess breast health")
+    tool_card("Breast cancer", "Explore model estimates from diagnostic tumour measurements.",
+              "ribbon", "pages/breast_app.py", "open_breast", "rose", "Assess breast cancer")
 
 section("More ways to understand your health", "Explore your information, find answers, and keep everything connected.", "BEYOND THE ASSESSMENT")
 tools = [
     ("Accessibility tools", "Fingerspelling recognition and text-to-Braille tools, within MedPredict.", "access", "pages/9_abilitybridge.py", "mp_ax_open_ability", "teal", "Open accessibility tools"),
     ("More health screenings", "Seven additional educational screenings, from blood pressure to kidney health.", "pulse", "pages/4_health_screenings.py", "open_addon_screenings", "amber", "Explore screenings"),
-    ("Imaging & reports", "Explore medical images and make sense of the information in health reports.", "scan", "pages/5_medical_imaging.py", "open_addon_imaging", "blue", "Explore reports"),
+    ("Imaging & reports", "Explore medical images and make sense of the information in health reports.", "scan", "pages/5_medical_imaging.py", "open_addon_imaging", "slate", "Explore reports"),
     ("AI assistant", "Ask questions about health terms, medical information, and AI research.", "chat", "pages/8_gemini_chatbot.py", "medpredict_gemini38_home", "violet", "Start a conversation"),
-    ("Disease atlas", "Discover conditions and learn from medically sourced educational information.", "book", "pages/10_disease_atlas.py", "mp_ax_open_atlas", "green", "Browse the atlas"),
+    ("Disease atlas", "Discover conditions and learn from medically sourced educational information.", "book", "pages/10_disease_atlas.py", "mp_ax_open_atlas", "olive", "Browse the atlas"),
     ("Your assessment history", "Revisit your saved assessments and explore how your results compare.", "history", "pages/history.py", "mp_open_history", "copper", "View your history"),
     ("Family health", "Manage family connections and the health information you choose to share.", "people", "pages/z_family.py", "mp_open_family", "green", "Open family health"),
-    ("Reviews & experience", "Read visitor feedback and share your own experience of MedPredict.", "people", "pages/12_reviews.py", "mp_open_reviews", "amber", "See community reviews"),
+    ("Reviews & experience", "Read visitor feedback and share your own experience of MedPredict.", "people", "pages/12_reviews.py", "mp_open_reviews", "gold", "See community reviews"),
 ]
 for start in range(0, len(tools), 3):
     for col, tool in zip(st.columns(3, gap="medium"), tools[start:start+3]):

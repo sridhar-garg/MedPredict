@@ -59,18 +59,6 @@ def step_for(value):
 
 
 
-st.markdown(
-    """
-    <div class="section-heading">
-        <span class="section-number">01</span>
-        <div>
-            <h2>Breast Cancer Risk Assessment</h2>
-            <p>Enter tumor measurements from a diagnostic report.</p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
 st.info(
     "Enter measurements from a diagnostic report. "
@@ -231,63 +219,8 @@ if st.button(
 
 
 
-st.markdown(
-    """
-    <div class="workflow-heading-fixed">
-        <span class="workflow-heading-icon">⌁</span>
-        <div>
-            <h2>How this assessment works</h2>
-            <p>From diagnostic measurements to an explainable AI result.</p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-workflow_cols = st.columns([1, 0.15, 1, 0.15, 1, 0.15, 1])
-
-steps = [
-    (
-        "01",
-        "Enter Measurements",
-        "Provide the values from the diagnostic report.",
-    ),
-    (
-        "02",
-        "Five AI Models",
-        "Multiple trained models analyze the same measurements.",
-    ),
-    (
-        "03",
-        "Compare Results",
-        "The available model probabilities are combined into an overall estimate.",
-    ),
-    (
-        "04",
-        "Explain with XAI",
-        "SHAP identifies the features that influenced the model result.",
-    ),
-]
-
-for i, (number, title, description) in enumerate(steps):
-
-    with workflow_cols[i * 2]:
-        st.markdown(
-            f"""
-            <div class="workflow-step">
-                <span>{number}</span>
-                <div>
-                    <b>{title}</b>
-                    <p>{description}</p>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    if i < 3:
-        with workflow_cols[i * 2 + 1]:
-            st.markdown(
-                '<div class="workflow-arrow">→</div>',
-                unsafe_allow_html=True,
-            )
+from ui import assessment_workflow
+assessment_workflow([('01', 'Enter Measurements', 'Provide the values from the diagnostic report.'),
+ ('02', 'Five AI Models', 'Multiple trained models analyze the same measurements.'),
+ ('03', 'Compare Results', 'The available model probabilities are combined into an overall estimate.'),
+ ('04', 'Explain with XAI', 'SHAP identifies the features that influenced the model result.')])

@@ -26,7 +26,6 @@ if not st.session_state.get("is_logged_in", False):
         st.switch_page("app.py")
     st.stop()
 
-st.title("🔬 Medical Imaging & Report Explorer")
 st.info(
     "**Research / education only — not medical diagnosis.** The uploaded image might be outside a model's training distribution. "
     "Scores are uncalibrated model outputs, not disease probabilities. Results cannot confirm or rule out an illness. "

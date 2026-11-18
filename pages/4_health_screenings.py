@@ -25,7 +25,6 @@ if not st.session_state.get("is_logged_in", False):
         st.switch_page("app.py")
     st.stop()
 
-st.title("🩺 Seven More Health Screenings")
 st.caption("Educational screening tools, not diagnostic AI. Completed results are saved to your account history.")
 st.warning("For adult users and demonstration purposes. Do not use these results for diagnosis, medication decisions, or emergencies. A healthcare professional must interpret findings and symptoms.")
 
@@ -33,7 +32,11 @@ CONDITIONS = [
     "High blood pressure", "Chronic kidney disease indicators", "Anaemia indicators",
     "High LDL cholesterol", "Obesity / BMI", "Sleep apnoea screening", "Liver fibrosis screening",
 ]
-choice = st.selectbox("Choose a screening tool", CONDITIONS)
+if "mp_screening_requested" in st.session_state:
+    requested = st.session_state.pop("mp_screening_requested")
+    if requested in CONDITIONS:
+        st.session_state["mp_screening_picker"] = requested
+choice = st.selectbox("Choose a screening tool", CONDITIONS, key="mp_screening_picker")
 
 
 def show_result(result, metric=None, source=None):

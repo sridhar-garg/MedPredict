@@ -285,21 +285,6 @@ st.markdown(
 
 
 
-st.markdown(
-    """
-    <div class="family-header">
-        <div class="family-header-icon">👨‍👩‍👧‍👦</div>
-        <div>
-            <h1 class="family-title">Family Health</h1>
-            <p class="family-subtitle">
-                Connect with family members and view their health assessments
-                only after they accept your connection.
-            </p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 

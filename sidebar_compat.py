@@ -3,7 +3,7 @@ from inspect import currentframe
 from pathlib import Path
 
 import streamlit as st
-from ui import brand, html, theme_switch, PAGE_CONTEXT, icon
+from ui import brand, html, theme_switch, PAGE_CONTEXT, PAGE_DESIGNS, page_header
 
 
 _NAV_GROUPS = [
@@ -14,7 +14,7 @@ _NAV_GROUPS = [
     ("ASSESSMENTS", [
         ("pages/diabetes_app.py", "Diabetes", "water_drop"),
         ("pages/heart_app.py", "Heart health", "favorite"),
-        ("pages/breast_app.py", "Breast health", "health_and_safety"),
+        ("pages/breast_app.py", "Breast cancer", "health_and_safety"),
         ("pages/4_health_screenings.py", "More screenings", "health_metrics"),
     ]),
     ("EXPLORE", [
@@ -49,7 +49,8 @@ def show_sidebar(current_page=None):
     restore_google_login()
     load_account_preferences()
     tone, context_title, context_copy, context_icon = PAGE_CONTEXT.get(current_path.stem, ("teal", "", "", "pulse"))
-    html(f'<span class="mp-route" data-route="{current_path.stem}" data-tone="{tone}" aria-hidden="true"></span>')
+    design = PAGE_DESIGNS.get(current_path.stem, ("dashboard",))[0]
+    html(f'<span class="mp-route" data-route="{current_path.stem}" data-tone="{tone}" data-design="{design}" aria-hidden="true"></span>')
     with st.container(key="mp_workspace_header"):
         identity, menu, settings = st.columns([3, 1, 1], vertical_alignment="center", gap="small")
         with identity:
@@ -65,9 +66,8 @@ def show_sidebar(current_page=None):
                 language_picker()
                 theme_switch()
 
-    if context_title:
-        html(f'<div class="mp-page-context"><span class="mp-context-icon">{icon(context_icon, 26)}</span>'
-             f'<div><span class="mp-eyebrow">{context_title}</span><p>{context_copy}</p></div></div>')
+    if current_path.stem in PAGE_DESIGNS:
+        page_header(current_path.stem)
 
     with st.sidebar:
         html('<div class="mp-sidebar-brand">' + brand() +

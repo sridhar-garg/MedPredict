@@ -23,7 +23,7 @@ timm
 nibabel
 pydicom
 scipy
-google-genai>=1.0
+google-genai>=2.34,<3
 streamlit-webrtc>=0.60,<1
 opencv-python-headless>=4.8,<5
 requests>=2.31

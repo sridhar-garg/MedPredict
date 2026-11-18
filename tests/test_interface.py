@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import pytest
 
 from streamlit.testing.v1 import AppTest
 
@@ -36,6 +37,7 @@ def test_dashboard_accessibility_and_all_languages(tmp_path,monkeypatch):
 def test_review_form_and_summary(tmp_path,monkeypatch):
     at,user=app(tmp_path,monkeypatch,'pages/12_reviews.py')
     assert not at.exception
+    assert [tab.label for tab in at.tabs] == ['Community reviews', 'Write a review']
     assert at.metric[0].value=='—'
     at.text_input[0].set_value('Visitor')
     at.text_input[1].set_value('Easy to navigate')
@@ -70,3 +72,71 @@ def test_catalogs_share_keys_and_keep_technical_values():
     entries=[json.loads(p.read_text()) for p in files]
     assert all(set(d)==set(entries[0]) for d in entries)
     assert all(d['Dashboard'] and d['Accessibility tools'] for d in entries)
+
+
+def test_atlas_search_selection_assistant_and_persistence(tmp_path,monkeypatch):
+    import health_assistant
+    monkeypatch.setattr(health_assistant,'load_settings',lambda *a,**kw: ('',health_assistant.DEFAULT_MODEL))
+    at,user=app(tmp_path,monkeypatch,'pages/10_disease_atlas.py')
+    assert not at.exception
+    assert len(at.selectbox(key='atlas_topic_picker').options) >= 100
+    next(x for x in at.text_input if x.label=='Search for a disease or condition').set_value('epilepsy')
+    next(b for b in at.button if b.label=='Search conditions').click().run()
+    assert not at.exception
+    assert any('Epilepsy' in x.value and 'CONDITION GUIDE' in x.value for x in at.markdown)
+    assert [tab.label for tab in at.tabs] == ['Overview','Symptoms & tests','Care & prevention']
+    at.button(key='atlas_ask_assistant').click().run()
+    assert not at.exception
+    messages=at.session_state['medpredict_gemini_messages']
+    assert messages[-1]['answer_mode']=='library'
+    assert '### Epilepsy' in messages[-1]['content']
+    assert db.get_workspace_items(user,'AI assistant')[0]['payload']['messages']==messages
+    fresh=AppTest.from_file(Path('app.py').resolve(),default_timeout=20)
+    fresh.session_state['is_logged_in']=True
+    fresh.session_state['user_id']=user
+    fresh.run().switch_page('pages/8_gemini_chatbot.py').run()
+    assert not fresh.exception
+    assert fresh.session_state['medpredict_gemini_messages']==messages
+
+
+def test_atlas_related_screening_opens_the_correct_form(tmp_path,monkeypatch):
+    at,_=app(tmp_path,monkeypatch,'pages/10_disease_atlas.py')
+    next(x for x in at.text_input if x.label=='Search for a disease or condition').set_value('obesity')
+    next(b for b in at.button if b.label=='Search conditions').click().run()
+    assert not at.exception
+    at.button(key='atlas_related_tool').click().run()
+    assert not at.exception
+    assert at.selectbox(key='mp_screening_picker').value=='Obesity / BMI'
+    assert any(x.label=='Height (cm)' for x in at.number_input)
+
+
+def test_chat_greeting_and_provider_retry(tmp_path,monkeypatch):
+    import health_assistant as assistant
+    monkeypatch.setattr(assistant,'load_settings',lambda *a,**kw: ('test-only-key',assistant.DEFAULT_MODEL))
+    def unavailable(*a,**kw):
+        raise RuntimeError('synthetic provider outage')
+    monkeypatch.setattr(assistant,'generate_online_reply',unavailable)
+    at,user=app(tmp_path,monkeypatch,'pages/8_gemini_chatbot.py')
+    at.chat_input[0].set_value('hi').run()
+    assert not at.exception
+    assert at.session_state['medpredict_gemini_messages'][-1]['provider_unavailable']
+    assert any('Hello!' in x.value for x in at.markdown)
+    at.run()
+    assert at.button(key='assistant_retry')
+    monkeypatch.setattr(assistant,'generate_online_reply',lambda *a,**kw: assistant.AssistantAnswer('Hello from online AI.','online','test-model'))
+    at.button(key='assistant_retry').click().run()
+    assert not at.exception
+    messages=at.session_state['medpredict_gemini_messages']
+    assert len(messages)==2 and messages[-1]['answer_mode']=='online'
+    assert db.get_workspace_items(user,'AI assistant')[0]['payload']['messages'][-1]['model']=='test-model'
+
+
+@pytest.mark.parametrize('route,design', [('heart_app','cardio'),('diabetes_app','metabolic'),('breast_app','breast')])
+def test_assessments_render_forms_and_the_compact_workflow(tmp_path,monkeypatch,route,design):
+    at,_=app(tmp_path,monkeypatch,'pages/'+route+'.py')
+    assert not at.exception and not at.error
+    assert at.number_input or at.selectbox
+    headers=[x.value for x in at.markdown if x.value.startswith('<header class="mp-page-hero')]
+    assert len(headers)==1 and 'mp-design-'+design in headers[0]
+    workflows=[x.value for x in at.markdown if x.value.startswith('<section class="mp-workflow')]
+    assert len(workflows)==1 and workflows[0].count('<li>')==4

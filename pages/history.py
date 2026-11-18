@@ -60,22 +60,6 @@ st.divider()
 
 
 
-st.html(
-    dedent(
-        """
-        <div class="section-heading">
-            <span class="section-number">04</span>
-            <div>
-                <h2>Health History</h2>
-                <p>
-                    Review your previous health assessments and
-                    AI-generated evaluations.
-                </p>
-            </div>
-        </div>
-        """
-    ),
-)
 
 
 
@@ -227,22 +211,6 @@ else:
 
 
 
-st.html(
-    dedent(
-        """
-        <div class="section-heading">
-            <span class="section-number">05</span>
-            <div>
-                <h2>Previous Assessments</h2>
-                <p>
-                    Open an assessment to view the submitted information
-                    and AI evaluation.
-                </p>
-            </div>
-        </div>
-        """
-    ),
-)
 
 
 if not filtered_assessments:

@@ -1,19 +1,8 @@
-"""Account-backed visitor feedback, kept separate from illustrative examples."""
+"""Account-backed community feedback and review submission."""
 import streamlit as st
 from database import get_reviews, save_review, delete_review
-from ui import html, icon
 
-DEMO_REVIEWS = [
-    dict(name='Demo reviewer 01', context='Sample interface walkthrough', rating=5,
-         title='A clear place to start', comment='The assessment choices are easy to find, and the next step is clear.'),
-    dict(name='Demo reviewer 02', context='Sample readability check', rating=4,
-         title='Explanations in plain language', comment='The explanations make the model output easier to follow. A glossary would make unfamiliar terms even clearer.'),
-    dict(name='Demo reviewer 03', context='Sample navigation check', rating=5,
-         title='Everything feels connected', comment='Moving between assessments, reports and the help tools feels straightforward.'),
-]
-
-
-def review_card(item, sample=False):
+def review_card(item):
     with st.container(border=True):
         left, right = st.columns([4,1])
         with left:
@@ -23,18 +12,16 @@ def review_card(item, sample=False):
         with right:
             st.text('★' * item['rating'] + '☆' * (5-item['rating']))
         st.markdown(item['comment'], _mp_raw=True)
-        st.caption('Fictional example' if sample else 'Submitted by a signed-in user · ' + str(item['updated_at'])[:10])
+        st.caption('Submitted by a signed-in user · ' + str(item['updated_at'])[:10])
 
 
 def render_reviews():
-    html(f'<div class="mp-page-intro"><span class="mp-eyebrow">COMMUNITY / YOUR VOICE</span>'
-         f'<h1>Made better, together.</h1><p>Share what worked, what helped, and what could be clearer.</p></div>')
     reviews = get_reviews()
     a,b,c = st.columns(3)
     a.metric('Community rating', f"{sum(x['rating'] for x in reviews)/len(reviews):.1f} / 5" if reviews else '—')
     b.metric('Submitted reviews', len(reviews))
     c.metric('Languages available', '15')
-    community, write, samples, usage = st.tabs(['Community reviews','Write a review','Sample reviews','Real-life usage'])
+    community, write = st.tabs(['Community reviews','Write a review'])
     with community:
         st.caption('Ratings reflect interface experience, not medical accuracy. One review per account; reviewers may update or delete their review.')
         if not reviews:
@@ -77,14 +64,3 @@ def render_reviews():
                     if st.button('Delete',key='delete_my_review'):
                         delete_review(user_id)
                         st.rerun()
-    with samples:
-        st.info('These three reviews are fictional examples from the original design. They are excluded from community ratings.')
-        for item in DEMO_REVIEWS:
-            review_card(item,sample=True)
-    with usage:
-        st.subheader('Real-life usage')
-        st.write('The community rating above is calculated from submitted reviews only. No clinical validation or patient outcomes are claimed.')
-        for context in ['Assessments','Reports','AI assistant','Accessibility tools','Family health','Dashboard']:
-            count=sum(x['context']==context for x in reviews)
-            if count: st.metric(context,count)
-        if not reviews: st.info('No visitor feedback has been submitted yet.')

@@ -247,7 +247,7 @@ except Exception:
 
 
 
-st.html('<div class="profile-header">My Profile 👤</div>')
+
 
 st.html(
     '<div class="profile-subtitle">'

@@ -13,16 +13,31 @@ PAGE_CONTEXT = {
     "app": ("teal", "", "", "pulse"),
     "heart_app": ("coral", "HEART HEALTH", "Explore cardiovascular measurements and the factors behind the estimate.", "heart"),
     "diabetes_app": ("blue", "DIABETES", "Bring symptoms and health indicators into a clearer picture.", "drop"),
-    "breast_app": ("rose", "BREAST HEALTH", "Understand model estimates from diagnostic measurements.", "ribbon"),
+    "breast_app": ("rose", "BREAST CANCER", "Understand model estimates from diagnostic measurements.", "ribbon"),
     "4_health_screenings": ("amber", "EVERYDAY SCREENINGS", "Check measurements with transparent, source-linked screening tools.", "pulse"),
-    "5_medical_imaging": ("blue", "IMAGING & REPORTS", "Explore scans and report measurements in a focused workspace.", "scan"),
+    "5_medical_imaging": ("slate", "IMAGING & REPORTS", "Explore scans and report measurements in a focused workspace.", "scan"),
     "8_gemini_chatbot": ("violet", "AI ASSISTANT", "Ask questions, understand unfamiliar terms and revisit conversations.", "chat"),
     "9_abilitybridge": ("teal", "ACCESSIBILITY", "Communicate with fingerspelling and explore Braille within MedPredict.", "access"),
-    "10_disease_atlas": ("green", "HEALTH KNOWLEDGE", "Find context and learn from medically sourced information.", "book"),
+    "10_disease_atlas": ("olive", "HEALTH KNOWLEDGE", "Find context and learn from medically sourced information.", "book"),
     "history": ("copper", "YOUR SAVED WORK", "Return to your assessments, reports and saved conversations.", "history"),
     "z_family": ("green", "FAMILY HEALTH", "Keep family connections and sharing permissions in one place.", "people"),
-    "profile": ("teal", "YOUR ACCOUNT", "Manage your profile, sign-in details and personal preferences.", "shield"),
-    "12_reviews": ("amber", "COMMUNITY", "Read real visitor feedback and share your experience.", "people"),
+    "profile": ("cyan", "YOUR ACCOUNT", "Manage your profile, sign-in details and personal preferences.", "shield"),
+    "12_reviews": ("gold", "COMMUNITY", "Read real visitor feedback and share your experience.", "people"),
+}
+
+PAGE_DESIGNS = {
+    "heart_app": ("cardio", "Heart health", "Clinical measurements · Model comparison · Explainable factors", "pulse"),
+    "diabetes_app": ("metabolic", "Diabetes assessment", "Symptoms and indicators · A structured view of your information", "drop"),
+    "breast_app": ("breast", "Breast cancer", "Diagnostic measurements · Clear explanations · Your saved results", "ribbon"),
+    "4_health_screenings": ("screening", "Check the numbers that matter.", "Seven practical screening tools, with their sources and calculations.", "07"),
+    "5_medical_imaging": ("imaging", "A clearer view of your reports.", "A focused workspace for medical images and report measurements.", "scan"),
+    "8_gemini_chatbot": ("conversation", "Ask. Understand. Explore.", "A conversation space for health information and questions.", "chat"),
+    "9_abilitybridge": ("access", "More ways to communicate.", "Fingerspelling and Braille tools, designed to be easy to reach.", "⠿"),
+    "10_disease_atlas": ("library", "Conditions, clearly explained.", "Browse common conditions and explore source-linked health information.", "A–Z"),
+    "history": ("timeline", "Your health timeline.", "Assessments, reports and conversations, ready when you return.", "history"),
+    "z_family": ("family", "Care, connected.", "Your family circle, invitations and sharing permissions.", "people"),
+    "profile": ("account", "Your personal space.", "Profile, sign-in details and preferences in one place.", "shield"),
+    "12_reviews": ("community", "Your voice makes a difference.", "Read community feedback and share your experience.", "“"),
 }
 
 _ICONS = {
@@ -83,7 +98,7 @@ def apply_theme():
     theme = st.session_state.healthai_theme
     language = st.session_state.get("mp_language", "en")
     html(f'<span class="mp-locale" data-language="{escape(language)}" lang="{escape(language)}"></span>')
-    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="colour-google-5" aria-hidden="true"></span>')
+    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="exhibition-personality-6" aria-hidden="true"></span>')
 
 
 def _change_theme():
@@ -100,6 +115,23 @@ def theme_switch():
 def section(title, description="", eyebrow=""):
     html(f'<div class="mp-section"><span class="mp-eyebrow">{escape(eyebrow)}</span>'
          f'<h2>{escape(title)}</h2><p>{escape(description)}</p></div>')
+
+
+def page_header(route):
+    design, title, copy, symbol = PAGE_DESIGNS[route]
+    tone, label, _, _ = PAGE_CONTEXT[route]
+    art = icon(symbol, 110) if symbol in _ICONS else escape(symbol)
+    html(f'<header class="mp-page-hero mp-design-{design}" data-tone="{tone}">'
+         f'<div class="mp-page-hero-copy"><span class="mp-hero-kicker">MEDPREDICT / {label}</span>'
+         f'<h1>{title}</h1><p>{copy}</p></div><div class="mp-page-hero-art" aria-hidden="true">{art}</div></header>')
+
+
+def assessment_workflow(steps):
+    cards = ''.join(f'<li><span class="mp-process-number">{escape(number)}</span>'
+                    f'<h3>{escape(title)}</h3><p>{escape(copy)}</p></li>' for number, title, copy in steps)
+    html('<section class="mp-workflow"><div class="mp-workflow-heading"><span class="mp-eyebrow">THE PROCESS</span>'
+         '<h2>How this assessment works</h2><p>Follow your information from input to explanation.</p></div>'
+         f'<ol class="mp-process-grid">{cards}</ol></section>')
 
 
 def tool_card(name, description, glyph, page, key, color="violet", label="Open tool"):

@@ -1,20 +1,32 @@
-"""Gemini 3.8 Flash text-chat support for MedPredict.
+"""Online Gemini support and an explicitly labelled offline condition guide.
 
 Security boundaries:
 - No keys are embedded in code or printed.
-- Chat history is kept by Streamlit in the browser session, not in SQLite.
+- Completed exchanges are saved by the caller to the account workspace.
 - No access to medical scans, accounts or patient records unless the user types
   text into the chat box; Streamlit does not automatically forward data.
 """
 from __future__ import annotations
 
 import os
+import logging
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 DEFAULT_MODEL = "gemini-3.8-flash"
 MAX_USER_CHARS = 3000
 MAX_HISTORY_MESSAGES = 12
+logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class AssistantAnswer:
+    text: str
+    mode: str
+    model: str = ""
+    provider_unavailable: bool = False
+    availability_message: str = ""
 
 SYSTEM_INSTRUCTION = """You are MedPredict AI, a helpful educational medical-research assistant.
 You help users understand terminology, evaluate research, learn how machine-learning
@@ -84,7 +96,7 @@ def to_genai_contents(history: list[dict[str, str]]) -> list[Any]:
     ]
 
 
-def generate_reply(history: list[dict[str, str]], *, api_key: str, model: str) -> str:
+def generate_online_reply(history: list[dict[str, str]], *, api_key: str, model: str) -> AssistantAnswer:
     """Send last conversation turns to Gemini without server-side chat storage.
 
     The caller must append the newest user turn to `history` before calling.
@@ -95,24 +107,89 @@ def generate_reply(history: list[dict[str, str]], *, api_key: str, model: str) -
         raise ValueError("The most recent turn must be a user message")
     from google import genai
     from google.genai import types
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=20000, retry_options=types.HttpRetryOptions(attempts=1)))
     try:
-        response = client.models.generate_content(
-            model=model,
-            contents=to_genai_contents(history),
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_INSTRUCTION,
-                max_output_tokens=2500,
-            ),
-        )
+        def request(selected):
+            options = dict(system_instruction=SYSTEM_INSTRUCTION, max_output_tokens=4096)
+            if selected.removeprefix("models/").startswith("gemini-3"):
+                options["thinking_config"] = types.ThinkingConfig(thinking_level="low")
+            return client.models.generate_content(model=selected, contents=to_genai_contents(history),
+                                                  config=types.GenerateContentConfig(**options))
+        selected = model.removeprefix("models/")
+        try:
+            response = request(selected)
+        except Exception as exc:
+            # Only switch models after the provider reports a model error. Never
+            # turn permission/quota failures into repeated chargeable requests.
+            code = getattr(exc, "code", getattr(exc, "status_code", None))
+            if str(code) not in ("400", "404") or (str(code) == "400" and "model" not in str(exc).lower()):
+                raise
+            available = {entry.name.removeprefix("models/") for entry in client.models.list()
+                         if "generateContent" in (getattr(entry, "supported_actions", None) or [])}
+            preferred = (DEFAULT_MODEL, "gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite")
+            replacement = next((name for name in preferred if name != selected and name in available), None)
+            if replacement is None:
+                raise
+            selected = replacement
+            response = request(selected)
         result = (getattr(response, "text", None) or "").strip()
         if not result:
             raise RuntimeError("The model did not return a text response. Please retry.")
-        return result
+        return AssistantAnswer(result, "online", selected)
     finally:
         close = getattr(client, "close", None)
         if callable(close):
             close()
+
+
+def generate_reply(history, *, api_key, model):
+    """Compatibility wrapper for existing callers."""
+    return generate_online_reply(history, api_key=api_key, model=model).text
+
+
+def library_reply(prompt):
+    """Deterministic source retrieval; it is never presented as a model response."""
+    from condition_library import library, normalize, search_topics
+    query = normalize(prompt)
+    if query in ("hi", "hello", "hey", "namaste", "good morning", "good evening"):
+        return "Hello! I can help you explore health conditions and explain terms. Try **What is epilepsy?**, **Explain asthma**, or **What is AUROC?** You can also browse the condition library."
+    if "auroc" in query or "roc curve" in query:
+        return "**AUROC** describes how well a classifier ranks positive cases above negative cases across decision thresholds. A value near 0.5 is similar to chance ranking; 1.0 means perfect ranking in that evaluated dataset. It does not tell you whether an individual person has a disease, and it does not establish that a model works reliably in a different population."
+    if "shap" in query:
+        return "**SHAP** explains how input features influence a model's prediction relative to a baseline. A contribution describes the model's behaviour; it does not prove that a feature caused a disease. In an assessment, compare the feature explanation with the model limitations and the information you entered."
+    if "ct" in query.split() and "mri" in query.split():
+        return "**CT** uses X-rays to create cross-sectional images. **MRI** uses magnetic fields and radio waves. They show different kinds of detail and are chosen for different clinical questions. A qualified professional decides which examination is appropriate.\n\nSources: [CT](https://medlineplus.gov/ctscans.html) · [MRI](https://medlineplus.gov/mriscans.html)."
+    matches = search_topics(prompt, limit=3)
+    if not matches:
+        found = []
+        for topic in library()["topics"]:
+            names = [normalize(topic["title"])] + [normalize(x) for x in topic["aliases"]]
+            if any(len(name) >= 5 and f" {name} " in f" {query} " for name in names):
+                found.append(topic)
+        matches = sorted(found, key=lambda x: (not x["featured"], -len(x["title"])))[:2]
+    if matches:
+        topic = matches[0]
+        paragraphs = topic["summary"].split("\n\n")[:4]
+        return f"### {topic['title']}\n\n" + "\n\n".join(paragraphs) + f"\n\n[Read the MedlinePlus source]({topic['url']}). This is general health information, not a diagnosis for you."
+    return "I can look up condition information and explain common assessment terms. Try a condition name such as **epilepsy**, **asthma**, **migraine** or **dengue**, or ask about **SHAP** or **AUROC**. For an open-ended conversation, choose Online AI when it is available."
+
+
+def answer_question(history, *, api_key="", model=DEFAULT_MODEL, use_online=True):
+    if not history or history[-1].get("role") != "user":
+        raise ValueError("The most recent turn must be a user message")
+    if use_online and api_key:
+        try:
+            return generate_online_reply(history, api_key=api_key, model=model)
+        except Exception as exc:
+            code = getattr(exc, "code", getattr(exc, "status_code", "unavailable"))
+            logger.warning("Online assistant failed: %s, status=%s", type(exc).__name__, code)
+            status = str(code)
+            message = ("Online chat has reached its usage limit. Please try again later." if status == "429"
+                       else "The online AI model is unavailable right now." if status == "404"
+                       else "Online AI could not respond right now. You can retry later.")
+            return AssistantAnswer(library_reply(history[-1]["content"]), "library", provider_unavailable=True,
+                                   availability_message=message)
+    return AssistantAnswer(library_reply(history[-1]["content"]), "library")
 
 
 def friendly_error(error: Exception) -> str:

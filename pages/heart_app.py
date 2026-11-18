@@ -77,18 +77,6 @@ def load_features(filename):
 
 
 
-st.markdown(
-    """
-    <div class="section-heading">
-        <span class="section-number">01</span>
-        <div>
-            <h2>Heart Disease Risk Assessment</h2>
-            <p>Enter the patient's cardiovascular measurements and clinical information.</p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 
@@ -336,64 +324,8 @@ if st.button(
 
 
 
-st.markdown(
-    """
-    <div class="healthai-workflow">
-        <div class="workflow-title">
-            <span>⌁</span>
-            <div>
-                <h2>How this assessment works</h2>
-                <p>From clinical measurements to an explainable AI result.</p>
-            </div>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-workflow_cols = st.columns([1, 0.15, 1, 0.15, 1, 0.15, 1])
-
-steps = [
-    (
-        "01",
-        "Enter Information",
-        "Provide the patient's cardiovascular measurements.",
-    ),
-    (
-        "02",
-        "Five AI Models",
-        "Multiple trained models analyze the same measurements.",
-    ),
-    (
-        "03",
-        "Compare Results",
-        "The available model probabilities are combined into an overall estimate.",
-    ),
-    (
-        "04",
-        "Explain with XAI",
-        "SHAP identifies the features that influenced the model result.",
-    ),
-]
-
-for i, (number, title, description) in enumerate(steps):
-    with workflow_cols[i * 2]:
-        st.markdown(
-            f"""
-            <div class="workflow-step">
-                <span>{number}</span>
-                <div>
-                    <b>{title}</b>
-                    <p>{description}</p>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    if i < 3:
-        with workflow_cols[i * 2 + 1]:
-            st.markdown(
-                '<div class="workflow-arrow">→</div>',
-                unsafe_allow_html=True,
-            )
+from ui import assessment_workflow
+assessment_workflow([('01', 'Enter Information', "Provide the patient's cardiovascular measurements."),
+ ('02', 'Five AI Models', 'Multiple trained models analyze the same measurements.'),
+ ('03', 'Compare Results', 'The available model probabilities are combined into an overall estimate.'),
+ ('04', 'Explain with XAI', 'SHAP identifies the features that influenced the model result.')])

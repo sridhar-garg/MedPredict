@@ -1,0 +1,151 @@
+Acne
+Acute Bronchitis
+Alcohol Use Disorder (AUD)
+Allergy
+Alzheimer's Disease
+Anemia
+Angina
+Anxiety
+Appendicitis
+Asthma
+Athlete's Foot
+Atrial Fibrillation
+Attention Deficit Hyperactivity Disorder
+Autism Spectrum Disorder
+Back Pain
+Bell's Palsy
+Bipolar Disorder
+Brain Tumors
+Breast Cancer
+Bursitis
+COPD
+COVID-19 (Coronavirus Disease 2019)
+Cataract
+Celiac Disease
+Cellulitis
+Cervical Cancer
+Chickenpox
+Chikungunya
+Chlamydia Infections
+Cholesterol
+Chronic Bronchitis
+Chronic Kidney Disease
+Cirrhosis
+Colorectal Cancer
+Common Cold
+Constipation
+Coronary Artery Disease
+Crohn's Disease
+Dengue
+Depression
+Diabetes
+Diabetes Type 1
+Diabetes Type 2
+Diabetic Eye Problems
+Diarrhea
+Diverticulosis and Diverticulitis
+Ear Infections
+Eating Disorders
+Eczema
+Endometriosis
+Enlarged Prostate (BPH)
+Epilepsy
+Erectile Dysfunction
+Esophageal Cancer
+Fibromyalgia
+Flu
+Food Allergy
+Gallstones
+Gastroenteritis
+Genital Herpes
+Glaucoma
+Gonorrhea
+Gout
+Gum Disease
+HIV
+HPV
+Hair Loss
+Headache
+Hearing Disorders and Deafness
+Heart Attack
+Heart Failure
+Heart Valve Diseases
+Hemorrhoids
+Hepatitis A
+Hepatitis B
+Hepatitis C
+Herpes Simplex
+High Blood Pressure
+Hives
+Hyperthyroidism
+Hypothyroidism
+Insomnia
+Irritable Bowel Syndrome
+Kidney Stones
+Lactose Intolerance
+Leukemia
+Liver Cancer
+Lung Cancer
+Lupus
+Lymphoma
+Macular Degeneration
+Malaria
+Measles
+Menopause
+Metabolic Syndrome
+Migraine
+Multiple Sclerosis
+Mumps
+Obesity
+Obsessive-Compulsive Disorder
+Oral Cancer
+Osteoarthritis
+Osteoporosis
+Ovarian Cancer
+Pancreatic Cancer
+Pancreatitis
+Panic Disorder
+Parkinson's Disease
+Peptic Ulcer
+Peripheral Nerve Disorders
+Pink Eye
+Pneumonia
+Polycystic Ovary Syndrome
+Post-Traumatic Stress Disorder
+Prediabetes
+Premenstrual Syndrome
+Prostate Cancer
+Prostate Diseases
+Psoriasis
+Rabies
+Rheumatoid Arthritis
+Rosacea
+Rubella
+Scabies
+Schizophrenia
+Sciatica
+Shingles
+Sickle Cell Disease
+Sinusitis
+Skin Cancer
+Sleep Apnea
+Sprains and Strains
+Steatotic Liver Disease
+Stomach Cancer
+Stroke
+Syphilis
+Tendinitis
+Tetanus
+Thalassemia
+Thyroid Cancer
+Thyroid Diseases
+Tonsillitis
+Tooth Decay
+Tuberculosis
+Ulcerative Colitis
+Urinary Incontinence
+Urinary Tract Infections
+Uterine Fibroids
+Vitamin D Deficiency
+Warts
+Whooping Cough
