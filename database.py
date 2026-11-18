@@ -10,7 +10,8 @@ DATABASE_NAME = "healthai.db"
 
 
 def get_connection():
-    return sqlite3.connect(DATABASE_NAME)
+    from storage import connect
+    return connect(DATABASE_NAME)
 
 
 
@@ -824,16 +825,26 @@ def process_family_email_action(connection_id, recipient_user_id, action):
 
 
 def initialize_database():
+    from storage import database_url
+    if database_url():
+        # Hosted schema is deployed separately; never run SQLite DDL against Postgres.
+        conn = get_connection()
+        try:
+            conn.cursor().execute("SELECT id FROM users LIMIT 0")
+        finally:
+            conn.close()
+        return
     create_users_table()
     create_health_assessments_table()
     create_family_connections_table()
+    create_workspace_tables()
 
 
 
 
 
 
-if __name__ == "__main__":
+if __name__ == "__disabled__":
 
     initialize_database()
 
@@ -841,3 +852,129 @@ if __name__ == "__main__":
         "Database, users table, health assessments table and "
         "family connections table created successfully!"
     )
+
+
+
+def create_workspace_tables():
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS reviews (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+            display_name TEXT NOT NULL, rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
+            title TEXT NOT NULL, comment TEXT NOT NULL, context TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+        cur.execute("""CREATE TABLE IF NOT EXISTS workspace_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            kind TEXT NOT NULL, title TEXT NOT NULL, payload TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+        cur.execute("""CREATE TABLE IF NOT EXISTS user_preferences (
+            user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+            language TEXT NOT NULL DEFAULT 'en', theme TEXT NOT NULL DEFAULT 'light')""")
+        cur.execute("CREATE INDEX IF NOT EXISTS workspace_user_date ON workspace_items(user_id, created_at)")
+        cur.execute("CREATE INDEX IF NOT EXISTS assessments_user_date ON health_assessments(user_id, created_at)")
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def save_review(user_id, display_name, rating, title, comment, context):
+    if not user_id or not get_user_profile(user_id):
+        raise ValueError("Sign in to submit a review.")
+    display_name, title, comment, context = [str(x).strip() for x in (display_name, title, comment, context)]
+    if not 1 <= int(rating) <= 5 or not 2 <= len(display_name) <= 60 or not 3 <= len(title) <= 100 or not 10 <= len(comment) <= 1500 or not 1 <= len(context) <= 80:
+        raise ValueError("Please complete all review fields within the displayed limits.")
+    conn = get_connection()
+    try:
+        conn.cursor().execute("""INSERT INTO reviews(user_id,display_name,rating,title,comment,context)
+            VALUES(?,?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET
+            display_name=excluded.display_name,rating=excluded.rating,title=excluded.title,
+            comment=excluded.comment,context=excluded.context,updated_at=CURRENT_TIMESTAMP""",
+            (user_id, display_name, int(rating), title, comment, context))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_reviews(user_id=None):
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id,user_id,display_name,rating,title,comment,context,created_at,updated_at FROM reviews" +
+                    (" WHERE user_id=?" if user_id is not None else "") + " ORDER BY updated_at DESC, id DESC",
+                    (user_id,) if user_id is not None else ())
+        keys = ('id','user_id','name','rating','title','comment','context','created_at','updated_at')
+        return [dict(zip(keys, row)) for row in cur.fetchall()]
+    finally:
+        conn.close()
+
+
+def delete_review(user_id):
+    conn = get_connection()
+    try:
+        conn.cursor().execute("DELETE FROM reviews WHERE user_id=?", (user_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def save_workspace_item(user_id, kind, title, payload):
+    if not user_id:
+        raise ValueError("Sign in to save your work.")
+    data = json.dumps(payload, ensure_ascii=False, default=str)
+    if len(data.encode('utf-8')) > 1_000_000:
+        raise ValueError("This saved item is too large.")
+    conn = get_connection()
+    try:
+        conn.cursor().execute("INSERT INTO workspace_items(user_id,kind,title,payload) VALUES(?,?,?,?)",
+                              (user_id, kind, title, data))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_workspace_items(user_id, kind=None):
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id,kind,title,payload,created_at FROM workspace_items WHERE user_id=?" +
+                    (" AND kind=?" if kind else "") + " ORDER BY created_at DESC,id DESC", (user_id,kind) if kind else (user_id,))
+        return [dict(id=r[0], kind=r[1], title=r[2], payload=json.loads(r[3]), created_at=str(r[4])) for r in cur.fetchall()]
+    finally:
+        conn.close()
+
+
+def delete_workspace_item(user_id, item_id):
+    conn = get_connection()
+    try:
+        conn.cursor().execute("DELETE FROM workspace_items WHERE id=? AND user_id=?", (item_id,user_id))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def load_preferences(user_id):
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT language,theme FROM user_preferences WHERE user_id=?", (user_id,))
+        row = cur.fetchone()
+        return dict(language=row[0],theme=row[1]) if row else {}
+    finally:
+        conn.close()
+
+
+def save_preferences(user_id, language, theme):
+    conn = get_connection()
+    try:
+        conn.cursor().execute("""INSERT INTO user_preferences(user_id,language,theme) VALUES(?,?,?)
+            ON CONFLICT(user_id) DO UPDATE SET language=excluded.language,theme=excluded.theme""", (user_id,language,theme))
+        conn.commit()
+    finally:
+        conn.close()
+
+if __name__ == "__main__":
+    initialize_database()

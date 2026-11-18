@@ -4,3 +4,11 @@ __pycache__/
 .env
 .streamlit/secrets.toml
 node_modules/
+
+# Local preview and verification only
+.preview/
+preview_app.py
+package.json
+.pytest_cache/
+*.db-shm
+*.db-wal

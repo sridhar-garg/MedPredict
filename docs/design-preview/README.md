@@ -1,5 +1,7 @@
 # MedPredict design refresh
 
+The latest exhibition update and phone validation are documented in [MOBILE_UPDATE.md](../MOBILE_UPDATE.md).
+
 The restored homepage and sign-in used several HealthAI/HealthGuard identities, a long decorative introduction, and inconsistent feature navigation. This refresh gives MedPredict one indigo/violet identity and puts the existing assessments directly after a compact welcome panel.
 
 ## Design references
@@ -35,7 +37,7 @@ The chat screenshots use native Streamlit widgets with a local test conversation
 
 ## Deployment
 
-Run the existing entry point, `streamlit run app.py`. No new Python dependencies, environment variables or data migration are required. The existing app is https://medpredictgit-gwv3verd6e57qygyixu5zs.streamlit.app/ and its source link points to `design/reference-inspired-ui`. These changes remain on that branch; `main` is not modified. The updated appearance has been verified locally, not in an authenticated session on the hosted app. The local preview harness is excluded from Git.
+Run the existing entry point, `streamlit run app.py`. The current update pins Streamlit 1.67.0 and adds a server-only Postgres driver. See [DATABASE_SETUP.md](../DATABASE_SETUP.md) for optional hosted persistence, required secret configuration and migration of an existing SQLite database. Local SQLite remains the fallback when no hosted connection is configured. The existing app is https://medpredictgit-gwv3verd6e57qygyixu5zs.streamlit.app/ and its source link points to `design/reference-inspired-ui`. These changes remain on that branch; `main` is not modified. The updated appearance has been verified locally, not in an authenticated session on the hosted app. The local preview harness is excluded from Git.
 
 ## Image asset
 
@@ -44,3 +46,13 @@ Run the existing entry point, `streamlit run app.py`. No new Python dependencies
 Generation prompt:
 
 > Use case: product-mockup. Asset type: a polished background photograph for the MedPredict healthcare AI website sign-in page. Generate a premium editorial studio still life of a real silver stethoscope with deep violet tubing, arranged in a loose natural curved loop on a matte midnight-indigo surface, with a small frosted glass sphere and soft out-of-focus lavender light in the upper right. Rich dark blue and violet palette, subtle realistic reflections, soft directional studio light, tangible fine textures, sophisticated health technology mood, minimal and clean. Portrait 2:3 composition. Objects concentrated in the upper and middle-right half; lower left and bottom third should be dark calm negative space to place website heading text later. No text, no lettering, no numbers, no logos, no watermark, no screens, no charts, no human anatomy or people.
+
+## Updated phone and desktop previews
+
+These screenshots use synthetic local QA sessions.
+
+![Phone, light appearance](phone-light.jpg)
+
+![Phone, dark appearance](phone-dark.jpg)
+
+![Updated desktop dashboard](desktop-exhibition.jpg)

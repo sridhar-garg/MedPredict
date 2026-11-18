@@ -13,7 +13,7 @@ from medical_addon_core import (
 from imaging_models import MODALITIES, lookup_model, infer
 from utils import apply_custom_css
 
-st.set_page_config(page_title="Medical Imaging & Reports | MedPredict", page_icon="🔬", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Medical Imaging & Reports | MedPredict", page_icon="🔬", layout="wide", initial_sidebar_state="auto")
 
 
 from sidebar_compat import show_sidebar
@@ -142,6 +142,8 @@ if is_report:
         if "LDL (mg/dL)" in pairs:
             r = assess_ldl(pairs["LDL (mg/dL)"])
             st.info(f"LDL screening: {r['label']} — {r['detail']}")
+        from workspace import save_work
+        save_work('Reports', 'Health report reading', {'verified_measurements':pairs, 'age':age, 'sex':sex})
         st.caption("All other extracted values are displayed for review only. Talk to a healthcare professional about abnormal results.")
 
     from result_explanations import explain_report
@@ -176,6 +178,9 @@ if st.button("Run research image model", disabled=not agree, type="primary"):
         st.dataframe(scores, hide_index=True, use_container_width=True)
         st.bar_chart(scores.set_index("Model label"))
         st.error("These values are NOT diagnostic confidence or patient disease probabilities. A high score may still be wrong.")
+        from workspace import save_work
+        save_work('Imaging', f'{modality} / {part}', {'modality':modality,'body_part':part,'model':spec.repo_id,'ranked':ranked,
+                  'note':'Uncalibrated research scores, not disease probabilities. Original image is not retained.'})
         st.session_state["mp_ax_imaging_result"] = {"route": (modality,part), "ranked": ranked}
     except ImportError as exc:
         st.error(f"Required model dependency is missing: {exc}. Run the model-requirements install command.")

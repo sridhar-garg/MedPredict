@@ -17,7 +17,7 @@ st.set_page_config(
     page_title="Health History | MedPredict",
     page_icon="📜",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 
@@ -49,6 +49,11 @@ user_id = st.session_state.get("user_id")
 if user_id is None:
     st.error("User session could not be found.")
     st.stop()
+
+
+from workspace import render_saved_workspace
+render_saved_workspace()
+st.divider()
 
 
 
@@ -175,7 +180,9 @@ with summary4:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-available_diseases = [
+available_available_diseases += sorted(present_diseases - set(available_diseases))
+
+diseases = [
     "All Diseases",
     "Breast Cancer",
     "Diabetes",
@@ -186,6 +193,8 @@ present_diseases = {
     str(assessment[1]).strip()
     for assessment in assessments
 }
+
+available_diseases += sorted(present_diseases - set(available_diseases))
 
 diseases = [
     disease

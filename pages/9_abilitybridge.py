@@ -34,16 +34,19 @@ if mode=="Braille":
     st.download_button("Download Braille text",converted.encode('utf-8'),file_name="medpredict_braille.txt",mime="text/plain")
     sample=st.text_input("Braille to text",value="⠓⠑⠇⠇⠕",max_chars=500)
     st.code(braille_to_text(sample))
+    from workspace import save_control
+    save_control('Accessibility tools', 'Braille conversion', {'text':text,'braille':converted}, 'save_braille')
     st.divider()
     st.subheader("Learn the six-dot cell")
     selected=st.selectbox("Explore a letter",list("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),index=0)
     char=text_to_braille(selected.lower()); active=set(braille_dots(char))
     left,right=st.columns([2,3])
     with left:
-        for a,b in ((1,4),(2,5),(3,6)):
-            a1,a2=st.columns(2)
-            with a1:st.markdown(f"### {'🔵' if a in active else '⚪'}")
-            with a2:st.markdown(f"### {'🔵' if b in active else '⚪'}")
+        with st.container(key='braille_cell'):
+            for a,b in ((1,4),(2,5),(3,6)):
+                a1,a2=st.columns(2)
+                with a1:st.markdown(f"### {'🔵' if a in active else '⚪'}")
+                with a2:st.markdown(f"### {'🔵' if b in active else '⚪'}")
     with right:
         st.metric(f"Letter {selected}",char)
         st.write("Raised dots:",", ".join(map(str,sorted(active))))
@@ -136,6 +139,8 @@ def live_typing():
     with state.lock:
         snap=state.get_status()
     st.subheader("Live sign typing")
+    from workspace import save_control
+    save_control('Accessibility tools', f'{language} fingerspelling', {'language':language,'text':snap['typed']}, f'save_sign_{language}')
     st.code(snap['typed'] if snap['typed'] else '(Hold a sign for 0.4 seconds)',language='text')
     st.caption(f"Detected: {snap['label'] or 'uncertain / no hand'} · "
                f"model score: {snap['score']:.0%} · "

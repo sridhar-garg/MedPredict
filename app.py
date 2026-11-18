@@ -2,7 +2,7 @@
 import streamlit as st
 
 st.set_page_config(page_title="Dashboard | MedPredict", page_icon="assets/favicon.svg",
-                   layout="wide", initial_sidebar_state="expanded")
+                   layout="wide", initial_sidebar_state="auto")
 
 from auth import verify_family_email_token
 from database import initialize_database, process_family_email_action
@@ -111,21 +111,19 @@ with c3:
 
 section("More ways to understand your health", "Explore your information, find answers, and keep everything connected.", "BEYOND THE ASSESSMENT")
 tools = [
+    ("Accessibility tools", "Fingerspelling recognition and text-to-Braille tools, within MedPredict.", "access", "pages/9_abilitybridge.py", "mp_ax_open_ability", "teal", "Open accessibility tools"),
     ("More health screenings", "Seven additional educational screenings, from blood pressure to kidney health.", "pulse", "pages/4_health_screenings.py", "open_addon_screenings", "teal", "Explore screenings"),
     ("Imaging & reports", "Explore medical images and make sense of the information in health reports.", "scan", "pages/5_medical_imaging.py", "open_addon_imaging", "blue", "Explore reports"),
     ("AI assistant", "Ask questions about health terms, medical information, and AI research.", "chat", "pages/8_gemini_chatbot.py", "medpredict_gemini38_home", "violet", "Start a conversation"),
     ("Disease atlas", "Discover conditions and learn from medically sourced educational information.", "book", "pages/10_disease_atlas.py", "mp_ax_open_atlas", "blue", "Browse the atlas"),
     ("Your assessment history", "Revisit your saved assessments and explore how your results compare.", "history", "pages/history.py", "mp_open_history", "violet", "View your history"),
     ("Family health", "Manage family connections and the health information you choose to share.", "people", "pages/z_family.py", "mp_open_family", "teal", "Open family health"),
+    ("Reviews & experience", "Read visitor feedback and share your own experience of MedPredict.", "people", "pages/12_reviews.py", "mp_open_reviews", "amber", "See community reviews"),
 ]
 for start in range(0, len(tools), 3):
     for col, tool in zip(st.columns(3, gap="medium"), tools[start:start+3]):
         with col:
             tool_card(*tool)
-with st.expander("Accessibility in MedPredict"):
-    st.write("Use fingerspelling recognition and text-to-Braille tools within your MedPredict workspace.")
-    if st.button("Open accessibility tools →", key="mp_ax_open_ability"):
-        st.switch_page("pages/9_abilitybridge.py")
 st.caption("Additional screenings use educational formulas. Imaging models are experimental; neither replaces clinical assessment.")
 
 section("A clearer path from information to insight", eyebrow="HOW IT WORKS")

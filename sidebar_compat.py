@@ -41,6 +41,27 @@ def show_sidebar(current_page=None):
     current_path = Path(current_page).resolve()
     root = Path(__file__).resolve().parent
 
+    from database import initialize_database
+    from i18n import install_translations, load_account_preferences, language_picker
+    install_translations()
+    initialize_database()
+    load_account_preferences()
+    html(f'<span class="mp-route" data-route="{current_path.stem}" aria-hidden="true"></span>')
+    with st.container(key="mp_workspace_header"):
+        identity, menu, settings = st.columns([3, 1, 1], vertical_alignment="center", gap="small")
+        with identity:
+            html(brand())
+        with menu:
+            with st.popover("Menu", icon=":material/menu:", use_container_width=True):
+                for heading, links in _NAV_GROUPS:
+                    st.caption(heading)
+                    for path, label, glyph in links:
+                        st.page_link(path, label=label, icon=f":material/{glyph}:")
+        with settings:
+            with st.popover("Settings", icon=":material/tune:", use_container_width=True):
+                language_picker()
+                theme_switch()
+
     with st.sidebar:
         html('<div class="mp-sidebar-brand">' + brand() +
              '<div class="mp-side-caption">A clearer perspective</div></div>')
@@ -53,6 +74,5 @@ def show_sidebar(current_page=None):
                     with st.container(key=container_key):
                         st.page_link(path, label=label, icon=f":material/{glyph}:")
         with st.container(key="mp_sidebar_footer"):
-            theme_switch()
             html('<div class="mp-sidebar-note">Educational prototype<br>'
                  '<span>Not a medical diagnosis.</span></div>')

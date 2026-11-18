@@ -37,7 +37,7 @@ st.markdown(
         min-width: 100% !important;
         max-width: 100% !important;
         min-height: 52px !important;
-        white-space: nowrap !important;
+        white-space: normal !important;
         writing-mode: horizontal-tb !important;
         text-orientation: mixed !important;
         transform: none !important;
@@ -48,7 +48,7 @@ st.markdown(
     }
 
     div.stButton > button p {
-        white-space: nowrap !important;
+        white-space: normal !important;
         writing-mode: horizontal-tb !important;
         text-orientation: mixed !important;
         margin: 0 !important;

@@ -11,7 +11,7 @@ from medical_addon_core import (
     assess_ldl, assess_bmi, assess_stop_bang, fib4, assess_fib4,
 )
 
-st.set_page_config(page_title="More Health Screenings | MedPredict", page_icon="🩺", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="More Health Screenings | MedPredict", page_icon="🩺", layout="wide", initial_sidebar_state="auto")
 
 
 from sidebar_compat import show_sidebar
@@ -26,7 +26,7 @@ if not st.session_state.get("is_logged_in", False):
     st.stop()
 
 st.title("🩺 Seven More Health Screenings")
-st.caption("Educational screening tools, not diagnostic AI. Inputs are not automatically saved to your existing patient database.")
+st.caption("Educational screening tools, not diagnostic AI. Completed results are saved to your account history.")
 st.warning("For adult users and demonstration purposes. Do not use these results for diagnosis, medication decisions, or emergencies. A healthcare professional must interpret findings and symptoms.")
 
 CONDITIONS = [
@@ -45,8 +45,16 @@ def show_result(result, metric=None, source=None):
     if source:
         st.markdown(f"[Clinical reference]({SOURCES[source]})")
 
+    from workspace import save_work
+    save_work('Screenings', choice, {'screening':choice, 'result':result, 'metric':metric,
+                                    'source':SOURCES.get(source), 'inputs':screening_inputs()})
     from result_explanations import explain_screening
     explain_screening(result,metric,SOURCES.get(source) if source else None)
+
+
+def screening_inputs():
+    names=('sys','dia','age','sex','cr','group','hb','ldl','height','weight','flags','ast','alt','platelets')
+    return {name:globals()[name] for name in names if name in globals()}
 
 
 if choice == "High blood pressure":

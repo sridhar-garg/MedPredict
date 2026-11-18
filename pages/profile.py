@@ -614,6 +614,9 @@ if st.button(
     key="profile_logout",
 ):
 
+    for private_key in list(st.session_state):
+        if private_key not in ('mp_language','healthai_theme'):
+            del st.session_state[private_key]
     st.session_state["is_logged_in"] = False
     st.session_state["user_id"] = None
     st.session_state["user_email"] = ""

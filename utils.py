@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import shap
 
 from pathlib import Path
-from sklearn.pipeline import Pipeline
 
 
 
@@ -127,6 +125,7 @@ def breast_default(feature):
 
 def get_final_model(model):
     """Return the estimator at the end of a saved sklearn Pipeline."""
+    from sklearn.pipeline import Pipeline
     if isinstance(model, Pipeline):
         return model.steps[-1][1]
     return model
@@ -134,6 +133,7 @@ def get_final_model(model):
 
 def _transform_for_shap(model, patient):
     """Transform a patient exactly as the saved pipeline does."""
+    from sklearn.pipeline import Pipeline
     if not isinstance(model, Pipeline):
         return patient, list(patient.columns)
 
@@ -173,6 +173,7 @@ def _normalise_shap_values(raw_values):
 
 
 def _tree_shap(model, patient):
+    import shap
     final_model = get_final_model(model)
     transformed, feature_names = _transform_for_shap(model, patient)
     explainer = shap.TreeExplainer(final_model)
@@ -215,6 +216,7 @@ def create_background(patient, rows=24):
 
 
 def _kernel_shap(model, patient):
+    import shap
     background = create_background(patient)
 
     def predict(data):

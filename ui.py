@@ -39,8 +39,17 @@ def html(markup):
 
 
 def brand():
-    return (f'<div class="mp-brand"><span class="mp-brand-mark">{icon("pulse")}</span>'
+    return (f'<div class="mp-brand"><span class="mp-brand-mark">{brand_mark()}</span>'
             '<span>MedPredict<span class="mp-brand-dot">.</span></span></div>')
+
+
+def brand_mark():
+    return ('<svg viewBox="0 0 64 64" width="34" height="34" fill="none" aria-hidden="true">'
+            '<path d="M23 19v-5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v5" stroke="#e5deff" stroke-width="4"/>'
+            '<rect x="9" y="19" width="46" height="36" rx="10" fill="#fff"/>'
+            '<path d="M32 27v20M22 37h20" stroke="#5941bd" stroke-width="5" stroke-linecap="round"/>'
+            '<circle cx="49" cy="22" r="8" fill="#7ee5cc"/>'
+            '<path d="m45 22 3 3 5-6" stroke="#194d44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
 
 @lru_cache(maxsize=1)
@@ -55,15 +64,19 @@ def apply_theme():
     css = (ROOT / "style.css").read_text(encoding="utf-8")
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
     theme = st.session_state.healthai_theme
-    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="sidebar-chat-3" aria-hidden="true"></span>')
+    language = st.session_state.get("mp_language", "en")
+    html(f'<span class="mp-locale" data-language="{escape(language)}" lang="{escape(language)}"></span>')
+    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="reference-mobile-4" aria-hidden="true"></span>')
 
 
 def _change_theme():
     st.session_state.healthai_theme = "dark" if st.session_state.mp_dark_mode else "light"
+    from i18n import persist_preferences
+    persist_preferences()
 
 
 def theme_switch():
-    st.toggle("Dark appearance", value=st.session_state.get("healthai_theme") == "dark",
+    st.toggle("Dark mode", value=st.session_state.get("healthai_theme") == "dark",
               key="mp_dark_mode", on_change=_change_theme)
 
 
@@ -73,8 +86,8 @@ def section(title, description="", eyebrow=""):
 
 
 def tool_card(name, description, glyph, page, key, color="violet", label="Open tool"):
-    with st.container(border=True):
-        html(f'<div class="mp-tool-card"><span class="mp-icon mp-{escape(color)}">{icon(glyph)}</span>'
+    with st.container(border=True, key=f"tool_{key}"):
+        html(f'<div class="mp-tool-card mp-card-{escape(color)}"><span class="mp-icon mp-{escape(color)}">{icon(glyph)}</span>'
              f'<h3>{escape(name)}</h3><p>{escape(description)}</p></div>')
         if st.button(f"{label}  →", key=key, use_container_width=True):
             st.switch_page(page)

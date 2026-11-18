@@ -16,6 +16,8 @@ def is_valid_email(email: str) -> bool:
 
 
 def login_page():
+    from i18n import language_picker
+    language_picker("mp_login_language")
     defaults = {
         "otp_sent": False, "verified": False, "user_email": "", "otp": None,
         "user_id": None, "is_logged_in": False, "auth_mode": "Login",

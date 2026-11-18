@@ -1,5 +1,5 @@
 # Refresh Streamlit deployment after navigation and sidebar spacing updates.
-streamlit
+streamlit==1.67.0
 python-dotenv
 pandas
 numpy
@@ -29,3 +29,4 @@ opencv-python-headless>=4.8,<5
 requests>=2.31
 mediapipe>=0.10.14,<0.11
 keras>=3.4,<4
+psycopg[binary]==3.2.13
