@@ -354,7 +354,7 @@ def get_health_assessments(user_id):
             created_at
         FROM health_assessments
         WHERE user_id = ?
-        ORDER BY created_at DESC
+        ORDER BY created_at DESC, id DESC
         """,
         (user_id,)
     )
@@ -947,6 +947,34 @@ def get_workspace_items(user_id, kind=None):
         cur.execute("SELECT id,kind,title,payload,created_at FROM workspace_items WHERE user_id=?" +
                     (" AND kind=?" if kind else "") + " ORDER BY created_at DESC,id DESC", (user_id,kind) if kind else (user_id,))
         return [dict(id=r[0], kind=r[1], title=r[2], payload=json.loads(r[3]), created_at=str(r[4])) for r in cur.fetchall()]
+    finally:
+        conn.close()
+
+
+def get_dashboard_records(user_id):
+    """Return the account's dashboard metadata without inputs or saved payloads."""
+    if user_id is None:
+        return [], []
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """SELECT id, disease, prediction, probability, created_at
+               FROM health_assessments WHERE user_id = ?
+               ORDER BY created_at DESC, id DESC""",
+            (user_id,),
+        )
+        assessments = [dict(id=i, disease=disease, prediction=prediction, probability=probability, created_at=created_at)
+                       for i, disease, prediction, probability, created_at in cur.fetchall()]
+        cur.execute(
+            """SELECT kind, title, created_at FROM workspace_items
+               WHERE user_id = ? AND kind IN ('Screenings', 'Reports', 'Imaging')
+               ORDER BY created_at DESC, id DESC""",
+            (user_id,),
+        )
+        work = [dict(kind=kind, title=title, created_at=created_at)
+                for kind, title, created_at in cur.fetchall()]
+        return assessments, work
     finally:
         conn.close()
 

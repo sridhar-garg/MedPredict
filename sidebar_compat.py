@@ -52,19 +52,20 @@ def show_sidebar(current_page=None):
     design = PAGE_DESIGNS.get(current_path.stem, ("dashboard",))[0]
     html(f'<span class="mp-route" data-route="{current_path.stem}" data-tone="{tone}" data-design="{design}" aria-hidden="true"></span>')
     with st.container(key="mp_workspace_header"):
-        identity, menu, settings = st.columns([3, 1, 1], vertical_alignment="center", gap="small")
-        with identity:
+        with st.container(key="mp_workspace_identity"):
             html(brand())
-        with menu:
-            with st.popover("Menu", icon=":material/menu:", use_container_width=True):
-                for heading, links in _NAV_GROUPS:
-                    st.caption(heading)
-                    for path, label, glyph in links:
-                        st.page_link(path, label=label, icon=f":material/{glyph}:")
-        with settings:
-            with st.popover("Settings", icon=":material/tune:", use_container_width=True):
-                language_picker()
-                theme_switch()
+        with st.container(key="mp_workspace_controls"):
+            menu, settings = st.columns(2, gap="small")
+            with menu:
+                with st.popover("Menu", icon=":material/menu:", use_container_width=True):
+                    for heading, links in _NAV_GROUPS:
+                        st.caption(heading)
+                        for path, label, glyph in links:
+                            st.page_link(path, label=label, icon=f":material/{glyph}:")
+            with settings:
+                with st.popover("Settings", icon=":material/tune:", use_container_width=True):
+                    language_picker()
+                    theme_switch()
 
     if current_path.stem in PAGE_DESIGNS:
         page_header(current_path.stem)

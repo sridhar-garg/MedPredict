@@ -51,177 +51,47 @@ if user_id is None:
     st.stop()
 
 
-from workspace import render_saved_workspace
-render_saved_workspace()
-st.divider()
+requested_assessment = st.query_params.get("assessment")
 
-
-
-
-
-
-
-
-
-
-
+if requested_assessment is None:
+    from workspace import render_saved_workspace
+    render_saved_workspace()
+    st.divider()
 
 try:
     assessments = get_health_assessments(user_id)
-except Exception as e:
+except Exception:
     st.error("Unable to load your health history.")
-    st.code(str(e))
     st.stop()
 
-
-
-
-
-
-if not assessments:
-    st.html(
-        dedent(
-            """
-            <div class="assessment-section-card">
-                <div class="assessment-section-title">
-                    📋 No Assessments Yet
-                </div>
-                <div class="assessment-section-subtitle">
-                    You haven't completed any health assessments yet.
-                    Your Breast Cancer, Diabetes, and Heart Disease
-                    assessments will appear here after you complete them.
-                </div>
-            </div>
-            """
-        ),
-    )
-
-    st.info(
-        "Start an assessment from the Dashboard to build your personal health history."
-    )
-    st.stop()
-
-
-
-
-
-
-total_assessments = len(assessments)
-
-breast_count = sum(
-    1 for assessment in assessments
-    if str(assessment[1]).strip().lower() == "breast cancer"
-)
-
-diabetes_count = sum(
-    1 for assessment in assessments
-    if str(assessment[1]).strip().lower() == "diabetes"
-)
-
-heart_count = sum(
-    1 for assessment in assessments
-    if str(assessment[1]).strip().lower() == "heart disease"
-)
-
-
-
-
-
-
-st.html(
-    dedent(
-        """
-        <div class="assessment-section-card">
-            <div class="assessment-section-title">
-                📊 Assessment Summary
-            </div>
-            <div class="assessment-section-subtitle">
-                A quick overview of your completed AI health assessments.
-            </div>
-        </div>
-        """
-    ),
-)
-
-summary1, summary2, summary3, summary4 = st.columns(4)
-
-with summary1:
-    st.metric("Total Assessments", total_assessments)
-
-with summary2:
-    st.metric("Breast Cancer", breast_count)
-
-with summary3:
-    st.metric("Diabetes", diabetes_count)
-
-with summary4:
-    st.metric("Heart Disease", heart_count)
-
-
-
-
-
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-available_available_diseases += sorted(present_diseases - set(available_diseases))
-
-diseases = [
-    "All Diseases",
-    "Breast Cancer",
-    "Diabetes",
-    "Heart Disease",
-]
-
-present_diseases = {
-    str(assessment[1]).strip()
-    for assessment in assessments
-}
-
-available_diseases += sorted(present_diseases - set(available_diseases))
-
-diseases = [
-    disease
-    for disease in available_diseases
-    if disease == "All Diseases" or disease in present_diseases
-]
-
-selected_disease = st.selectbox(
-    "Filter by disease",
-    diseases,
-    key="history_disease_filter",
-)
-
-
-
-
-
-
-if selected_disease == "All Diseases":
-    filtered_assessments = assessments
+if requested_assessment is not None:
+    if st.button("Back to full history", icon=":material/history:", key="history_all_results"):
+        del st.query_params["assessment"]
+        st.rerun()
+    filtered_assessments = [row for row in assessments if str(row[0]) == requested_assessment]
+    if not filtered_assessments:
+        st.info("This saved assessment is unavailable in your account.")
+        st.stop()
 else:
-    filtered_assessments = [
-        assessment
-        for assessment in assessments
-        if str(assessment[1]).strip() == selected_disease
-    ]
+    if not assessments:
+        st.info("Complete your first assessment to start your health history.")
+        st.page_link("app.py", label="Open dashboard", icon=":material/space_dashboard:")
+        st.stop()
 
+    st.subheader("Assessment summary")
+    summary = (("Total Assessments", len(assessments)), *(
+        (disease, sum(1 for row in assessments if str(row[1]).strip().casefold() == disease.casefold()))
+        for disease in ("Breast Cancer", "Diabetes", "Heart Disease")
+    ))
+    for column, (label, count) in zip(st.columns(4), summary):
+        column.metric(label, count)
 
-
-
-
-
-
-
-if not filtered_assessments:
-    st.info(
-        f"No {selected_disease.lower()} assessments were found."
+    present_diseases = sorted({str(row[1]).strip() for row in assessments})
+    selected_disease = st.selectbox(
+        "Filter by disease", ["All Diseases", *present_diseases], key="history_disease_filter",
     )
-    st.stop()
-
-
-
-
+    filtered_assessments = [row for row in assessments
+                            if selected_disease == "All Diseases" or str(row[1]).strip() == selected_disease]
 
 
 def display_assessment_value(disease, key, value):
@@ -433,7 +303,7 @@ for assessment in filtered_assessments:
 
 
     with st.expander(
-        f"View {disease} Assessment Details"
+        f"View {disease} Assessment Details", expanded=requested_assessment is not None,
     ):
 
         st.markdown("#### 🧾 Assessment Information")

@@ -98,7 +98,7 @@ def apply_theme():
     theme = st.session_state.healthai_theme
     language = st.session_state.get("mp_language", "en")
     html(f'<span class="mp-locale" data-language="{escape(language)}" lang="{escape(language)}"></span>')
-    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="exhibition-personality-6" aria-hidden="true"></span>')
+    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="activity-dashboard-7" aria-hidden="true"></span>')
 
 
 def _change_theme():
