@@ -43,6 +43,9 @@ if _family_action and _family_token:
     st.stop()
 
 
+from google_auth import restore_google_login
+restore_google_login()
+
 if not st.session_state.get("is_logged_in", False):
     login_page()
     st.stop()
@@ -101,23 +104,23 @@ section("Where would you like to begin?", "Choose an assessment to explore the f
 c1, c2, c3 = st.columns(3, gap="medium")
 with c1:
     tool_card("Diabetes", "Explore diabetes-related risk using your symptoms and health information.",
-              "drop", "pages/diabetes_app.py", "open_diabetes", "violet", "Assess diabetes")
+              "drop", "pages/diabetes_app.py", "open_diabetes", "blue", "Assess diabetes")
 with c2:
     tool_card("Heart health", "Understand cardiovascular risk using clinical measurements and symptoms.",
-              "heart", "pages/heart_app.py", "open_heart", "rose", "Assess heart health")
+              "heart", "pages/heart_app.py", "open_heart", "coral", "Assess heart health")
 with c3:
     tool_card("Breast health", "Explore model estimates from diagnostic tumour measurements.",
-              "ribbon", "pages/breast_app.py", "open_breast", "blue", "Assess breast health")
+              "ribbon", "pages/breast_app.py", "open_breast", "rose", "Assess breast health")
 
 section("More ways to understand your health", "Explore your information, find answers, and keep everything connected.", "BEYOND THE ASSESSMENT")
 tools = [
     ("Accessibility tools", "Fingerspelling recognition and text-to-Braille tools, within MedPredict.", "access", "pages/9_abilitybridge.py", "mp_ax_open_ability", "teal", "Open accessibility tools"),
-    ("More health screenings", "Seven additional educational screenings, from blood pressure to kidney health.", "pulse", "pages/4_health_screenings.py", "open_addon_screenings", "teal", "Explore screenings"),
+    ("More health screenings", "Seven additional educational screenings, from blood pressure to kidney health.", "pulse", "pages/4_health_screenings.py", "open_addon_screenings", "amber", "Explore screenings"),
     ("Imaging & reports", "Explore medical images and make sense of the information in health reports.", "scan", "pages/5_medical_imaging.py", "open_addon_imaging", "blue", "Explore reports"),
     ("AI assistant", "Ask questions about health terms, medical information, and AI research.", "chat", "pages/8_gemini_chatbot.py", "medpredict_gemini38_home", "violet", "Start a conversation"),
-    ("Disease atlas", "Discover conditions and learn from medically sourced educational information.", "book", "pages/10_disease_atlas.py", "mp_ax_open_atlas", "blue", "Browse the atlas"),
-    ("Your assessment history", "Revisit your saved assessments and explore how your results compare.", "history", "pages/history.py", "mp_open_history", "violet", "View your history"),
-    ("Family health", "Manage family connections and the health information you choose to share.", "people", "pages/z_family.py", "mp_open_family", "teal", "Open family health"),
+    ("Disease atlas", "Discover conditions and learn from medically sourced educational information.", "book", "pages/10_disease_atlas.py", "mp_ax_open_atlas", "green", "Browse the atlas"),
+    ("Your assessment history", "Revisit your saved assessments and explore how your results compare.", "history", "pages/history.py", "mp_open_history", "copper", "View your history"),
+    ("Family health", "Manage family connections and the health information you choose to share.", "people", "pages/z_family.py", "mp_open_family", "green", "Open family health"),
     ("Reviews & experience", "Read visitor feedback and share your own experience of MedPredict.", "people", "pages/12_reviews.py", "mp_open_reviews", "amber", "See community reviews"),
 ]
 for start in range(0, len(tools), 3):

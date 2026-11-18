@@ -8,6 +8,23 @@ import streamlit as st
 
 ROOT = Path(__file__).resolve().parent
 
+# One colour family follows each tool from its dashboard card to its own page.
+PAGE_CONTEXT = {
+    "app": ("teal", "", "", "pulse"),
+    "heart_app": ("coral", "HEART HEALTH", "Explore cardiovascular measurements and the factors behind the estimate.", "heart"),
+    "diabetes_app": ("blue", "DIABETES", "Bring symptoms and health indicators into a clearer picture.", "drop"),
+    "breast_app": ("rose", "BREAST HEALTH", "Understand model estimates from diagnostic measurements.", "ribbon"),
+    "4_health_screenings": ("amber", "EVERYDAY SCREENINGS", "Check measurements with transparent, source-linked screening tools.", "pulse"),
+    "5_medical_imaging": ("blue", "IMAGING & REPORTS", "Explore scans and report measurements in a focused workspace.", "scan"),
+    "8_gemini_chatbot": ("violet", "AI ASSISTANT", "Ask questions, understand unfamiliar terms and revisit conversations.", "chat"),
+    "9_abilitybridge": ("teal", "ACCESSIBILITY", "Communicate with fingerspelling and explore Braille within MedPredict.", "access"),
+    "10_disease_atlas": ("green", "HEALTH KNOWLEDGE", "Find context and learn from medically sourced information.", "book"),
+    "history": ("copper", "YOUR SAVED WORK", "Return to your assessments, reports and saved conversations.", "history"),
+    "z_family": ("green", "FAMILY HEALTH", "Keep family connections and sharing permissions in one place.", "people"),
+    "profile": ("teal", "YOUR ACCOUNT", "Manage your profile, sign-in details and personal preferences.", "shield"),
+    "12_reviews": ("amber", "COMMUNITY", "Read real visitor feedback and share your experience.", "people"),
+}
+
 _ICONS = {
     "arrow": '<path d="M7 17 17 7M7 7h10v10"/>',
     "pulse": '<path d="M2 12h5l3-8 4 16 3-8h5"/>',
@@ -47,7 +64,7 @@ def brand_mark():
     return ('<svg viewBox="0 0 64 64" width="34" height="34" fill="none" aria-hidden="true">'
             '<path d="M23 19v-5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v5" stroke="#e5deff" stroke-width="4"/>'
             '<rect x="9" y="19" width="46" height="36" rx="10" fill="#fff"/>'
-            '<path d="M32 27v20M22 37h20" stroke="#5941bd" stroke-width="5" stroke-linecap="round"/>'
+            '<path d="M32 27v20M22 37h20" stroke="#096961" stroke-width="5" stroke-linecap="round"/>'
             '<circle cx="49" cy="22" r="8" fill="#7ee5cc"/>'
             '<path d="m45 22 3 3 5-6" stroke="#194d44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
@@ -66,7 +83,7 @@ def apply_theme():
     theme = st.session_state.healthai_theme
     language = st.session_state.get("mp_language", "en")
     html(f'<span class="mp-locale" data-language="{escape(language)}" lang="{escape(language)}"></span>')
-    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="reference-mobile-4" aria-hidden="true"></span>')
+    html(f'<span class="mp-theme-marker healthai-theme-{theme}-marker" data-ui-revision="colour-google-5" aria-hidden="true"></span>')
 
 
 def _change_theme():
@@ -86,8 +103,17 @@ def section(title, description="", eyebrow=""):
 
 
 def tool_card(name, description, glyph, page, key, color="violet", label="Open tool"):
+    category = {
+        "open_diabetes": "ASSESSMENT / 01", "open_heart": "ASSESSMENT / 02",
+        "open_breast": "ASSESSMENT / 03", "mp_ax_open_ability": "COMMUNICATE & CONVERT",
+        "open_addon_screenings": "MEASURE & CHECK", "open_addon_imaging": "SCAN & READ",
+        "medpredict_gemini38_home": "ASK & UNDERSTAND", "mp_ax_open_atlas": "LEARN & EXPLORE",
+        "mp_open_history": "YOUR SAVED RESULTS", "mp_open_family": "CONNECTED WITH PERMISSION",
+        "mp_open_reviews": "COMMUNITY FEEDBACK",
+    }.get(key, "YOUR WORKSPACE")
     with st.container(border=True, key=f"tool_{key}"):
         html(f'<div class="mp-tool-card mp-card-{escape(color)}"><span class="mp-icon mp-{escape(color)}">{icon(glyph)}</span>'
+             f'<span class="mp-tool-type">{category}</span>'
              f'<h3>{escape(name)}</h3><p>{escape(description)}</p></div>')
         if st.button(f"{label}  →", key=key, use_container_width=True):
             st.switch_page(page)

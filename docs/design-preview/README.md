@@ -1,5 +1,9 @@
 # MedPredict design refresh
 
+The newest palette and Google sign-in implementation are documented in
+[COLOR_AND_GOOGLE_UPDATE.md](../COLOR_AND_GOOGLE_UPDATE.md). Screenshots below
+show the preceding mobile revision; browser access was blocked for the new palette.
+
 The latest exhibition update and phone validation are documented in [MOBILE_UPDATE.md](../MOBILE_UPDATE.md).
 
 The restored homepage and sign-in used several HealthAI/HealthGuard identities, a long decorative introduction, and inconsistent feature navigation. This refresh gives MedPredict one indigo/violet identity and puts the existing assessments directly after a compact welcome panel.

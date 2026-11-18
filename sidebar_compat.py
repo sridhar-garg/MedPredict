@@ -3,7 +3,7 @@ from inspect import currentframe
 from pathlib import Path
 
 import streamlit as st
-from ui import brand, html, theme_switch
+from ui import brand, html, theme_switch, PAGE_CONTEXT, icon
 
 
 _NAV_GROUPS = [
@@ -45,8 +45,11 @@ def show_sidebar(current_page=None):
     from i18n import install_translations, load_account_preferences, language_picker
     install_translations()
     initialize_database()
+    from google_auth import restore_google_login
+    restore_google_login()
     load_account_preferences()
-    html(f'<span class="mp-route" data-route="{current_path.stem}" aria-hidden="true"></span>')
+    tone, context_title, context_copy, context_icon = PAGE_CONTEXT.get(current_path.stem, ("teal", "", "", "pulse"))
+    html(f'<span class="mp-route" data-route="{current_path.stem}" data-tone="{tone}" aria-hidden="true"></span>')
     with st.container(key="mp_workspace_header"):
         identity, menu, settings = st.columns([3, 1, 1], vertical_alignment="center", gap="small")
         with identity:
@@ -61,6 +64,10 @@ def show_sidebar(current_page=None):
             with st.popover("Settings", icon=":material/tune:", use_container_width=True):
                 language_picker()
                 theme_switch()
+
+    if context_title:
+        html(f'<div class="mp-page-context"><span class="mp-context-icon">{icon(context_icon, 26)}</span>'
+             f'<div><span class="mp-eyebrow">{context_title}</span><p>{context_copy}</p></div></div>')
 
     with st.sidebar:
         html('<div class="mp-sidebar-brand">' + brand() +

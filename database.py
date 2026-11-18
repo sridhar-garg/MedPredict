@@ -859,6 +859,10 @@ def create_workspace_tables():
     conn = get_connection()
     try:
         cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS google_identities (
+            subject TEXT PRIMARY KEY,
+            user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
         cur.execute("""CREATE TABLE IF NOT EXISTS reviews (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,

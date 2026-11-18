@@ -43,6 +43,11 @@ CREATE TABLE IF NOT EXISTS medpredict.user_preferences (
  user_id BIGINT PRIMARY KEY REFERENCES medpredict.users(id) ON DELETE CASCADE,
  language TEXT NOT NULL DEFAULT 'en',theme TEXT NOT NULL DEFAULT 'light' CHECK(theme IN ('light','dark'))
 );
+CREATE TABLE IF NOT EXISTS medpredict.google_identities (
+ subject TEXT PRIMARY KEY,
+ user_id BIGINT NOT NULL UNIQUE REFERENCES medpredict.users(id) ON DELETE CASCADE,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 CREATE INDEX IF NOT EXISTS workspace_user_date ON medpredict.workspace_items(user_id,created_at);
 CREATE INDEX IF NOT EXISTS assessments_user_date ON medpredict.health_assessments(user_id,created_at);
 CREATE INDEX IF NOT EXISTS family_member ON medpredict.family_connections(member_user_id);
@@ -54,6 +59,7 @@ ALTER TABLE medpredict.family_connections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE medpredict.reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE medpredict.workspace_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE medpredict.user_preferences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE medpredict.google_identities ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON ALL TABLES IN SCHEMA medpredict FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON ALL SEQUENCES IN SCHEMA medpredict FROM PUBLIC,anon,authenticated;
 COMMIT;

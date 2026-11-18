@@ -55,6 +55,8 @@ def login_page():
             <span class="mp-eyebrow">WELCOME TO MEDPREDICT</span>
             <h2 class="mp-auth-heading">Your next step starts here.</h2>
             <p class="mp-auth-description">Sign in to your personal health workspace,<br>or create an account to get started.</p>''')
+            from google_auth import render_google_login
+            render_google_login()
             auth_mode = st.radio(
                 "Choose an option",
                 ["Login", "Create Account"],
@@ -111,12 +113,17 @@ def login_page():
                                 "Incorrect username or password."
                             )
                         else:
-
-
+                            from google_auth import connect_pending_google
+                            try:
+                                connect_pending_google(user[0])
+                            except ValueError as exc:
+                                st.error(str(exc))
+                                st.stop()
                             st.session_state.user_id = user[0]
                             st.session_state.user_email = user[1]
                             st.session_state.is_logged_in = True
                             st.session_state.verified = True
+                            st.session_state.auth_method = "password"
                             st.session_state.otp = None
                             st.session_state.otp_sent = False
 

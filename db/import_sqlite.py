@@ -6,7 +6,7 @@ import sys
 import psycopg
 from psycopg import sql
 
-TABLES=('users','health_assessments','family_connections','reviews','workspace_items','user_preferences')
+TABLES=('users','health_assessments','family_connections','reviews','workspace_items','user_preferences','google_identities')
 
 
 def main(path):

@@ -1,5 +1,5 @@
 # Refresh Streamlit deployment after navigation and sidebar spacing updates.
-streamlit==1.67.0
+streamlit[auth]==1.67.0
 python-dotenv
 pandas
 numpy

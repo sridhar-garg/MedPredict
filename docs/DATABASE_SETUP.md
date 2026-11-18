@@ -6,6 +6,9 @@ server; no database credential or password hash is sent to the browser.
 
 ## Supabase setup
 
+Google sign-in has a separate [setup guide](GOOGLE_LOGIN_SETUP.md). Existing
+hosted schemas must also apply `db/002_google_identities.sql` before enabling it.
+
 1. Create/select the MedPredict Supabase project, preferably Mumbai (`ap-south-1`).
 2. Apply `db/schema.sql` using the SQL editor or the Supabase connector. Its
    `medpredict` schema is private and must **not** be added to exposed API schemas.
