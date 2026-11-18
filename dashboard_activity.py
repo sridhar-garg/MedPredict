@@ -1,5 +1,6 @@
 """Personal dashboard cards and charts backed by saved account records."""
 
+from base64 import b64encode
 from collections import Counter, defaultdict
 from datetime import date, datetime, timezone
 from html import escape
@@ -64,8 +65,13 @@ def _score(score):
 
 
 def _heading(title, glyph, tone, level=3):
+    # Streamlit's HTML sanitizer keeps image tags but removes inline SVG.
+    svg = icon(glyph, 24).replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" ', 1)
+    svg = svg.replace('stroke="currentColor"', f'stroke="{_chart_color(tone)}"', 1)
+    encoded = b64encode(svg.encode("utf-8")).decode("ascii")
     return (
-        f'<div class="mp-tracking-heading"><span class="mp-tracking-icon mp-{tone}">{icon(glyph, 21)}</span>'
+        f'<div class="mp-tracking-heading"><span class="mp-tracking-icon mp-{tone}">'
+        f'<img src="data:image/svg+xml;base64,{encoded}" width="24" height="24" alt=""></span>'
         f'<h{level}>{escape(title)}</h{level}></div>'
     )
 
