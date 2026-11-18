@@ -5,7 +5,6 @@ st.set_page_config(page_title="Dashboard | MedPredict", page_icon="assets/favico
                    layout="wide", initial_sidebar_state="auto")
 
 from auth import verify_family_email_token
-from dashboard_activity import render_dashboard_activity
 from database import initialize_database, process_family_email_action
 from login import login_page
 from sidebar_compat import show_sidebar
@@ -89,9 +88,8 @@ if submitted and search_query.strip():
     st.session_state["mp_atlas_query"] = query
     st.switch_page("pages/10_disease_atlas.py")
 
-html('<div class="mp-welcome"><h1>Your health, in focus.</h1></div>')
-
-render_dashboard_activity(st.session_state.get("user_id"))
+html('''<div class="mp-welcome"><h1>Your health, in focus.</h1>
+<p>A little understanding today. More informed decisions tomorrow.</p></div>''')
 
 from condition_library import counts
 _, common_conditions = counts()
@@ -101,6 +99,20 @@ with st.container(border=True, key="dashboard_condition_library"):
          '<p>Search by name, browse body systems, read source-linked guides and open related tools.</p></div>')
     if st.button("Explore the condition library →", key="dashboard_open_library", type="primary"):
         st.switch_page("pages/10_disease_atlas.py")
+
+html(f'''<section class="mp-hero" aria-label="Welcome to your health workspace">
+<img class="mp-hero-art" src="{studio_image()}" alt="Stethoscope on an indigo surface">
+<div class="mp-hero-copy"><span class="mp-eyebrow">{icon("spark", 14)} INSIGHT BEGINS WITH YOU</span>
+<h2>Know a little more.<br><span class="mp-heading-accent">Care a little better.</span></h2>
+<p>Bring your health information into focus with AI-assisted risk assessments and explanations that make sense.</p>
+<a class="mp-hero-link" href="#assessments" target="_self">Explore assessments {icon("arrow", 14)}</a>
+<div class="mp-hero-footnote">Educational insights. Always guided by clinical advice.</div></div></section>''')
+
+html(f'''<div class="mp-capabilities">
+<div class="mp-capability">{icon("pulse",22)}<div><b>3 focused assessments</b><small>Heart, diabetes &amp; breast cancer</small></div></div>
+<div class="mp-capability">{icon("spark",22)}<div><b>Understand the factors</b><small>Model comparisons &amp; SHAP explanations</small></div></div>
+<div class="mp-capability">{icon("history",22)}<div><b>Your progress, together</b><small>Saved assessments &amp; family health</small></div></div>
+</div>''')
 
 html('<div id="assessments"></div>')
 section("Where would you like to begin?", "Choose an assessment to explore the factors behind your health.", "YOUR NEXT STEP")
@@ -132,32 +144,15 @@ for start in range(0, len(tools), 3):
             tool_card(*tool)
 st.caption("Additional screenings use educational formulas. Imaging models are experimental; neither replaces clinical assessment.")
 
-with st.expander("About MedPredict"):
-    st.write("A little understanding today. More informed decisions tomorrow.")
-    html(f'''<section class="mp-hero" aria-label="Welcome to your health workspace">
-    <img class="mp-hero-art" src="{studio_image()}" alt="Stethoscope on an indigo surface">
-    <div class="mp-hero-copy"><span class="mp-eyebrow">{icon("spark", 14)} INSIGHT BEGINS WITH YOU</span>
-    <h2>Know a little more.<br><span class="mp-heading-accent">Care a little better.</span></h2>
-    <p>Bring your health information into focus with AI-assisted risk assessments and explanations that make sense.</p>
-    <a class="mp-hero-link" href="#assessments" target="_self">Explore assessments {icon("arrow", 14)}</a>
-    <div class="mp-hero-footnote">Educational insights. Always guided by clinical advice.</div></div></section>''')
-
-    html(f'''<div class="mp-capabilities">
-    <div class="mp-capability">{icon("pulse",22)}<div><b>3 focused assessments</b><small>Heart, diabetes &amp; breast cancer</small></div></div>
-    <div class="mp-capability">{icon("spark",22)}<div><b>Understand the factors</b><small>Model comparisons &amp; SHAP explanations</small></div></div>
-    <div class="mp-capability">{icon("history",22)}<div><b>Your progress, together</b><small>Saved assessments &amp; family health</small></div></div>
-    </div>''')
-
-    section("A clearer path from information to insight", eyebrow="HOW IT WORKS")
-    steps = [
-        ("01", "Share your information", "Enter the measurements requested by your chosen assessment."),
-        ("02", "Explore the estimate", "Compare model outputs and understand their limitations."),
-        ("03", "Understand the factors", "Review the explanations and discuss concerns with a clinician."),
-    ]
-    for col, (number, title, copy) in zip(st.columns(3), steps):
-        with col:
-            html(f'<div class="mp-step"><span class="mp-step-number">{number}</span><div><h4>{title}</h4><p>{copy}</p></div></div>')
-
+section("A clearer path from information to insight", eyebrow="HOW IT WORKS")
+steps = [
+    ("01", "Share your information", "Enter the measurements requested by your chosen assessment."),
+    ("02", "Explore the estimate", "Compare model outputs and understand their limitations."),
+    ("03", "Understand the factors", "Review the explanations and discuss concerns with a clinician."),
+]
+for col, (number, title, copy) in zip(st.columns(3), steps):
+    with col:
+        html(f'<div class="mp-step"><span class="mp-step-number">{number}</span><div><h4>{title}</h4><p>{copy}</p></div></div>')
 html('<div class="mp-footer"><span>MedPredict. A clearer perspective.</span><span>Research &amp; education · Not a medical diagnosis</span></div>')
 
 

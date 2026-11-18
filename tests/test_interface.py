@@ -34,58 +34,6 @@ def test_dashboard_accessibility_and_all_languages(tmp_path,monkeypatch):
     assert any('Your health, in focus.' in x.value for x in at.markdown)
 
 
-def test_dashboard_tracks_saved_results_and_threshold_history(tmp_path, monkeypatch):
-    at, user = app(tmp_path, monkeypatch)
-    assert [m.value for m in at.metric] == ['0', '0', '0', '0']
-    assert sum(link.proto.label == 'Start assessment' for link in at.get('page_link')) == 3
-
-    for disease, score in (('Diabetes', .63), ('Diabetes', .71), ('Heart Disease', .82),
-                           ('Heart Disease', .51), ('Breast Cancer', .60)):
-        assert db.save_health_assessment(user, disease, {}, 'Test result', score, '')
-    for kind, title in (('Screenings', 'Blood pressure reading'), ('Reports', 'Saved report'),
-                        ('Imaging', 'Saved image analysis'), ('AI assistant', 'Private conversation')):
-        db.save_workspace_item(user, kind, title, {})
-
-    other = create_account('other-ui@example.com', 'other_ui_test', 'Interface-Test-2026')
-    assert db.save_health_assessment(other, 'Diabetes', {}, 'Other account result', .99, '')
-    db.save_workspace_item(other, 'Reports', 'Another account report', {})
-
-    at.run()
-    assert not at.exception
-    assert [m.value for m in at.metric] == ['5', '1', '1', '1', '71.00%', '51.00%', '60.00%']
-    watch = [m.value for m in at.markdown if m.value.startswith('<div class="mp-watch-entry">')]
-    assert len(watch) == 2
-    assert all(text in watch[0] for text in ('Diabetes', '71.00%', '63.00%', '+8.00 percentage points'))
-    assert all(text in watch[1] for text in ('Heart health', '51.00%', '82.00%', 'Earlier result above 60%'))
-    timeline = next(m.value for m in at.markdown if m.value.startswith('<ol class="mp-activity-timeline">'))
-    assert timeline.count('<li>') == 5
-    at.selectbox(key='dashboard_activity_filter').set_value('Reports').run()
-    timeline = next(m.value for m in at.markdown if m.value.startswith('<ol class="mp-activity-timeline">'))
-    assert timeline.count('<li>') == 1 and 'Saved report' in timeline
-    assert 'Another account report' not in timeline
-
-    latest_diabetes = next(row for row in db.get_health_assessments(user) if row[1] == 'Diabetes')
-    assert latest_diabetes[4] == .71
-    link = next(link for link in at.get('page_link') if link.proto.label == 'View result')
-    assert link.proto.query_string.lstrip('?') == f'assessment={latest_diabetes[0]}'
-    at.query_params['assessment'] = str(latest_diabetes[0])
-    at.switch_page('pages/history.py').run()
-    assert not at.exception
-    result_boxes = [item.label for item in at.expander if 'Assessment Details' in item.label]
-    assert result_boxes == ['View Diabetes Assessment Details']
-
-    at.query_params['assessment'] = str(db.get_health_assessments(other)[0][0])
-    at.run()
-    assert not at.exception
-    assert any('unavailable in your account' in item.value for item in at.info)
-    assert not at.expander
-    at.button(key='history_all_results').click().run()
-    assert not at.exception
-    assert at.selectbox(key='history_disease_filter').options == [
-        'All Diseases', 'Breast Cancer', 'Diabetes', 'Heart Disease',
-    ]
-
-
 def test_review_form_and_summary(tmp_path,monkeypatch):
     at,user=app(tmp_path,monkeypatch,'pages/12_reviews.py')
     assert not at.exception
