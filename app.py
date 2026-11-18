@@ -5,6 +5,7 @@ st.set_page_config(page_title="Dashboard | MedPredict", page_icon="assets/favico
                    layout="wide", initial_sidebar_state="auto")
 
 from auth import verify_family_email_token
+from dashboard_activity import render_dashboard_activity
 from database import initialize_database, process_family_email_action
 from login import login_page
 from sidebar_compat import show_sidebar
@@ -113,6 +114,8 @@ html(f'''<div class="mp-capabilities">
 <div class="mp-capability">{icon("spark",22)}<div><b>Understand the factors</b><small>Model comparisons &amp; SHAP explanations</small></div></div>
 <div class="mp-capability">{icon("history",22)}<div><b>Your progress, together</b><small>Saved assessments &amp; family health</small></div></div>
 </div>''')
+
+render_dashboard_activity(st.session_state.get("user_id"))
 
 html('<div id="assessments"></div>')
 section("Where would you like to begin?", "Choose an assessment to explore the factors behind your health.", "YOUR NEXT STEP")

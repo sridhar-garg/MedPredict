@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import pyarrow as pa
 import pytest
 
 from streamlit.testing.v1 import AppTest
@@ -32,6 +33,59 @@ def test_dashboard_accessibility_and_all_languages(tmp_path,monkeypatch):
         assert at.session_state['mp_language']==language
         assert db.load_preferences(user)['language']==language
     assert any('Your health, in focus.' in x.value for x in at.markdown)
+
+
+def test_dashboard_inserts_real_activity_between_existing_sections(tmp_path, monkeypatch):
+    at, user = app(tmp_path, monkeypatch)
+    markup = [item.value for item in at.markdown]
+    order = [
+        next(i for i, item in enumerate(markup) if item.startswith(prefix) and text in item)
+        for prefix, text in (
+            ('<section class="mp-hero"', 'Care a little better.'),
+            ('<div class="mp-capabilities"', 'Your progress, together'),
+            ('<div class="mp-tracking-heading"', 'Your health activity'),
+            ('<div class="mp-section"', 'Where would you like to begin?'),
+        )
+    ]
+    assert order == sorted(order)
+    assert 'Explore assessments' in markup[order[0]]
+    assert not at.get('vega_lite_chart')
+    assert len([link for link in at.get('page_link') if link.proto.label == 'Start assessment']) == 3
+
+    for disease, score in (('Diabetes', .63), ('Diabetes', .71),
+                           ('Heart Disease', .80), ('Heart Disease', .51), ('Breast Cancer', .60)):
+        assert db.save_health_assessment(user, disease, {}, 'Synthetic result', score, '')
+    db.save_workspace_item(user, 'Reports', 'My saved report', {})
+    other = create_account('other-ui@example.com', 'other_ui_test', 'Interface-Test-2026')
+    assert db.save_health_assessment(other, 'Diabetes', {}, 'Other result', .99, '')
+    db.save_workspace_item(other, 'Reports', 'Other account report', {})
+    at.run()
+    assert not at.exception
+
+    watch = next(item.value for item in at.markdown if item.value.startswith('<ul class="mp-watch-list"'))
+    assert all(value in watch for value in ('71.00%', '63.00%', '+8.00 percentage points', '51.00%', '80.00%'))
+    assert 'Earlier result above 60%' in watch
+    assert 'Breast cancer' not in watch and '99.00%' not in watch
+    recent = next(item.value for item in at.markdown if item.value.startswith('<ol class="mp-activity-timeline"'))
+    assert recent.count('<li ') == 5
+    latest = next(row for row in db.get_health_assessments(user) if row[1] == 'Diabetes')
+    route = next(link.proto for link in at.get('page_link') if link.proto.label == 'View result')
+    assert route.query_string.lstrip('?') == f'assessment={latest[0]}'
+
+    def chart_rows(chart):
+        return [row for data in chart.proto.datasets
+                for row in pa.ipc.open_stream(data.data.data).read_all().to_pylist()]
+
+    at.selectbox(key='tracking_estimate_condition').set_value('diabetes').run()
+    trend, monthly = at.get('vega_lite_chart')
+    assert [row['estimate'] for row in chart_rows(trend) if 'number' in row] == [.63, .71]
+    assert sum(row['count'] for row in chart_rows(monthly)) == 6
+    at.selectbox(key='dashboard_activity_filter').set_value('Reports').run()
+    recent = next(item.value for item in at.markdown if item.value.startswith('<ol class="mp-activity-timeline"'))
+    assert 'My saved report' in recent and 'Other account report' not in recent
+    assert recent.count('<li ') == 1
+    rows = chart_rows(at.get('vega_lite_chart')[1])
+    assert {row['kind'] for row in rows} == {'Reports'} and sum(row['count'] for row in rows) == 1
 
 
 def test_review_form_and_summary(tmp_path,monkeypatch):

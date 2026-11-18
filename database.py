@@ -951,6 +951,38 @@ def get_workspace_items(user_id, kind=None):
         conn.close()
 
 
+def get_dashboard_records(user_id):
+    """Read activity metadata without fetching assessment inputs or report payloads."""
+    if user_id is None:
+        return [], []
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """SELECT id, disease, probability, created_at
+               FROM health_assessments WHERE user_id = ?
+               ORDER BY created_at DESC, id DESC""",
+            (user_id,),
+        )
+        assessments = [
+            dict(id=record_id, disease=disease, probability=probability, created_at=created_at)
+            for record_id, disease, probability, created_at in cur.fetchall()
+        ]
+        cur.execute(
+            """SELECT kind, title, created_at FROM workspace_items
+               WHERE user_id = ? AND kind IN ('Screenings', 'Reports', 'Imaging')
+               ORDER BY created_at DESC, id DESC""",
+            (user_id,),
+        )
+        work = [
+            dict(kind=kind, title=title, created_at=created_at)
+            for kind, title, created_at in cur.fetchall()
+        ]
+        return assessments, work
+    finally:
+        conn.close()
+
+
 def delete_workspace_item(user_id, item_id):
     conn = get_connection()
     try:
