@@ -840,6 +840,32 @@ body .mp-tracking-heading h2, body .mp-tracking-heading h3 {margin:0;padding:0}
 .st-key-tracking_panels > [data-testid="stGridCell"]:last-child {
   border-top:4px solid var(--ink-blue) !important;
 }
+.st-key-tracking_panels > [data-testid="stGridCell"] {
+  padding:22px;
+}
+.st-key-tracking_panels .mp-tracking-panel-content {
+  display:grid;
+  gap:16px;
+}
+.mp-tracking-panel-intro {display:grid;gap:8px}
+.mp-tracking-panel-intro p {
+  margin:0;
+  color:var(--text-2);
+  font-size:14px;
+  line-height:1.5;
+}
+.mp-tracking-panel-content > .mp-tracking-empty {
+  min-height:102px;
+}
+.mp-tracking-panel-content:not(:has(.mp-tracking-empty)) {
+  padding-bottom:12px;
+}
+.st-key-tracking_panels > [data-testid="stGridCell"]:first-child .mp-tracking-empty {
+  --tracking-tone:var(--tone-amber);
+}
+.st-key-tracking_panels > [data-testid="stGridCell"]:last-child .mp-tracking-empty {
+  --tracking-tone:var(--tone-blue);
+}
 .st-key-tracking_recent {border-top:4px solid var(--ink-teal) !important}
 .mp-tracking-result {display:grid;gap:16px}
 .mp-tracking-result .mp-tracking-result-status {

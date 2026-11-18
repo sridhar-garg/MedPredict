@@ -70,8 +70,21 @@ def _heading(title, glyph, tone, level=3):
     )
 
 
+def _empty_box(title, description):
+    return f'<div class="mp-tracking-empty"><strong>{escape(title)}</strong><p>{escape(description)}</p></div>'
+
+
 def _empty(title, description):
-    html(f'<div class="mp-tracking-empty"><strong>{escape(title)}</strong><p>{escape(description)}</p></div>')
+    html(_empty_box(title, description))
+
+
+def _panel_intro(title, glyph, tone, description, *, empty=None):
+    status = _empty_box(*empty) if empty else ""
+    st.html(
+        '<div class="mp-tracking-panel-content">'
+        f'<header class="mp-tracking-panel-intro">{_heading(title, glyph, tone)}'
+        f'<p>{escape(description)}</p></header>{status}</div>'
+    )
 
 
 def _counts(assessments, work):
@@ -111,8 +124,6 @@ def _latest_cards(by_disease):
 
 
 def _watch_card(by_disease, names):
-    html(_heading("Assessment watch", "shield", "amber"))
-    st.caption("Conditions with any saved estimate above 60%. Each entry shows the most recent result.")
     watched = []
     for condition, records in by_disease.items():
         highs = [record for record in records
@@ -120,8 +131,11 @@ def _watch_card(by_disease, names):
         if highs:
             watched.append((condition, records, max(highs, key=lambda record: record["probability"])))
     watched.sort(key=lambda item: (item[1][0]["probability"] or 0) > WATCH_THRESHOLD, reverse=True)
+    _panel_intro(
+        "Assessment watch", "shield", "amber", "Flags any past estimate above 60%.",
+        empty=None if watched else ("No estimates above 60%", "Results above the threshold will appear here."),
+    )
     if not watched:
-        _empty("No estimates above 60%", "Saved results that cross the watch threshold will appear here.")
         return
 
     rows = []
@@ -163,11 +177,13 @@ def _chart(chart, label, key):
 
 
 def _estimate_chart(by_disease, names):
-    html(_heading("Model estimate history", "pulse", "blue"))
     available = [condition for condition, records in by_disease.items()
                  if any(record["probability"] is not None for record in records)]
+    _panel_intro(
+        "Model estimate history", "pulse", "blue", "Compare saved model estimates.",
+        empty=None if available else ("Your trend starts here", "Your saved estimates will appear on this graph."),
+    )
     if not available:
-        _empty("Your trend starts here", "Saved model estimates will appear on this graph.")
         return
     condition = st.selectbox("Condition", available, format_func=names.get, key="tracking_estimate_condition")
     tone = ASSESSMENTS[condition][2] if condition in ASSESSMENTS else "violet"
@@ -286,7 +302,7 @@ def render_dashboard_activity(user_id):
 
         _counts(assessments, work)
         _latest_cards(by_disease)
-        grid = st.grid(2, min_column_width=300, gap=16, key="tracking_panels")
+        grid = st.grid(2, min_column_width=340, gap=18, key="tracking_panels")
         with grid.cell():
             _watch_card(by_disease, names)
         with grid.cell():
