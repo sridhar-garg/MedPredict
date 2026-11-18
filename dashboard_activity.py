@@ -15,9 +15,9 @@ from ui import html, icon
 
 
 ASSESSMENTS = {
-    "diabetes": ("Diabetes", "pages/diabetes_app.py", "drop", "blue"),
-    "heart disease": ("Heart health", "pages/heart_app.py", "heart", "coral"),
-    "breast cancer": ("Breast cancer", "pages/breast_app.py", "ribbon", "rose"),
+    "diabetes": ("Diabetes", "drop", "blue"),
+    "heart disease": ("Heart health", "heart", "coral"),
+    "breast cancer": ("Breast cancer", "ribbon", "rose"),
 }
 ACTIVITY_TYPES = {
     "Assessments": ("Completed assessments", "Assessment", "blue", "pulse"),
@@ -64,8 +64,10 @@ def _score(score):
 
 
 def _heading(title, glyph, tone, level=3):
-    html(f'<div class="mp-tracking-heading"><span class="mp-tracking-icon mp-{tone}">{icon(glyph, 21)}</span>'
-         f'<h{level}>{escape(title)}</h{level}></div>')
+    return (
+        f'<div class="mp-tracking-heading"><span class="mp-tracking-icon mp-{tone}">{icon(glyph, 21)}</span>'
+        f'<h{level}>{escape(title)}</h{level}></div>'
+    )
 
 
 def _empty(title, description):
@@ -85,31 +87,31 @@ def _counts(assessments, work):
 
 def _latest_cards(by_disease):
     st.subheader("Your latest assessments")
-    for column, (key, (name, page, glyph, tone)) in zip(st.columns(3), ASSESSMENTS.items()):
-        with column, st.container(border=True, key=f"tracking_latest_{tone}"):
-            _heading(name, glyph, tone)
-            records = by_disease.get(key)
-            if not records:
-                _empty("No saved result yet", "Complete an assessment to see your estimate here.")
-                st.page_link(page, label="Start assessment", icon=":material/arrow_forward:")
-                continue
-            latest = records[0]
-            score = latest["probability"]
-            if score is None:
-                _empty("Estimate unavailable", "Open the saved result for details.")
+    grid = st.grid(3, min_column_width=210, gap=16, key="tracking_results")
+    for key, (name, glyph, tone) in ASSESSMENTS.items():
+        records = by_disease.get(key)
+        latest = records[0] if records else None
+        with grid.cell():
+            if latest is None:
+                body = '<p class="mp-tracking-result-status">No saved result yet</p>'
+            elif latest["probability"] is None:
+                body = '<p class="mp-tracking-result-status">Estimate unavailable</p>'
             else:
-                html(
+                score = latest["probability"]
+                body = (
                     f'<div class="mp-tracking-estimate">'
                     f'<div class="mp-tracking-ring" style="--mp-score:{score:.6%}"><b>{_score(score)}</b></div>'
                     f'<div><strong>Latest model estimate</strong><small>Saved {_date(latest)}</small></div>'
                     '</div>'
                 )
-            st.page_link("pages/history.py", label="View result", icon=":material/arrow_forward:",
-                         query_params={"assessment": str(latest["id"])})
+            st.html(f'<article class="mp-tracking-result" data-tone="{tone}">{_heading(name, glyph, tone)}{body}</article>')
+            if latest is not None:
+                st.page_link("pages/history.py", label="View result", icon=":material/arrow_forward:",
+                             query_params={"assessment": str(latest["id"])})
 
 
 def _watch_card(by_disease, names):
-    _heading("Assessment watch", "shield", "amber")
+    html(_heading("Assessment watch", "shield", "amber"))
     st.caption("Conditions with any saved estimate above 60%. Each entry shows the most recent result.")
     watched = []
     for condition, records in by_disease.items():
@@ -161,14 +163,14 @@ def _chart(chart, label, key):
 
 
 def _estimate_chart(by_disease, names):
-    _heading("Model estimate history", "pulse", "blue")
+    html(_heading("Model estimate history", "pulse", "blue"))
     available = [condition for condition, records in by_disease.items()
                  if any(record["probability"] is not None for record in records)]
     if not available:
         _empty("Your trend starts here", "Saved model estimates will appear on this graph.")
         return
-    condition = st.selectbox("Assessment", available, format_func=names.get, key="tracking_estimate_condition")
-    tone = ASSESSMENTS.get(condition, (None, None, None, "violet"))[3]
+    condition = st.selectbox("Condition", available, format_func=names.get, key="tracking_estimate_condition")
+    tone = ASSESSMENTS[condition][2] if condition in ASSESSMENTS else "violet"
     color = _chart_color(tone)
     valid = [record for record in reversed(by_disease[condition]) if record["probability"] is not None]
     source = alt.InlineData(values=[
@@ -233,15 +235,15 @@ def _monthly_activity(entries):
 
 def _recent_activity(entries):
     with st.container(border=True, key="tracking_recent"):
-        _heading("Recent activity", "history", "teal")
+        html(_heading("Recent activity", "history", "teal"))
         selected = st.selectbox("Filter activity", ["All activity", *ACTIVITY_TYPES],
                                 key="dashboard_activity_filter")
         matching = [entry for entry in entries if selected == "All activity" or entry["kind"] == selected]
-        graph, timeline = st.columns(2, gap="large")
-        with graph:
+        grid = st.grid(2, min_column_width=280, gap=24, key="tracking_recent_grid")
+        with grid.cell():
             st.markdown("#### Last six months")
             _monthly_activity(matching)
-        with timeline:
+        with grid.cell():
             st.markdown("#### Latest records")
             if matching:
                 items = "".join(
@@ -253,12 +255,13 @@ def _recent_activity(entries):
                 html(f'<ol class="mp-activity-timeline">{items}</ol>')
             else:
                 _empty("No saved records in this view", "Assessments, screenings, reports, and imaging will appear as you save them.")
+        with st.container(key="tracking_history_footer"):
             st.page_link("pages/history.py", label="Full history", icon=":material/history:")
 
 
 def render_dashboard_activity(user_id):
     with st.container(key="mp_dashboard_activity"):
-        _heading("Your health activity", "pulse", "teal", level=2)
+        html(_heading("Your health activity", "pulse", "teal", level=2))
         try:
             assessments, work = get_dashboard_records(user_id)
         except Exception:
@@ -283,9 +286,9 @@ def render_dashboard_activity(user_id):
 
         _counts(assessments, work)
         _latest_cards(by_disease)
-        watch, estimate = st.columns([1, 1.15], gap="medium")
-        with watch, st.container(border=True, key="tracking_watch"):
+        grid = st.grid(2, min_column_width=300, gap=16, key="tracking_panels")
+        with grid.cell():
             _watch_card(by_disease, names)
-        with estimate, st.container(border=True, key="tracking_trend"):
+        with grid.cell():
             _estimate_chart(by_disease, names)
         _recent_activity(entries)

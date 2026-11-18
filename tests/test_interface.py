@@ -50,7 +50,12 @@ def test_dashboard_inserts_real_activity_between_existing_sections(tmp_path, mon
     assert order == sorted(order)
     assert 'Explore assessments' in markup[order[0]]
     assert not at.get('vega_lite_chart')
-    assert len([link for link in at.get('page_link') if link.proto.label == 'Start assessment']) == 3
+    assert not any(link.proto.label == 'Start assessment' for link in at.get('page_link'))
+    result_cards = [item.proto.body for item in at.get('html')
+                    if item.proto.body.startswith('<article class="mp-tracking-result"')]
+    assert len(result_cards) == 3
+    assert all('No saved result yet' in card for card in result_cards)
+    assert {'open_diabetes', 'open_heart', 'open_breast'} <= {button.key for button in at.button}
 
     for disease, score in (('Diabetes', .63), ('Diabetes', .71),
                            ('Heart Disease', .80), ('Heart Disease', .51), ('Breast Cancer', .60)):
