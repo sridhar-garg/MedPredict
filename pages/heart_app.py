@@ -12,8 +12,8 @@ from database import save_health_assessment
 
 
 st.set_page_config(
-    page_title="Heart Disease Risk Assessment",
-    page_icon="🫀",
+    page_title="Heart Disease Risk Assessment | MedPredict",
+    page_icon="assets/favicon.svg",
     layout="wide",
     initial_sidebar_state="collapsed",
 )

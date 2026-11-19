@@ -15,8 +15,8 @@
 #include <stdlib.h>
 
 #define CAP 2048
-static const wchar_t *app_url =
-    L"https://medpredictgit-gwv3verd6e57qygyixu5zs.streamlit.app/?embed=true";
+#include "release_url.h"
+static const wchar_t *app_url = MEDPREDICT_APP_URL;
 static const wchar_t *uninstall_key =
     L"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MedPredict";
 
@@ -105,7 +105,7 @@ static BOOL register_app(const AppPaths *paths) {
     BOOL ok = SUCCEEDED(StringCchPrintfW(command, CAP, L"\"%ls\" --uninstall", paths->executable)) &&
               SUCCEEDED(StringCchPrintfW(display_icon, CAP, L"%ls,0", paths->executable)) &&
               set_value(key, L"DisplayName", L"MedPredict") &&
-              set_value(key, L"DisplayVersion", L"1.1.0") &&
+              set_value(key, L"DisplayVersion", L"1.2.0") &&
               set_value(key, L"Publisher", L"MedPredict") &&
               set_value(key, L"DisplayIcon", display_icon) &&
               set_value(key, L"InstallLocation", paths->directory) &&
@@ -119,8 +119,8 @@ static BOOL register_app(const AppPaths *paths) {
 
 static void open_workspace(void) {
     const wchar_t *folders[] = {L"ProgramFiles(x86)", L"ProgramFiles", L"LocalAppData"};
-    const wchar_t *browsers[] = {L"Microsoft\\Edge\\Application\\msedge.exe",
-                                L"Google\\Chrome\\Application\\chrome.exe"};
+    const wchar_t *browsers[] = {L"Google\\Chrome\\Application\\chrome.exe",
+                                L"Microsoft\\Edge\\Application\\msedge.exe"};
     wchar_t base[CAP], path[CAP], args[CAP];
     StringCchPrintfW(args, CAP, L"--app=\"%ls\"", app_url);
     for (size_t browser = 0; browser < ARRAYSIZE(browsers); ++browser) {

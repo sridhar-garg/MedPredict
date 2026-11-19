@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.medpredict.mobile",
+      "sha256_cert_fingerprints": [
+        "81:4E:75:21:08:37:32:51:65:B2:7B:C1:81:0F:7A:17:17:36:66:A1:8E:4B:D7:CF:7B:E4:78:22:BF:E1:99:58"
+      ]
+    }
+  }
+]

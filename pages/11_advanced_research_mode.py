@@ -2,7 +2,7 @@
 from pathlib import Path
 import streamlit as st
 
-st.set_page_config(page_title="Advanced Research Mode | MedPredict X",page_icon="🧪",layout="wide")
+st.set_page_config(page_title="Advanced Research Mode | MedPredict X",page_icon="assets/favicon.svg",layout="wide")
 
 
 from sidebar_compat import show_sidebar

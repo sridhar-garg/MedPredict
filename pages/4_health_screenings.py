@@ -11,7 +11,7 @@ from medical_addon_core import (
     assess_ldl, assess_bmi, assess_stop_bang, fib4, assess_fib4,
 )
 
-st.set_page_config(page_title="More Health Screenings | MedPredict", page_icon="🩺", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="More Health Screenings | MedPredict", page_icon="assets/favicon.svg", layout="wide", initial_sidebar_state="auto")
 
 
 from sidebar_compat import show_sidebar

@@ -5,7 +5,7 @@ from health_assistant import MAX_USER_CHARS, answer_question, load_settings
 from sidebar_compat import show_sidebar
 from ui import apply_theme, html
 
-st.set_page_config(page_title="AI Assistant | MedPredict", page_icon="💬", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="AI Assistant | MedPredict", page_icon="assets/favicon.svg", layout="wide", initial_sidebar_state="auto")
 show_sidebar()
 apply_theme()
 if not st.session_state.get("is_logged_in", False):

@@ -5,7 +5,7 @@ from condition_library import counts, library, normalize, related_tool, search_t
 from sidebar_compat import show_sidebar
 from ui import apply_theme, html
 
-st.set_page_config(page_title="Disease Atlas | MedPredict", page_icon="📚", layout="wide")
+st.set_page_config(page_title="Disease Atlas | MedPredict", page_icon="assets/favicon.svg", layout="wide")
 show_sidebar()
 apply_theme()
 if not st.session_state.get("is_logged_in", False):

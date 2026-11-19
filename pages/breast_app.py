@@ -18,8 +18,8 @@ from utils import (
 
 
 st.set_page_config(
-    page_title="Breast Cancer Risk Assessment",
-    page_icon="🎗️",
+    page_title="Breast Cancer Risk Assessment | MedPredict",
+    page_icon="assets/favicon.svg",
     layout="wide",
     initial_sidebar_state="collapsed",
 )

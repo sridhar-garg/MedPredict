@@ -13,7 +13,7 @@ from medical_addon_core import (
 from imaging_models import MODALITIES, lookup_model, infer
 from utils import apply_custom_css
 
-st.set_page_config(page_title="Medical Imaging & Reports | MedPredict", page_icon="🔬", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="Medical Imaging & Reports | MedPredict", page_icon="assets/favicon.svg", layout="wide", initial_sidebar_state="auto")
 
 
 from sidebar_compat import show_sidebar

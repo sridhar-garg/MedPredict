@@ -19,7 +19,7 @@ from lab_report_tools import candidates, to_fhir_observations, pdf_or_image_to_t
 from research_sources import find_evidence
 from research_benchmarks import demo_experiment, external_experiment, research_summary
 
-st.set_page_config(page_title='MedPredict X | AI Research Hub', page_icon='🧪', layout='wide', initial_sidebar_state='expanded')
+st.set_page_config(page_title='MedPredict X | AI Research Hub', page_icon="assets/favicon.svg", layout='wide', initial_sidebar_state='expanded')
 
 
 from sidebar_compat import show_sidebar

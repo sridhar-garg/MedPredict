@@ -15,7 +15,7 @@ from utils import apply_custom_css
 
 st.set_page_config(
     page_title="Health History | MedPredict",
-    page_icon="📜",
+    page_icon="assets/favicon.svg",
     layout="wide",
     initial_sidebar_state="auto",
 )

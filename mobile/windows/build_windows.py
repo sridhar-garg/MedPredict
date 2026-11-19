@@ -4,11 +4,14 @@ import argparse
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 from tempfile import TemporaryDirectory
 
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT.parent))
+from release_url import release_url
 
 
 def make_icon(destination):
@@ -44,6 +47,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--zig", type=Path, required=True, help="Path to the Zig executable")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--app-url", type=release_url, required=True, help="Verified independent HTTPS deployment")
     args = parser.parse_args()
     zig = str(args.zig.resolve())
     output = args.out.resolve()
@@ -52,6 +56,7 @@ def main():
         work = Path(build)
         for filename in ("MedPredict.c", "MedPredict.rc", "MedPredict.manifest"):
             shutil.copyfile(ROOT / filename, work / filename)
+        (work / "release_url.h").write_text(f'#define MEDPREDICT_APP_URL L"{args.app_url}"\n', encoding="ascii")
         make_icon(work / "MedPredict.ico")
         subprocess.run([zig, "rc", "/fo", "MedPredict.res", "MedPredict.rc"], cwd=work, check=True)
         subprocess.run([

@@ -8,7 +8,7 @@ from utils import apply_custom_css
 from adaptive_assessment import run_experiment
 from robot_simulator import run_dispatch, benchmark, SIZE
 
-st.set_page_config(page_title='CARE-BOT | Autonomous Evidence & Robotics Lab',page_icon='🤖',layout='wide',initial_sidebar_state='expanded')
+st.set_page_config(page_title='CARE-BOT | Autonomous Evidence & Robotics Lab',page_icon="assets/favicon.svg",layout='wide',initial_sidebar_state='expanded')
 
 
 from sidebar_compat import show_sidebar

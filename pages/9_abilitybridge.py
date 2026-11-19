@@ -7,7 +7,7 @@ from braille_tools import braille_dots, text_to_braille, braille_to_text
 from hand_tracking import LiveLandmarkState, create_detector, extract_landmarks
 from sign_recognition import load_pretrained, classify, WEIGHTS
 
-st.set_page_config(page_title="Accessibility | MedPredict",page_icon="🤟",layout="wide")
+st.set_page_config(page_title="Accessibility | MedPredict",page_icon="assets/favicon.svg",layout="wide")
 
 
 from sidebar_compat import show_sidebar

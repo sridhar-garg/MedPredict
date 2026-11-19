@@ -132,7 +132,7 @@ MedPredict
 
 st.set_page_config(
     page_title="Family Health | MedPredict",
-    page_icon="👨‍👩‍👧‍👦",
+    page_icon="assets/favicon.svg",
     layout="wide",
 )
 

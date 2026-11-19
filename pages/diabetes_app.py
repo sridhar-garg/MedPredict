@@ -12,8 +12,8 @@ from database import save_health_assessment
 
 
 st.set_page_config(
-    page_title="Diabetes Risk Assessment",
-    page_icon="🩸",
+    page_title="Diabetes Risk Assessment | MedPredict",
+    page_icon="assets/favicon.svg",
     layout="wide",
     initial_sidebar_state="collapsed",
 )

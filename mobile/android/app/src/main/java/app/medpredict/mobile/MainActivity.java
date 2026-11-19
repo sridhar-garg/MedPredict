@@ -21,6 +21,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -43,13 +44,14 @@ public final class MainActivity extends Activity {
     private WebView web;
     private LinearLayout cover;
     private TextView status;
-    private Button retry;
+    private Button retry, browserButton;
     private ProgressBar spinner;
     private ValueCallback<Uri[]> chooser;
     private PermissionRequest mediaRequest;
     private byte[] pendingDownload;
     private String appUrl, appHost;
     private boolean failed;
+    private int loadGeneration;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -77,7 +79,7 @@ public final class MainActivity extends Activity {
         settings.setSafeBrowsingEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(true);
         CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(web, true);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(web, false);
         web.setBackgroundColor(getColor(R.color.canvas));
         web.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -93,12 +95,16 @@ public final class MainActivity extends Activity {
             }
             @Override public void onPageStarted(WebView view, String url, android.graphics.Bitmap icon) {
                 failed = false;
+                if (cover != null && cover.getVisibility() == View.VISIBLE) beginLoadCheck();
             }
             @Override public void onPageFinished(WebView view, String url) {
-                if (!failed) cover.setVisibility(View.GONE);
+                if (!failed && cover.getVisibility() == View.VISIBLE) pollReady(loadGeneration, 0);
                 CookieManager.getInstance().flush();
             }
             @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                if (request.isForMainFrame()) showError();
+            }
+            @Override public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse error) {
                 if (request.isForMainFrame()) showError();
             }
         });
@@ -159,28 +165,55 @@ public final class MainActivity extends Activity {
         spin.topMargin = dp(24); cover.addView(spinner, spin);
         retry = new Button(this); retry.setText("Try again"); retry.setVisibility(View.GONE);
         retry.setOnClickListener(v -> loadApp()); cover.addView(retry);
+        browserButton = new Button(this); browserButton.setText("Open in browser");
+        browserButton.setVisibility(View.GONE);
+        browserButton.setOnClickListener(v -> openExternal(Uri.parse(appUrl))); cover.addView(browserButton);
         root.addView(cover, new FrameLayout.LayoutParams(-1, -1));
         if (state == null || web.restoreState(state) == null) loadApp();
         else cover.setVisibility(View.GONE);
     }
 
     private boolean trustedOrigin(Uri uri) {
-        return uri != null && "https".equals(uri.getScheme()) && appHost.equals(uri.getHost());
+        return uri != null && "https".equals(uri.getScheme()) && appHost.equals(uri.getHost())
+            && (uri.getPort() == -1 || uri.getPort() == 443) && uri.getUserInfo() == null;
     }
     private boolean insideApp(Uri uri) {
-        if (trustedOrigin(uri)) return true;
-        // Streamlit Community Cloud may perform its session bootstrap on these hosts.
-        return "https".equals(uri.getScheme()) &&
-            ("share.streamlit.io".equals(uri.getHost()) || "auth.streamlit.io".equals(uri.getHost()));
+        return trustedOrigin(uri);
     }
     private void loadApp() {
         failed = false; retry.setVisibility(View.GONE); spinner.setVisibility(View.VISIBLE);
+        browserButton.setVisibility(View.GONE);
         status.setText("Opening your health workspace…"); cover.setVisibility(View.VISIBLE);
+        beginLoadCheck();
         web.loadUrl(appUrl);
     }
+    private void beginLoadCheck() {
+        final int generation = ++loadGeneration;
+        web.postDelayed(() -> {
+            if (generation == loadGeneration && !failed && cover.getVisibility() == View.VISIBLE) {
+                status.setText("Starting MedPredict may take a moment…");
+            }
+        }, 15000);
+        web.postDelayed(() -> {
+            if (generation == loadGeneration && !failed && cover.getVisibility() == View.VISIBLE) showError();
+        }, 90000);
+    }
+    private void pollReady(int generation, int attempt) {
+        if (generation != loadGeneration || failed || isDestroyed() || cover.getVisibility() != View.VISIBLE) return;
+        if (!trustedOrigin(Uri.parse(web.getUrl() == null ? "" : web.getUrl()))) return;
+        web.evaluateJavascript("!!(document.querySelector('.mp-brand') || document.querySelector('[data-testid=stException]'))", result -> {
+            if (generation != loadGeneration || failed || isDestroyed()) return;
+            if ("true".equals(result)) {
+                cover.setVisibility(View.GONE); ++loadGeneration;
+            } else if (attempt < 90) web.postDelayed(() -> pollReady(generation, attempt + 1), 1000);
+            else showError();
+        });
+    }
     private void showError() {
-        failed = true; status.setText("Unable to reach MedPredict. Check your internet connection and try again.");
+        failed = true; ++loadGeneration;
+        status.setText("MedPredict could not finish loading. Check your connection, retry, or open it in your browser.");
         spinner.setVisibility(View.GONE); retry.setVisibility(View.VISIBLE); cover.setVisibility(View.VISIBLE);
+        browserButton.setVisibility(View.VISIBLE);
     }
     private void openExternal(Uri uri) {
         String scheme = uri.getScheme();

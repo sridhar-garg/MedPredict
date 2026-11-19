@@ -6,14 +6,19 @@ packaged in the APK. Keep the signing directory private and reuse it for updates
 """
 import argparse
 import hashlib
+import json
 import os
 from pathlib import Path
 import secrets
 import shutil
 import subprocess
+import sys
 import zipfile
+from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT.parent))
+from release_url import release_url
 
 
 def main():
@@ -22,12 +27,13 @@ def main():
     parser.add_argument('--build-tools', required=True, type=Path)
     parser.add_argument('--signing-dir', type=Path, default=ROOT/'signing')
     parser.add_argument('--out', type=Path, default=ROOT/'build'/'MedPredict-Android.apk')
+    parser.add_argument('--app-url', required=True, type=release_url, help='Verified independent HTTPS deployment')
     args = parser.parse_args()
     tools = args.build_tools.resolve()
     android = args.android_jar.resolve()
     build = ROOT/'build'
     build.mkdir(exist_ok=True)
-    for name in ['classes', 'generated', 'dex']:
+    for name in ['classes', 'generated', 'dex', 'res']:
         directory = build/name
         if directory.exists():
             shutil.rmtree(directory)
@@ -37,11 +43,21 @@ def main():
         subprocess.run([str(x) for x in command], check=True, cwd=ROOT, **kwargs)
 
     source = ROOT/'app'/'src'/'main'
-    run(tools/'aapt2', 'compile', '--dir', source/'res', '-o', build/'resources.zip')
+    shutil.copytree(source/'res', build/'res', dirs_exist_ok=True)
+    statements = json.dumps([{"relation": ["delegate_permission/common.handle_all_urls"],
+                             "target": {"namespace": "web", "site": args.app_url.rstrip("/")}}], separators=(",", ":"))
+    statements = escape(statements.replace('"', '\\"'))
+    (build/'res'/'values'/'deployment.xml').write_text(
+        '<resources><string name="app_url" translatable="false">' + escape(args.app_url) + '</string>'
+        '<string name="asset_statements" translatable="false">' + statements + '</string></resources>', encoding='utf-8')
+    run(tools/'aapt2', 'compile', '--dir', build/'res', '-o', build/'resources.zip')
     run(tools/'aapt2', 'link', '-o', build/'unsigned.apk', '-I', android,
         '--manifest', source/'AndroidManifest.xml', '--java', build/'generated',
         '--min-sdk-version', '26', '--target-sdk-version', '35',
-        '--version-code', '2', '--version-name', '1.1.0', build/'resources.zip')
+        '--version-code', '3', '--version-name', '1.2.0', build/'resources.zip')
+    for file in sorted((source/'aidl').rglob('*.aidl')):
+        run(tools/'aidl', '--lang=java', '--min_sdk_version=26', '-p' + str(android.parent/'framework.aidl'),
+            '-I' + str(source/'aidl'), '-o' + str(build/'generated'), file)
     java_sources = sorted((source/'java').rglob('*.java')) + sorted((build/'generated').rglob('*.java'))
     bootclasspath = os.pathsep.join([str(tools/'core-lambda-stubs.jar'), str(android)])
     run('java', 'com.sun.tools.javac.Main', '-encoding', 'UTF-8', '-source', '8', '-target', '8',

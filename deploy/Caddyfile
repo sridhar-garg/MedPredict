@@ -1,0 +1,20 @@
+{
+    auto_https off
+    admin off
+}
+
+:{$PORT:7860} {
+    @assetlinks path /.well-known/assetlinks.json
+    handle @assetlinks {
+        root * /app/deploy/public
+        header Content-Type application/json
+        file_server
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:8501 {
+            # Railway terminates public HTTPS before forwarding to this container.
+            header_up X-Forwarded-Proto https
+        }
+    }
+}

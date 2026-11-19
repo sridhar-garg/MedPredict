@@ -83,7 +83,7 @@ def verify_current_password(username, password):
 
 st.set_page_config(
     page_title="My Profile | MedPredict",
-    page_icon="👤",
+    page_icon="assets/favicon.svg",
     layout="wide",
 )
 

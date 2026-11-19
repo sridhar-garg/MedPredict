@@ -4,16 +4,20 @@ An installable Android app with the MedPredict name, a medical-box launcher icon
 its own app window, a loading screen and Android back navigation. It loads the
 existing deployed Streamlit interface directly. The Python models and account
 services continue to run on the server, so an internet connection is required.
-Website updates appear in the app without rebuilding the APK. Streamlit's
-supported embedded mode hides the hosting toolbar and footer.
+Website updates appear in the app without rebuilding the APK. The independent
+deployment serves the application directly, without the Community Cloud shell.
 
 The app includes a system file picker, a save-file dialog for supported report
 downloads, and camera/microphone permission handling for the app's own origin.
 External links open in the appropriate external app. These device-dependent
 features should be checked on a real phone before distributing widely.
-The app's usual sign-in is available in the embedded browser. Google sign-in
-opens the MedPredict website in a system browser because Google authentication
-does not support embedded WebViews.
+The app first opens a Trusted Web Activity using the phone's Chrome/browser
+session. The browser independently verifies the deployment's Digital Asset
+Links file, so Google authentication can take place in the real browser.
+If a compatible browser is unavailable, it falls back to the built-in WebView
+with a time-limited loading screen and username sign-in. Google sign-in in that
+fallback opens the website externally. Browser origin indicators remain
+visible for external/unverified pages.
 
 ## Install
 
@@ -31,6 +35,7 @@ python3 build_apk.py \
   --android-jar /path/to/android-sdk/platforms/android-35/android.jar \
   --build-tools /path/to/android-sdk/build-tools/35.0.0 \
   --signing-dir /private/path/to/medpredict-signing \
+  --app-url https://your-deployment.example/ \
   --out /path/to/MedPredict-Android.apk
 ```
 
@@ -40,9 +45,9 @@ a private signing key on the first build. Keep the key and its password private
 and reuse them for updates; never commit them or share them with APK recipients.
 Increment the version code in `build_apk.py` before distributing a later update.
 
-Change `app/src/main/res/values/strings.xml` to point to a different MedPredict
-deployment. The default is the current public Streamlit app, which follows the
-`design/reference-inspired-ui` branch. The four design versions are unchanged.
+The build requires the independent deployment URL, and embeds its matching
+Digital Asset Links statement. The deployment must publish the APK signing
+certificate fingerprint. The four original design versions are unchanged.
 
 ## Verification
 
