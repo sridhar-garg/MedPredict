@@ -1,7 +1,8 @@
 """Start MedPredict on a direct HTTPS host, with secrets supplied at runtime.
 
-Production deliberately requires the shared database and Google OAuth settings.
-An unconfigured server must not silently create a second account database.
+Production requires Google OAuth and an explicitly configured durable database.
+An independent, mounted SQLite store is permitted only when explicitly selected;
+an unconfigured server must not silently create a second account database.
 """
 from __future__ import annotations
 
@@ -17,6 +18,24 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 GOOGLE_METADATA = "https://accounts.google.com/.well-known/openid-configuration"
+LOCAL_DATA_DIR = Path("/data")
+LOCAL_DB = LOCAL_DATA_DIR / "healthai.db"
+
+
+def storage_mode(env):
+    mode = env.get("MEDPREDICT_STORAGE", "postgres").strip().lower()
+    uri = env.get("DATABASE_URL", "").strip()
+    if mode == "postgres":
+        if not uri.startswith(("postgresql://", "postgres://")):
+            raise ValueError("Set DATABASE_URL to the private PostgreSQL connection URI.")
+    elif mode == "sqlite":
+        if uri:
+            raise ValueError("SQLite mode cannot be combined with DATABASE_URL.")
+        if env.get("MEDPREDICT_DB_PATH") != str(LOCAL_DB):
+            raise ValueError(f"SQLite requires MEDPREDICT_DB_PATH={LOCAL_DB} on the durable data volume.")
+    else:
+        raise ValueError("MEDPREDICT_STORAGE must be postgres or sqlite.")
+    return mode
 
 
 def config_from_env(env):
@@ -31,7 +50,8 @@ def config_from_env(env):
             or any(c.isspace() for c in base)):
         raise ValueError("APP_BASE_URL must be a public HTTPS origin, without a path or query.")
     base = base.rstrip("/")
-    required = ("DATABASE_URL", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "MEDPREDICT_COOKIE_SECRET")
+    storage_mode(env)
+    required = ("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "MEDPREDICT_COOKIE_SECRET")
     missing = [key for key in required if not env.get(key, "").strip()]
     if missing:
         raise ValueError("Set these private deployment variables: " + ", ".join(missing))
@@ -39,8 +59,6 @@ def config_from_env(env):
         raise ValueError("GOOGLE_CLIENT_ID must be a Google OAuth client ID.")
     if len(env["MEDPREDICT_COOKIE_SECRET"]) < 32:
         raise ValueError("MEDPREDICT_COOKIE_SECRET must have at least 32 characters.")
-    if not env["DATABASE_URL"].startswith(("postgresql://", "postgres://")):
-        raise ValueError("DATABASE_URL must be the private PostgreSQL connection URI.")
     secrets = {
         "auth": {
             "redirect_uri": base + "/oauth2callback",
@@ -80,6 +98,9 @@ def write_secrets(destination, secrets):
 def main():
     try:
         base, secrets = config_from_env(os.environ)
+        mode = storage_mode(os.environ)
+        if mode == "sqlite" and (not LOCAL_DATA_DIR.is_mount() or not os.access(LOCAL_DATA_DIR, os.W_OK)):
+            raise ValueError("SQLite requires a writable, persistent /data mount. Refusing ephemeral storage.")
         port = int(os.environ.get("PORT", "7860"))
         if not 1024 <= port <= 65535 or port == 8501:
             raise ValueError("PORT must be a nonprivileged port other than 8501.")
@@ -89,12 +110,13 @@ def main():
     os.environ["APP_BASE_URL"] = base
     os.environ["PORT"] = str(port)
     write_secrets(ROOT / ".streamlit" / "secrets.toml", secrets)
-    # Check the existing account schema before serving. Do not migrate, copy or replace data.
+    # Check the existing shared schema, or initialize explicitly selected SQLite storage.
+    # Do not migrate, copy or replace existing data.
     from database import initialize_database
     try:
         initialize_database()
     except Exception:
-        sys.exit("The shared database could not be reached or its existing MedPredict schema is unavailable.")
+        sys.exit("The configured durable database could not be opened or its MedPredict schema is unavailable.")
 
     children = []
     def stop(*_):

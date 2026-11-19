@@ -21,7 +21,7 @@ COPY translations/ translations/
 COPY docs/ docs/
 COPY .streamlit/config.toml .streamlit/config.toml
 COPY deploy/ deploy/
-RUN useradd --create-home --uid 10001 medpredict && chown -R medpredict:medpredict /app
+RUN useradd --create-home --uid 10001 medpredict && mkdir -p /data && chown -R medpredict:medpredict /app /data
 USER medpredict
 EXPOSE 7860
 CMD ["python", "deploy/start.py"]

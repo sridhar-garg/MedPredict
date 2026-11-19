@@ -4,7 +4,7 @@ import tempfile
 import tomllib
 import unittest
 
-from deploy.start import config_from_env, write_secrets
+from deploy.start import config_from_env, write_secrets, storage_mode
 from mobile.release_url import release_url
 
 
@@ -27,6 +27,18 @@ class TestReleaseConfig(unittest.TestCase):
     def test_missing_shared_database_is_not_silently_replaced(self):
         del self.env["DATABASE_URL"]
         with self.assertRaisesRegex(ValueError, "DATABASE_URL"):
+            config_from_env(self.env)
+
+    def test_explicit_sqlite_requires_the_durable_path(self):
+        del self.env["DATABASE_URL"]
+        self.env["MEDPREDICT_STORAGE"] = "sqlite"
+        with self.assertRaisesRegex(ValueError, "durable data volume"):
+            config_from_env(self.env)
+        self.env["MEDPREDICT_DB_PATH"] = "/data/healthai.db"
+        self.assertEqual(storage_mode(self.env), "sqlite")
+        config_from_env(self.env)
+        self.env["DATABASE_URL"] = "postgresql://example.invalid/postgres"
+        with self.assertRaisesRegex(ValueError, "cannot be combined"):
             config_from_env(self.env)
 
     def test_bad_release_urls(self):
