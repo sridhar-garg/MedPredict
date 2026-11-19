@@ -1,0 +1,150 @@
+"""Build branded, bundled Android/Windows applications from the local assets.
+
+Only a publishable Supabase URL/key is allowed into the client configuration.
+Signing keys are external to the repository and used by the Android signer.
+"""
+import argparse
+import base64
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
+import zipfile
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "mobile" / "windows"))
+from build_windows import make_icon
+
+
+def run(*args, **kwargs):
+    subprocess.run([str(a) for a in args], check=True, **kwargs)
+
+
+def validate_public(url, key):
+    if not url and not key:
+        return ""
+    match = re.fullmatch(r"https://([a-z0-9]+\.supabase\.co)", url)
+    if not match:
+        raise ValueError("Expected a Supabase HTTPS project URL.")
+    if not key.startswith("sb_publishable_"):
+        # Legacy JWT must explicitly have the anon role, never service_role.
+        try:
+            payload = key.split(".")[1]
+            role = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))["role"]
+        except Exception:
+            raise ValueError("Use a public publishable/anon key only.") from None
+        if role != "anon":
+            raise ValueError("Use a public publishable/anon key only.")
+    return match.group(1)
+
+
+def stage(work, args):
+    web = work / "web"
+    shutil.copytree(ROOT / "standalone" / "web", web)
+    shutil.copytree(args.assets, web / "assets")
+    host = validate_public(args.url, args.key)
+    (web / "config.js").write_text("window.MP_CONFIG=" + json.dumps({"url": args.url, "key": args.key}) + ";\n")
+    vendor = web / "vendor"
+    vendor.mkdir()
+    for name in ("pdf.min.mjs", "pdf.worker.min.mjs"):
+        shutil.copy(args.pdfjs / "build" / name, vendor / name)
+    shutil.copy(args.pdfjs / "LICENSE", vendor / "PDFJS-LICENSE.txt")
+    return web, host
+
+
+def android(work, web, host, args):
+    tools = args.build_tools.resolve()
+    jar = args.android_jar.resolve()
+    build = work / "android"
+    build.mkdir()
+    for name in ["classes", "generated", "dex"]:
+        (build/name).mkdir()
+    shutil.copytree(ROOT/"mobile/android/app/src/main/res", build/"res")
+    (build/"res/values/standalone.xml").write_text('<resources><string name="mp_project_host" translatable="false">'+host+'</string></resources>')
+    shutil.copytree(web, build/"assets/web")
+    run(tools/"aapt2","compile","--dir",build/"res","-o",build/"resources.zip")
+    run(tools/"aapt2","link","-o",build/"unsigned.apk","-I",jar,
+        "--manifest",ROOT/"standalone/android/AndroidManifest.xml","--java",build/"generated",
+        "--min-sdk-version","26","--target-sdk-version","35","--version-code","4",
+        "--version-name","2.0.0","-A",build/"assets",build/"resources.zip")
+    sources=list((build/"generated").rglob("*.java"))+[ROOT/"standalone/android/StandaloneActivity.java"]
+    run("java","com.sun.tools.javac.Main","-encoding","UTF-8","-source","8","-target","8",
+        "-Xlint:-options","-bootclasspath",os.pathsep.join([str(tools/"core-lambda-stubs.jar"),str(jar)]),
+        "-d",build/"classes",*sources)
+    run("java","-cp",tools/"lib/d8.jar","com.android.tools.r8.D8","--release","--lib",jar,
+        "--min-api","26","--output",build/"dex",*sorted((build/"classes").rglob("*.class")))
+    with zipfile.ZipFile(build/"unsigned.apk","a",compression=zipfile.ZIP_DEFLATED) as apk:
+        for dex in (build/"dex").glob("*.dex"):apk.write(dex,dex.name)
+    run(tools/"zipalign","-f","-P","16","4",build/"unsigned.apk",build/"aligned.apk")
+    signing=args.signing_dir.resolve()
+    key=signing/"medpredict.jks"
+    if not key.is_file() or not (signing/"signing-password.txt").is_file():
+        raise RuntimeError("Existing private Android signing files required.")
+    env=os.environ.copy()
+    env["MEDPREDICT_SIGNING_PASSWORD"]=(signing/"signing-password.txt").read_text().strip()
+    output=args.out/"MedPredict.apk"
+    run("java","-jar",tools/"lib/apksigner.jar","sign","--ks",key,
+        "--ks-key-alias","medpredict","--ks-pass","env:MEDPREDICT_SIGNING_PASSWORD",
+        "--key-pass","env:MEDPREDICT_SIGNING_PASSWORD","--min-sdk-version","26",
+        "--v1-signing-enabled","true","--v2-signing-enabled","true","--out",output,build/"aligned.apk",env=env)
+    run("java","-jar",tools/"lib/apksigner.jar","verify","--verbose","--print-certs",output)
+    run(tools/"zipalign","-c","-P","16","4",output)
+    run(tools/"aapt2","dump","badging",output)
+    print(output,hashlib.sha256(output.read_bytes()).hexdigest())
+
+
+def windows(work, web,args):
+    zig=args.zig.resolve()
+    build=work/"windows"
+    build.mkdir()
+    shutil.copy(ROOT/"standalone/windows/MedPredict.c",build/"MedPredict.c")
+    shutil.copy(ROOT/"mobile/windows/MedPredict.manifest",build/"MedPredict.manifest")
+    make_icon(build/"MedPredict.ico")
+    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","2,0,0,0").replace("1.2.0","2.0.0")
+    mime={".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",".js":"text/javascript; charset=utf-8",".mjs":"text/javascript; charset=utf-8",".json":"application/json; charset=utf-8",".svg":"image/svg+xml",".webp":"image/webp",".txt":"text/plain; charset=utf-8"}
+    lines=["static const struct {const char *path; const char *mime; int id;} bundle[] = {"]
+    for i,file in enumerate(sorted(web.rglob("*")),100):
+        if not file.is_file():continue
+        relative=file.relative_to(web).as_posix()
+        rc+='\n'+str(i)+' RCDATA "'+str(file).replace("\\","/")+'"\n'
+        lines.append('  {"/'+relative+'","'+mime.get(file.suffix,"application/octet-stream")+'",'+str(i)+'},')
+    lines.append("};")
+    (build/"bundle.h").write_text("\n".join(lines))
+    (build/"MedPredict.rc").write_text(rc)
+    run(zig,"rc","/fo","MedPredict.res","MedPredict.rc",cwd=build)
+    output=args.out/"MedPredict.exe"
+    run(zig,"cc","-target","x86_64-windows-gnu","-O2","-s","-municode","-Wl,--subsystem,windows","MedPredict.c","MedPredict.res","-lws2_32","-lshell32","-luser32","-lgdi32","-o",output,cwd=build)
+    shutil.copy(build/"MedPredict.ico",args.out/"MedPredict.ico")
+    print(output,hashlib.sha256(output.read_bytes()).hexdigest())
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--assets",type=Path,required=True)
+    p.add_argument("--pdfjs",type=Path,required=True)
+    p.add_argument("--out",type=Path,required=True)
+    p.add_argument("--android-jar",type=Path,required=True)
+    p.add_argument("--build-tools",type=Path,required=True)
+    p.add_argument("--signing-dir",type=Path,required=True)
+    p.add_argument("--zig",type=Path,required=True)
+    p.add_argument("--url",default="")
+    p.add_argument("--key",default="")
+    p.add_argument("--stage-only",action="store_true")
+    args=p.parse_args()
+    args.out=args.out.resolve()
+    args.out.mkdir(parents=True,exist_ok=True)
+    if args.stage_only:
+        stage(args.out,args)
+        return
+    with TemporaryDirectory(prefix="medpredict-standalone-") as directory:
+        work=Path(directory)
+        web,host=stage(work,args)
+        android(work,web,host,args)
+        windows(work,web,args)
+
+if __name__=="__main__":main()
