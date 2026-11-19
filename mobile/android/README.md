@@ -11,6 +11,9 @@ The app includes a system file picker, a save-file dialog for supported report
 downloads, and camera/microphone permission handling for the app's own origin.
 External links open in the appropriate external app. These device-dependent
 features should be checked on a real phone before distributing widely.
+The app's usual sign-in is available in the embedded browser. Google sign-in
+opens the MedPredict website in a system browser because Google authentication
+does not support embedded WebViews.
 
 ## Install
 

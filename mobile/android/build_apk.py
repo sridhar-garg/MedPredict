@@ -41,7 +41,7 @@ def main():
     run(tools/'aapt2', 'link', '-o', build/'unsigned.apk', '-I', android,
         '--manifest', source/'AndroidManifest.xml', '--java', build/'generated',
         '--min-sdk-version', '26', '--target-sdk-version', '35',
-        '--version-code', '1', '--version-name', '1.0.0', build/'resources.zip')
+        '--version-code', '2', '--version-name', '1.1.0', build/'resources.zip')
     java_sources = sorted((source/'java').rglob('*.java')) + sorted((build/'generated').rglob('*.java'))
     bootclasspath = os.pathsep.join([str(tools/'core-lambda-stubs.jar'), str(android)])
     run('java', 'com.sun.tools.javac.Main', '-encoding', 'UTF-8', '-source', '8', '-target', '8',

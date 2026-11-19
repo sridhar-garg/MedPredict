@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">MedPredict</string>
     <string name="app_url">https://medpredictgit-gwv3verd6e57qygyixu5zs.streamlit.app/?embed=true</string>
-    <color name="brand">#6351DB</color>
-    <color name="canvas">#F7F8FC</color>
-    <color name="ink">#1C2038</color>
+    <color name="brand">#096961</color>
+    <color name="canvas">#F4F7F7</color>
+    <color name="ink">#192F3D</color>
 </resources>

@@ -2,6 +2,7 @@ package app.medpredict.mobile;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -83,6 +84,10 @@ public final class MainActivity extends Activity {
                 Uri url = request.getUrl();
                 if (!request.isForMainFrame()) return false;
                 if (insideApp(url)) return false;
+                if ("https".equals(url.getScheme()) && "accounts.google.com".equals(url.getHost())) {
+                    showGoogleBrowser();
+                    return true;
+                }
                 if (request.hasGesture()) openExternal(url);
                 return true;
             }
@@ -182,6 +187,18 @@ public final class MainActivity extends Activity {
         if (!"https".equals(scheme) && !"http".equals(scheme) && !"mailto".equals(scheme) && !"tel".equals(scheme)) return;
         try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); }
         catch (ActivityNotFoundException e) { message("No app is available to open this link."); }
+    }
+    private void showGoogleBrowser() {
+        new AlertDialog.Builder(this)
+            .setTitle("Continue with Google")
+            .setMessage("Google requires sign-in through a browser. Open MedPredict in your browser to continue with Google, or use the usual sign-in here.")
+            .setPositiveButton("Open MedPredict", (dialog, which) -> {
+                loadApp();
+                openExternal(Uri.parse(appUrl).buildUpon().clearQuery().build());
+            })
+            .setNegativeButton("Stay here", (dialog, which) -> loadApp())
+            .setOnCancelListener(dialog -> loadApp())
+            .show();
     }
     private void requestMedia(PermissionRequest request) {
         if (!trustedOrigin(request.getOrigin())) { request.deny(); return; }
