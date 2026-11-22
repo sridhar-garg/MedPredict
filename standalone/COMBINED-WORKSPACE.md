@@ -14,6 +14,16 @@ existing MedPredict catalogs and expanded workspace catalogs. Hindi has the
 largest new coverage. Untranslated original educational content, user text
 and report/model values stay unchanged.
 
+Version 1.1.1 uses a compact outer toolbar and removes duplicate embedded
+banners. The Windows launcher and existing callback/port are unchanged.
+Keep the little launcher window open or minimized while using the workspace.
+Dashboard localization covers the main activity/card strings in all 15
+languages, with expanded German/Hindi module UI strings. Original long
+educational content and user-authored text are still not automatically
+translated. Healthara no longer presents sample hydration, sleep, steps
+or completed indicators as personal data; the shared snapshot updates both
+dashboards, with manually entered sleep/steps and saved water counts.
+
 ## Identity and data
 
 Only the workspace authenticates (Google OAuth via Supabase PKCE). Module

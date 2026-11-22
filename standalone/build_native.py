@@ -71,6 +71,16 @@ def stage(work, args):
     with (ROOT / "standalone" / "workspace-hi.tsv").open(encoding="utf-8", newline="") as stream:
         for original,translated in csv.reader(stream, delimiter="\t"):
             catalogs["hi"][original] = translated
+    with (ROOT / "standalone" / "workspace-de.tsv").open(encoding="utf-8", newline="") as stream:
+        for original,translated in csv.reader(stream, delimiter="\t"):
+            catalogs["de"][original] = translated
+    for filename in ("workspace-ui-extra.tsv","workspace-ui-indic.tsv"):
+        with (ROOT / "standalone" / filename).open(encoding="utf-8", newline="") as stream:
+            for row in csv.DictReader(stream, delimiter="\t"):
+                if not row.get("key") or None in row:
+                    raise ValueError("Invalid extra localization row")
+                for code,translated in row.items():
+                    if code in catalogs and translated: catalogs[code][row["key"]]=translated
     (web / "locale-data.js").write_text("window.MPI18nCatalogs="+json.dumps(catalogs,ensure_ascii=False,separators=(",",":"))+";\n",encoding="utf-8")
     vendor = web / "vendor"
     vendor.mkdir()
@@ -94,8 +104,8 @@ def android(work, web, host, args):
     run(tools/"aapt2","compile","--dir",build/"res","-o",build/"resources.zip")
     run(tools/"aapt2","link","-o",build/"unsigned.apk","-I",jar,
         "--manifest",ROOT/"standalone/android/AndroidManifest.xml","--java",build/"generated",
-        "--min-sdk-version","26","--target-sdk-version","35","--version-code","2",
-        "--version-name","1.1.0","-A",build/"assets",build/"resources.zip")
+        "--min-sdk-version","26","--target-sdk-version","35","--version-code","3",
+        "--version-name","1.1.1","-A",build/"assets",build/"resources.zip")
     sources=list((build/"generated").rglob("*.java"))+[ROOT/"standalone/android/StandaloneActivity.java"]
     run("java","com.sun.tools.javac.Main","-encoding","UTF-8","-source","8","-target","8",
         "-Xlint:-options","-bootclasspath",os.pathsep.join([str(tools/"core-lambda-stubs.jar"),str(jar)]),
@@ -129,7 +139,7 @@ def windows(work, web,args):
     shutil.copy(ROOT/"standalone/windows/MedPredict.c",build/"MedPredict.c")
     shutil.copy(ROOT/"mobile/windows/MedPredict.manifest",build/"MedPredict.manifest")
     make_icon(build/"MedPredict.ico")
-    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","1,1,0,0").replace("1.2.0","1.1.0").replace('MedPredict.exe','Aroham-AI.exe').replace('MedPredict\\0','Aroham AI\\0')
+    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","1,1,1,0").replace("1.2.0","1.1.1").replace('MedPredict.exe','Aroham-AI.exe').replace('MedPredict\\0','Aroham AI\\0')
     mime={".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",".js":"text/javascript; charset=utf-8",".mjs":"text/javascript; charset=utf-8",".json":"application/json; charset=utf-8",".svg":"image/svg+xml",".webp":"image/webp",".txt":"text/plain; charset=utf-8"}
     lines=["static const struct {const char *path; const char *mime; int id;} bundle[] = {"]
     for i,file in enumerate(sorted(web.rglob("*")),100):

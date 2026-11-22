@@ -6,6 +6,8 @@ const window={},handlers={};window.addEventListener=(type,fn)=>{handlers[type]=f
 class FakeFrame {
  constructor(){this.messages=[];this.contentWindow={postMessage:(value)=>this.messages.push(value)};}
  setAttribute(k,v){this[k]=v;}
+ append(...elements){this.children=(this.children||[]).concat(elements);}
+ replaceChildren(...elements){this.children=elements;}
  remove(){this.removed=true;}
 }
 let frame;
@@ -31,7 +33,7 @@ assert.match(home,/Welcome,.*Synthetic\./);
 for(const app of hub.apps)assert.ok(home.includes('data-route="'+app.route+'" data-app-launch="'+app.id+'"'));
 const msg=async (data,from=frame.contentWindow,origin='null')=>handlers.message({source:from,origin,data:{channel:'workspace-v1',...data}});
 modules.open('healthara',children,()=>{});
-window.MPI18n={languages:{en:'English',hi:'Hindi',fr:'French'}};
+window.MPI18n={languages:{en:'English',hi:'Hindi',fr:'French'},language:()=>'en'};
 window.MPI18nCatalogs={hi:{Dashboard:'डैशबोर्ड'},fr:{Dashboard:'Tableau de bord'}};
 let requested;
 modules.setPreferences({theme:'dark',language:'hi'},p=>{requested=p;});
@@ -50,10 +52,12 @@ await msg({type:'preferences',token:hello.token,preferences:{theme:'light',langu
 assert.equal(requested.language,'fr');assert.equal(requested.theme,'light');
 modules.setPreferences({theme:'light',language:'fr'});
 assert.equal(frame.messages.at(-1).preferences.language,'fr');
-const token=hello.token,stored={healthara_workspace_dummy:'bad','healthara_workspace-user':JSON.stringify({journalEntries:[{text:'synthetic'}],waterIntake:3,user:{password:'not retained'}})};
+const token=hello.token,stored={healthara_workspace_dummy:'bad','healthara_workspace-user':JSON.stringify({journalEntries:[{text:'synthetic'}],waterIntake:6,sleepHours:7.5,stepCount:7200,user:{password:'not retained'}})};
 await msg({type:'state',token,storage:stored},{});assert.equal(modules.status().summaries.healthara.journal,0);
 await msg({type:'state',token,storage:stored});assert.equal(modules.status().summaries.healthara.journal,1);
-assert.equal(modules.status().summaries.healthara.water,3);
+assert.equal(modules.status().summaries.healthara.water,6);
+assert.equal(modules.status().summaries.healthara.sleep,7.5);
+assert.equal(modules.status().summaries.healthara.steps,7200);
 await modules.flush();assert.equal(database.state.length,1);
 assert.ok(!JSON.stringify(database.state).includes('not retained'));
 modules.open('namastey',children,()=>{});
@@ -69,6 +73,9 @@ assert.equal(modules.status().summaries.kaamigo.exchanges,1);
 const html=render([{title:'<img onerror="bad">',created_at:new Date().toISOString(),kind:'assessment'}]);
 assert.ok(html.includes('&lt;img onerror=&quot;bad&quot;&gt;'));assert.ok(!html.includes('<img onerror'));
 assert.ok(html.includes('Journal entries</dt><dd>1</dd>'));
+assert.ok(html.includes('Water glasses</dt><dd>6</dd>'));
+assert.ok(html.includes('Sleep (hours)</dt><dd>7.5</dd>'));
+assert.ok(html.includes('Steps today</dt><dd>7200</dd>'));
 assert.ok(html.includes('Culture matches</dt><dd>2</dd>'));
 assert.ok(html.includes('Active skill exchanges</dt><dd>1</dd>'));
 for(const app of ['healthara','namastey','kaamigo']){
@@ -76,7 +83,20 @@ for(const app of ['healthara','namastey','kaamigo']){
  assert.ok(!/<script\b[^>]*src\s*=/i.test(source),app+' external script removed');
  assert.ok(!/<input[^>]+type="password"/i.test(source),app+' old credential input removed');
  assert.ok(!/firebaseConfig|emailjs\.send/.test(source));
+ assert.ok(!source.includes('<div id="workspaceNotice">'));
  for(const m of source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi))new Script(m[1]);
 }
 await modules.flush();modules.reset();assert.equal(modules.status().summaries.healthara.journal,0);
+// Re-enter every module repeatedly with both modes and languages.
+await modules.start(account,()=>{});
+for(let pass=0;pass<4;pass++){
+ modules.setPreferences({theme:pass%2?'dark':'light',language:pass%2?'hi':'fr'});
+ for(const id of ['healthara','namastey','kaamigo']){
+  modules.open(id,children,()=>{});const launched=frame;
+  await msg({type:'ready'});const init=frame.messages.at(-1);
+  assert.equal(init.preferences.language,pass%2?'hi':'fr');
+  modules.stop();assert.equal(launched.removed,true);
+ }
+}
+modules.reset();
 console.log('PASS: 4 in-app routes, shared identity without tokens, isolated child state, synthetic save interface, marketplace, aggregate counts, removed old logins and parsed all module scripts');

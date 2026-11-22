@@ -3558,7 +3558,7 @@ class Chart {
 
     </style>
 <style>#authContainer,#splashScreen{display:none!important}</style></head>
-<body><div id="workspaceNotice"><button type="button" onclick="Workspace.leave()">Combined dashboard</button>Connected edition · Uses your workspace account. External chat, maps, camera models, and media integrations are unavailable until separately configured.</div>
+<body><style>#appContainer header .user-info{display:none!important}#settingsLogoutBtn{display:none!important}#appContainer header{min-height:58px}#appContainer nav .nav-tabs{overflow-x:auto;flex-wrap:wrap}</style>
         <!-- Google Translate Widget -->
         <div id="google_translate_element" style="position: fixed; top: 10px; right: 10px; z-index: 9999;"></div>
         <script type="text/javascript">
@@ -3672,10 +3672,10 @@ class Chart {
                         <div class="progress-title">
                             <i class="fas fa-bed"></i> Sleep Tracker
                         </div>
-                        <div class="progress-value">7.5/8 hrs</div>
+                        <div class="progress-value" id="dashboardSleep">Not recorded</div>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill sleep" style="width: 94%;"></div>
+                        <div class="progress-fill sleep" style="width: 0%;"></div>
                     </div>
                 </div>
                 <div class="progress-card">
@@ -3683,10 +3683,10 @@ class Chart {
                         <div class="progress-title">
                             <i class="fas fa-walking"></i> Step Count
                         </div>
-                        <div class="progress-value">7,200/10,000</div>
+                        <div class="progress-value" id="dashboardSteps">Not recorded</div>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill steps" style="width: 72%;"></div>
+                        <div class="progress-fill steps" style="width: 0%;"></div>
                     </div>
                 </div>
                 <div class="progress-card">
@@ -3694,29 +3694,36 @@ class Chart {
                         <div class="progress-title">
                             <i class="fas fa-tint"></i> Hydration
                         </div>
-                        <div class="progress-value">6/8 glasses</div>
+                        <div class="progress-value" id="dashboardWater">0/8 glasses</div>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill hydration" style="width: 75%;"></div>
+                        <div class="progress-fill hydration" id="dashboardWaterFill" style="width: 0%;"></div>
                     </div>
                 </div>
             </div>
 
+            <form id="workspaceDailyActivity" style="display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:12px 0 22px;">
+                <label style="display:grid;gap:4px;color:var(--text-secondary)">Sleep (hours)<input id="workspaceSleep" type="number" min="0" max="24" step="0.1" style="max-width:150px;padding:9px;border:1px solid var(--glass-border);border-radius:8px;background:var(--bg-secondary);color:var(--text-primary)"></label>
+                <label style="display:grid;gap:4px;color:var(--text-secondary)">Steps today<input id="workspaceSteps" type="number" min="0" max="100000" step="1" style="max-width:150px;padding:9px;border:1px solid var(--glass-border);border-radius:8px;background:var(--bg-secondary);color:var(--text-primary)"></label>
+                <button type="submit" class="btn" style="width:auto;min-width:120px">Save activity</button>
+                <small style="color:var(--text-secondary)">Enter your measured values; leave unknown values blank.</small>
+            </form>
+
             <div class="daily-indicators">
                 <div class="indicator">
-                    <div class="indicator-icon completed">
+                    <div class="indicator-icon" id="dashboardMood">
                         <i class="fas fa-smile"></i>
                     </div>
                     <div class="indicator-label">Mood Logged</div>
                 </div>
                 <div class="indicator">
-                    <div class="indicator-icon completed">
+                    <div class="indicator-icon" id="dashboardMeal">
                         <i class="fas fa-utensils"></i>
                     </div>
                     <div class="indicator-label">Meal Logged</div>
                 </div>
                 <div class="indicator">
-                    <div class="indicator-icon">
+                    <div class="indicator-icon" id="dashboardJournal">
                         <i class="fas fa-book"></i>
                     </div>
                     <div class="indicator-label">Journal Updated</div>
@@ -3741,19 +3748,19 @@ class Chart {
             <div class="rewards-section">
                 <h3 class="rewards-title">Your Achievements</h3>
                 <div class="badges-container">
-                    <div class="badge unlocked">
+                    <div class="badge" data-badge="calmStreak">
                         <div class="badge-icon">🔥</div>
                         <div class="badge-name">Calm Streak</div>
                     </div>
-                    <div class="badge">
+                    <div class="badge" data-badge="stepChamp">
                         <div class="badge-icon">👟</div>
                         <div class="badge-name">Step Champ</div>
                     </div>
-                    <div class="badge unlocked">
+                    <div class="badge" data-badge="moodMaster">
                         <div class="badge-icon">😊</div>
                         <div class="badge-name">Mood Master</div>
                     </div>
-                    <div class="badge">
+                    <div class="badge" data-badge="hydrationHero">
                         <div class="badge-icon">💧</div>
                         <div class="badge-name">Hydration Hero</div>
                     </div>
@@ -4806,7 +4813,7 @@ class Chart {
                                     <button class="water-btn" id="resetWaterBtn">Reset</button>
                                 </div>
                                 <div class="water-info">
-                                    <div class="water-amount" id="waterAmount">3/8 glasses</div>
+                                    <div class="water-amount" id="waterAmount">0/8 glasses</div>
                                     <p>Hydrate and shine! 💧</p>
                                 </div>
                             </div>
@@ -5054,6 +5061,8 @@ class Chart {
             uploadedMealImage: null,
             waterIntake: 0,
             waterGoal: 8,
+            sleepHours: null,
+            stepCount: null,
             badges: {
                 calmStreak: false,
                 stepChamp: false,
@@ -5304,6 +5313,17 @@ class Chart {
             
             // Load saved data
             loadUserData();
+            updateWaterDisplay();
+            updateDashboardProgress();
+            document.getElementById('workspaceDailyActivity').addEventListener('submit',e=>{
+                e.preventDefault();
+                const sleep=document.getElementById('workspaceSleep'),steps=document.getElementById('workspaceSteps');
+                if(!e.target.reportValidity())return;
+                appState.sleepHours=sleep.value===''?null:Number(sleep.value);
+                appState.stepCount=steps.value===''?null:Number(steps.value);
+                appState.badges.stepChamp=appState.stepCount!==null&&appState.stepCount>=10000;
+                saveUserData();showToast('Activity saved','success');
+            });
             
             // Set up reminders
             setupReminders();
@@ -6551,6 +6571,7 @@ class Chart {
                         
                         // Update chart
                         updateCalorieChart();
+                        saveUserData();
                         
                         // Show success message
                         showToast(`Calorie budget calculated: ${suggestedCalories} kcal/day`, 'success');
@@ -6591,6 +6612,7 @@ class Chart {
                         updateNutritionDisplay();
                         updateMealsList();
                         updateCalorieChart();
+                        saveUserData();
                         
                         // Check if over budget
                         if (appState.consumedCalories > appState.dailyCalorieGoal) {
@@ -6629,6 +6651,7 @@ class Chart {
                         } else {
                             showToast(`Water intake: ${appState.waterIntake}/${appState.waterGoal} glasses`, 'info');
                         }
+                        saveUserData();
                     } else {
                         showToast('You\'ve already reached your daily water goal!', 'info');
                     }
@@ -6639,6 +6662,7 @@ class Chart {
                 resetWaterBtn.addEventListener('click', () => {
                     appState.waterIntake = 0;
                     updateWaterDisplay();
+                    saveUserData();
                     showToast('Water tracker reset', 'info');
                 });
             }
@@ -6734,16 +6758,16 @@ class Chart {
                 appState.dailyMeals.forEach(meal => {
                     const mealItem = document.createElement('div');
                     mealItem.className = 'meal-item';
-                    mealItem.innerHTML = `
-                        <span class="meal-name">${meal.name}</span>
-                        <span class="meal-calories">${meal.calories} kcal</span>
-                    `;
+                    const mealLabel=document.createElement('span');mealLabel.className='meal-name';mealLabel.textContent=meal.name;
+                    const caloriesLabel=document.createElement('span');caloriesLabel.className='meal-calories';caloriesLabel.textContent=meal.calories+' kcal';
+                    mealItem.append(mealLabel,caloriesLabel);
                     mealsList.appendChild(mealItem);
                 });
             }
         }
 
         function updateWaterDisplay() {
+            const waterFill=document.getElementById('waterFill'),waterAmount=document.getElementById('waterAmount');
             if (waterFill) {
                 const percentage = (appState.waterIntake / appState.waterGoal) * 100;
                 waterFill.style.height = `${percentage}%`;
@@ -7715,7 +7739,22 @@ class Chart {
             }
         }
 
+        function updateDashboardProgress(){
+            const count=Number(appState.waterIntake)||0,goal=Number(appState.waterGoal)||8;
+            const water=document.getElementById('dashboardWater');if(water)water.textContent=count+'/'+goal+' glasses';
+            const fill=document.getElementById('dashboardWaterFill');if(fill)fill.style.width=Math.min(100,count/goal*100)+'%';
+            const sleep=appState.sleepHours,steps=appState.stepCount;
+            document.getElementById('dashboardSleep').textContent=sleep===null?'Not recorded':sleep+' hrs';
+            document.getElementById('dashboardSteps').textContent=steps===null?'Not recorded':steps.toLocaleString();
+            document.querySelector('.progress-fill.sleep').style.width=(sleep===null?0:Math.min(100,sleep/8*100))+'%';
+            document.querySelector('.progress-fill.steps').style.width=(steps===null?0:Math.min(100,steps/10000*100))+'%';
+            document.getElementById('dashboardMood')?.classList.toggle('completed',appState.journalEntries.some(e=>!!e.mood));
+            document.getElementById('dashboardMeal')?.classList.toggle('completed',appState.dailyMeals.length>0);
+            document.getElementById('dashboardJournal')?.classList.toggle('completed',appState.journalEntries.length>0);
+            document.querySelectorAll('.badge[data-badge]').forEach(el=>el.classList.toggle('unlocked',!!appState.badges[el.dataset.badge]));
+        }
         function saveUserData() {
+            updateDashboardProgress();
             if (appState.user && appState.user.email !== 'guest') {
                 const userData = {
                     user: appState.user,
@@ -7726,6 +7765,9 @@ class Chart {
                     dailyCalorieGoal: appState.dailyCalorieGoal,
                     journalEntries: appState.journalEntries,
                     waterIntake: appState.waterIntake,
+                    waterGoal: appState.waterGoal,
+                    sleepHours:appState.sleepHours,
+                    stepCount:appState.stepCount,
                     badges: appState.badges,
                     notifications: appState.notifications,
                     profileData: appState.profileData,
@@ -7755,7 +7797,12 @@ class Chart {
                     appState.consumedCalories = userData.consumedCalories || 0;
                     appState.dailyCalorieGoal = userData.dailyCalorieGoal || 2000;
                     appState.journalEntries = userData.journalEntries || [];
-                    appState.waterIntake = userData.waterIntake || 0;
+                    appState.waterIntake = Number(userData.waterIntake)||0;
+                    appState.waterGoal = Number(userData.waterGoal)||8;
+                    appState.sleepHours=Number.isFinite(userData.sleepHours)&&userData.sleepHours>=0&&userData.sleepHours<=24?userData.sleepHours:null;
+                    appState.stepCount=Number.isInteger(userData.stepCount)&&userData.stepCount>=0&&userData.stepCount<=100000?userData.stepCount:null;
+                    document.getElementById('workspaceSleep').value=appState.sleepHours??'';
+                    document.getElementById('workspaceSteps').value=appState.stepCount??'';
                     appState.badges = userData.badges || {
                         calmStreak: false,
                         stepChamp: false,
@@ -8698,8 +8745,6 @@ class Chart {
           authContainer.querySelectorAll('input,button,select').forEach(el=>{el.disabled=true;});
           initApp();
           document.addEventListener('change',()=>{setTimeout(saveUserData,0);});
-          if(document.getElementById('addWaterBtn'))document.getElementById('addWaterBtn').addEventListener('click',saveUserData);
-          if(document.getElementById('resetWaterBtn'))document.getElementById('resetWaterBtn').addEventListener('click',saveUserData);
         });
     </script>
     

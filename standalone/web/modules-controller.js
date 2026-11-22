@@ -18,7 +18,7 @@
  const num=n=>Number.isFinite(Number(n))?Math.max(0,Math.min(100000,Math.floor(Number(n)))):0;
  const len=x=>Array.isArray(x)?x.length:0;
  function summarize(id,storage){
-   if(id==='healthara'){const s=read(storage,'healthara_workspace-user')||{};return {journal:len(s.journalEntries),meals:len(s.dailyMeals),water:num(s.waterIntake),reports:len(s.savedReports),habits:len(s.gardenFlowers)};}
+   if(id==='healthara'){const s=read(storage,'healthara_workspace-user')||{};return {journal:len(s.journalEntries),meals:len(s.dailyMeals),water:num(s.waterIntake),reports:len(s.savedReports),habits:len(s.gardenFlowers),sleep:Number.isFinite(s.sleepHours)&&s.sleepHours>=0&&s.sleepHours<=24?s.sleepHours:null,steps:Number.isInteger(s.stepCount)&&s.stepCount>=0?num(s.stepCount):null};}
    if(id==='namastey'){const m=read(storage,'workspace_metrics')||{};return {matches:num(m.matches),stories:num(m.stories),mantras:num(m.mantras),monuments:num(m.monuments)};}
    return {exchanges:privateListings.filter(x=>x.type==='skill'&&x.status==='active').length,jobs:privateListings.filter(x=>x.type==='job'&&x.status==='active').length,spaces:privateListings.filter(x=>x.type==='space'&&x.status==='active').length,preferences:len(read(storage,'KaamigoQuiz'))};
  }
