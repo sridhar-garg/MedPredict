@@ -7,6 +7,7 @@ import argparse
 import base64
 import hashlib
 import json
+import csv
 import os
 from pathlib import Path
 import re
@@ -58,6 +59,19 @@ def stage(work, args):
     shutil.copytree(args.assets, web / "assets")
     host = validate_public(args.url, args.key)
     (web / "config.js").write_text("window.MP_CONFIG=" + json.dumps({"url": args.url, "key": args.key}) + ";\n")
+    catalogs = {"en": {}}
+    for source in (ROOT / "translations").glob("*.json"):
+        catalogs[source.stem] = json.loads(source.read_text(encoding="utf-8"))
+    with (ROOT / "standalone" / "workspace-locales.tsv").open(encoding="utf-8", newline="") as stream:
+        for row in csv.DictReader(stream, delimiter="\t"):
+            if not row.get("key") or None in row or any(not row.get(code) for code in catalogs if code != "en"):
+                raise ValueError("Invalid common localization row")
+            for code in catalogs:
+                if code != "en": catalogs[code][row["key"]] = row[code]
+    with (ROOT / "standalone" / "workspace-hi.tsv").open(encoding="utf-8", newline="") as stream:
+        for original,translated in csv.reader(stream, delimiter="\t"):
+            catalogs["hi"][original] = translated
+    (web / "locale-data.js").write_text("window.MPI18nCatalogs="+json.dumps(catalogs,ensure_ascii=False,separators=(",",":"))+";\n",encoding="utf-8")
     vendor = web / "vendor"
     vendor.mkdir()
     for name in ("pdf.min.mjs", "pdf.worker.min.mjs"):
@@ -80,8 +94,8 @@ def android(work, web, host, args):
     run(tools/"aapt2","compile","--dir",build/"res","-o",build/"resources.zip")
     run(tools/"aapt2","link","-o",build/"unsigned.apk","-I",jar,
         "--manifest",ROOT/"standalone/android/AndroidManifest.xml","--java",build/"generated",
-        "--min-sdk-version","26","--target-sdk-version","35","--version-code","1",
-        "--version-name","1.0.0","-A",build/"assets",build/"resources.zip")
+        "--min-sdk-version","26","--target-sdk-version","35","--version-code","2",
+        "--version-name","1.1.0","-A",build/"assets",build/"resources.zip")
     sources=list((build/"generated").rglob("*.java"))+[ROOT/"standalone/android/StandaloneActivity.java"]
     run("java","com.sun.tools.javac.Main","-encoding","UTF-8","-source","8","-target","8",
         "-Xlint:-options","-bootclasspath",os.pathsep.join([str(tools/"core-lambda-stubs.jar"),str(jar)]),
@@ -97,7 +111,7 @@ def android(work, web, host, args):
         raise RuntimeError("Existing private Android signing files required.")
     env=os.environ.copy()
     env["MEDPREDICT_SIGNING_PASSWORD"]=(signing/"signing-password.txt").read_text().strip()
-    output=args.out/"AI-Workspace.apk"
+    output=args.out/"Aroham-AI.apk"
     run("java","-jar",tools/"lib/apksigner.jar","sign","--ks",key,
         "--ks-key-alias","medpredict","--ks-pass","env:MEDPREDICT_SIGNING_PASSWORD",
         "--key-pass","env:MEDPREDICT_SIGNING_PASSWORD","--min-sdk-version","26",
@@ -115,7 +129,7 @@ def windows(work, web,args):
     shutil.copy(ROOT/"standalone/windows/MedPredict.c",build/"MedPredict.c")
     shutil.copy(ROOT/"mobile/windows/MedPredict.manifest",build/"MedPredict.manifest")
     make_icon(build/"MedPredict.ico")
-    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","1,0,0,0").replace("1.2.0","1.0.0").replace('MedPredict.exe','AI-Workspace.exe').replace('MedPredict\\0','AI Workspace\\0')
+    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","1,1,0,0").replace("1.2.0","1.1.0").replace('MedPredict.exe','Aroham-AI.exe').replace('MedPredict\\0','Aroham AI\\0')
     mime={".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",".js":"text/javascript; charset=utf-8",".mjs":"text/javascript; charset=utf-8",".json":"application/json; charset=utf-8",".svg":"image/svg+xml",".webp":"image/webp",".txt":"text/plain; charset=utf-8"}
     lines=["static const struct {const char *path; const char *mime; int id;} bundle[] = {"]
     for i,file in enumerate(sorted(web.rglob("*")),100):
@@ -127,9 +141,9 @@ def windows(work, web,args):
     (build/"bundle.h").write_text("\n".join(lines))
     (build/"MedPredict.rc").write_text(rc)
     run(zig,"rc","/fo","MedPredict.res","MedPredict.rc",cwd=build)
-    output=args.out/"AI-Workspace.exe"
+    output=args.out/"Aroham-AI.exe"
     run(zig,"cc","-target","x86_64-windows-gnu","-O2","-s","-municode","-Wl,--subsystem,windows","MedPredict.c","MedPredict.res","-lws2_32","-lshell32","-luser32","-lgdi32","-o",output,cwd=build)
-    shutil.copy(build/"MedPredict.ico",args.out/"AI-Workspace.ico")
+    shutil.copy(build/"MedPredict.ico",args.out/"Aroham-AI.ico")
     print(output,hashlib.sha256(output.read_bytes()).hexdigest())
 
 

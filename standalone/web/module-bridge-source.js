@@ -3,6 +3,7 @@
  'use strict';
  const allowedParents=new Set(['http://127.0.0.1:8766','https://appassets.androidplatform.net']);
  let values=Object.create(null), connected=false, hostOrigin=null, token=null, counter=0, account=null;
+ let preferences={theme:'light',language:'en'}, preferenceListeners=[];
  const pending=new Map();
  let readyResolve;
  const ready=new Promise(resolve=>{readyResolve=resolve;});
@@ -28,20 +29,33 @@
    m[key]=increment?(Number(m[key])||0)+value:value;
    storage.setItem('workspace_metrics',JSON.stringify(m));
  }
+ function applyPreferences(p,catalog){
+   preferences={theme:p?.theme==='dark'?'dark':'light',language:Object.hasOwn(MPI18n.languages,p?.language)?p.language:'en'};
+   document.documentElement.dataset.theme=preferences.theme;
+   document.documentElement.style.colorScheme=preferences.theme;
+   if(document.body)document.body.classList.toggle('light-mode',preferences.theme==='light');
+   MPI18n.set(preferences.language,catalog);
+   for(const fn of preferenceListeners)fn({...preferences});
+ }
  window.addEventListener('message',event=>{
    if(event.source!==parent||!allowedParents.has(event.origin)||event.data?.channel!=='workspace-v1')return;
    const d=event.data;
    if(d.type==='init'&&!connected&&typeof d.token==='string'){
      hostOrigin=event.origin;token=d.token;connected=true;account=d.account;
      for(const [k,v] of Object.entries(d.storage||{}))if(typeof v==='string')values[k]=v;
+     applyPreferences(d.preferences,d.catalog);
      readyResolve({account,storage,listingRows:d.listings||[],synced:d.synced===true});
    }else if(connected&&event.origin===hostOrigin&&d.token===token){
      if(d.type==='result'){
        const p=pending.get(d.id);if(!p)return;pending.delete(d.id);d.ok?p.resolve(d.data):p.reject(Error(d.message||'Request failed.'));
      }else if(d.type==='flush'){snapshot();send('flushed');}
+     else if(d.type==='preferences'){applyPreferences(d.preferences,d.catalog);}
    }
  });
- window.Workspace={ready,storage,metric,rpc,leave:()=>{snapshot();send('leave');},snapshot};
+ window.Workspace={ready,storage,metric,rpc,leave:()=>{snapshot();send('leave');},snapshot,
+  preferences:()=>({...preferences}),
+  onPreferences:fn=>{preferenceListeners.push(fn);if(connected)fn({...preferences});},
+  setPreferences:p=>send('preferences',{preferences:p})};
  window.addEventListener('DOMContentLoaded',()=>parent.postMessage({channel:'workspace-v1',type:'ready'},'*'));
 })();
 const workspaceStorage=window.Workspace.storage;

@@ -87,15 +87,15 @@ static void open_workspace(){
         if((INT_PTR)ShellExecuteW(NULL,L"open",path,args,NULL,SW_SHOWNORMAL)>32)return;
     }
     if((INT_PTR)ShellExecuteW(NULL,L"open",url,NULL,NULL,SW_SHOWNORMAL)<=32)
-        MessageBoxW(NULL,L"Open http://127.0.0.1:8766 in your browser to use AI Workspace.",L"AI Workspace",MB_OK);
+        MessageBoxW(NULL,L"Open http://127.0.0.1:8766 in your browser to use Aroham AI.",L"Aroham AI",MB_OK);
 }
 static LRESULT CALLBACK wndproc(HWND wnd,UINT message,WPARAM w,LPARAM l){
     switch(message){
         case WM_CREATE:{
             HFONT font=(HFONT)GetStockObject(DEFAULT_GUI_FONT);
-            HWND a=CreateWindowW(L"STATIC",L"AI Workspace is running on this device.\r\nKeep this window open while using the workspace.",WS_CHILD|WS_VISIBLE,20,18,370,55,wnd,NULL,module,NULL);
-            HWND b=CreateWindowW(L"BUTTON",L"Open AI Workspace",WS_CHILD|WS_VISIBLE|BS_DEFPUSHBUTTON,20,80,170,38,wnd,(HMENU)1,module,NULL);
-            HWND c=CreateWindowW(L"BUTTON",L"Exit AI Workspace",WS_CHILD|WS_VISIBLE,205,80,170,38,wnd,(HMENU)2,module,NULL);
+            HWND a=CreateWindowW(L"STATIC",L"Aroham AI is running on this device.\r\nKeep this window open while using the workspace.",WS_CHILD|WS_VISIBLE,20,18,370,55,wnd,NULL,module,NULL);
+            HWND b=CreateWindowW(L"BUTTON",L"Open Aroham AI",WS_CHILD|WS_VISIBLE|BS_DEFPUSHBUTTON,20,80,170,38,wnd,(HMENU)1,module,NULL);
+            HWND c=CreateWindowW(L"BUTTON",L"Exit Aroham AI",WS_CHILD|WS_VISIBLE,205,80,170,38,wnd,(HMENU)2,module,NULL);
             SendMessageW(a,WM_SETFONT,(WPARAM)font,TRUE);SendMessageW(b,WM_SETFONT,(WPARAM)font,TRUE);SendMessageW(c,WM_SETFONT,(WPARAM)font,TRUE);return 0;
         }
         case WM_COMMAND:if(LOWORD(w)==1)open_workspace();else if(LOWORD(w)==2)DestroyWindow(wnd);return 0;
@@ -108,12 +108,12 @@ int WINAPI wWinMain(HINSTANCE instance,HINSTANCE prev,PWSTR command,int show){
     if(!lock)return 1;
     if(GetLastError()==ERROR_ALREADY_EXISTS){HWND old=FindWindowW(L"AIWorkspaceStandaloneWindow",NULL);if(old){ShowWindow(old,SW_RESTORE);SetForegroundWindow(old);}CloseHandle(lock);return 0;}
     if(!start_server()){
-        MessageBoxW(NULL,L"AI Workspace could not reserve its private local port. Close any other instance and retry.",L"AI Workspace",MB_OK|MB_ICONERROR);
+        MessageBoxW(NULL,L"Aroham AI could not reserve its private local port. Close any other instance and retry.",L"Aroham AI",MB_OK|MB_ICONERROR);
         if(listener!=INVALID_SOCKET)closesocket(listener);WSACleanup();CloseHandle(lock);return 1;
     }
     WNDCLASSW cls={0};cls.lpfnWndProc=wndproc;cls.hInstance=instance;cls.lpszClassName=L"AIWorkspaceStandaloneWindow";cls.hIcon=LoadIconW(instance,MAKEINTRESOURCEW(1));cls.hCursor=LoadCursorW(NULL,IDC_ARROW);cls.hbrBackground=(HBRUSH)(COLOR_WINDOW+1);
     RegisterClassW(&cls);
-    HWND wnd=CreateWindowW(cls.lpszClassName,L"AI Workspace",WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,425,182,NULL,NULL,instance,NULL);
+    HWND wnd=CreateWindowW(cls.lpszClassName,L"Aroham AI",WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,425,182,NULL,NULL,instance,NULL);
     if(!wnd)return 1;
     ShowWindow(wnd,SW_SHOWMINIMIZED);
     open_workspace();

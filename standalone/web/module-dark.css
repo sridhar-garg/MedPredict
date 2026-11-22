@@ -1,0 +1,20 @@
+/* Namastey AI: preserve its warm heritage palette in dark mode. */
+:root[data-theme=dark]{
+ --light-cream:#201a17;--parchment-background:#30241c;--parchment-border:#705239;
+ --text-on-parchment:#f3dfc7;--dark-saddle-brown:#f1bc86;--deep-brown:#f4ddc2;--warm-black:#f5e8d9;
+ --sanskriti-light-brown:#241c18;--sanskriti-card-background:#30251e;--sanskriti-text-color:#f4e5d5;
+ --sanskriti-light-text-color:#d6bca9;--sanskriti-soft-gold:#423223;--sanskriti-dark-brown:#f4bc85;
+ --sanskriti-nav-button-bg:#795239;--sanskriti-nav-button-hover:#905f3d;--landing-text-dark:#f0d7bc;--landing-text-medium:#d2b7a0;
+ --paper-bg-light:#382a22;--paper-bg-dark:#2b211b;--paper-text-color:#ecdac8;--paper-heading-color:#f0c18f;--paper-border-color:#664b37;
+ --paper-button-bg:#6d4a32;--paper-button-hover:#845b3d;--paper-selected-button:#8b4513;color-scheme:dark;
+}
+:root[data-theme=dark] body{background:#201a17!important;color:#f4e5d5}
+:root[data-theme=dark] :is(.content-card,.itihaas-title-card,.what-if-selector,.narrative-result,.reviews-container,.review-form-panel,.reviews-list-panel,.review-field input,.review-field textarea,.review-card,.mantra-full-meaning,.mantra-cultural-context,.game-title,.badge-display,.map-outline,.dice-container,.game-stats,.info-section,.info-item,.facts-section,.fact-item,.quiz-question,.quiz-option,.modal-content,.form-input){background:#30251e!important;color:#f3dfcb!important;border-color:#72533c!important;box-shadow:none}
+:root[data-theme=dark] :is(.section-title,.section-title p,.reviews-header p,.question-text,.info-label,.info-value,.monument-marker.unvisited,.dice){color:#e8d2ba!important}
+:root[data-theme=dark] :is(.monument-marker.unvisited,.dice){background:#493729!important}
+:root[data-theme=dark] .quiz-option.correct{background:#244b35!important;color:#b9f4ce!important}
+:root[data-theme=dark] .quiz-option.incorrect{background:#552b2b!important;color:#ffd0d0!important}
+:root[data-theme=dark] :is(.sanskriti-card,.sanskriti-tradition-card,.mantra-card,.review-count){background:#352820!important;color:#f4ddc5!important}
+:root[data-theme=dark] :is(.content-card,.main-app,.itihaas-reimagined-container,.mantra-detail-screen) :is(input,textarea,select){background:#2e241e!important;color:#f4e5d5!important;border-color:#765841!important}
+:root[data-theme=dark] .app-header{background:linear-gradient(115deg,#674327,#4d2b1d)}
+:root[data-theme=dark] .sanskriti-quiz-section{color:#f7e8dc}

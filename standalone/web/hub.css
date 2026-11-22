@@ -13,6 +13,7 @@
 .hub-kicker{font-size:.74rem;font-weight:750;letter-spacing:.15em;color:#b1ebd7}
 .hub-hero h1{font-size:clamp(1.85rem,3.7vw,3.35rem);color:white;line-height:1.12}
 .hub-hero h1 span{color:#b9f1dd}
+.hub-hero h1 .hub-greeting{color:white}
 .hub-hero p{max-width:630px;color:#d8e7ee;font-size:1.02rem}
 .hub-hero-button{display:inline-block;background:#c7f4e2;color:#163f3b;border-radius:10px;padding:12px 17px;text-decoration:none;font-weight:750}
 .hub-orbit{width:min(100%,250px);aspect-ratio:1;justify-self:center;position:relative;border:1px solid #9ecad040;border-radius:50%;box-shadow:0 0 0 18px #bfdbe312,0 0 0 38px #bfdbe30a}
@@ -83,4 +84,12 @@
 .workspace-module-notice{padding:8px 22px;color:var(--muted);font-size:.82rem;border-bottom:1px solid var(--line)}
 #module-frame-slot{min-height:0;min-width:0}
 .workspace-frame{display:block;border:0;width:100%;height:100%;background:#fff}
+:root[data-theme=dark] .workspace-frame{background:#182e37}
+.shared-preferences{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.pref-control{display:grid;gap:3px;font-size:.73rem;font-weight:650;color:var(--muted)}
+.pref-control select{background:var(--card);color:var(--ink);border:1px solid var(--line);min-height:38px;border-radius:9px;padding:7px 10px;font-size:.83rem;max-width:175px}
+.pref-control select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.login-top{gap:12px;flex-wrap:wrap}
+.workspace-module-header .shared-preferences{flex:none}
+@media(max-width:760px){.topbar .top-controls{display:block}.topbar{flex-wrap:wrap}.topbar .pill{display:none}.shared-preferences{gap:6px}.pref-control select{max-width:150px}.workspace-module-header .shared-preferences{width:100%}.workspace-module-header .shared-preferences .pref-control{flex:1}.workspace-module-header .pref-control select{width:100%;max-width:none}}
 @media(max-width:600px){.workspace-module-header{padding:9px 12px;flex-wrap:wrap;gap:9px}.workspace-module-header .hub-brand small{display:none}.workspace-module-header .hub-brand-mark{width:35px;height:35px}.workspace-module-title{margin-left:auto}.workspace-module-header .btn{width:100%;min-height:36px;padding:7px 10px}.workspace-module-notice{padding:7px 12px;font-size:.76rem}}

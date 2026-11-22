@@ -1,9 +1,18 @@
-# AI Workspace — four applications, one account
+# Aroham AI — four applications, one account
 
 This separate branch contains the authorized combined editions of MedPredict,
 Healthara, Namastey AI and Kaamigo. Original deployments and databases are left
-untouched. Android package/app name is AI Workspace (app.aiworkspace.mobile);
-Windows is AI-Workspace.exe with its own local port, 8766.
+untouched. Android package/app name is Aroham AI (app.aiworkspace.mobile);
+Windows is Aroham-AI.exe with its own local port, 8766.
+
+Version 1.1 adds shared appearance and language preferences. The host owns
+both settings, saves them to the Google-owned profile, caches changes locally
+when offline, and supplies them to every integrated module. Theme controls
+inside Healthara and Kaamigo update the shared setting, not a separate local
+theme. English and 14 additional UI languages are bundled, using the
+existing MedPredict catalogs and expanded workspace catalogs. Hindi has the
+largest new coverage. Untranslated original educational content, user text
+and report/model values stay unchanged.
 
 ## Identity and data
 
@@ -37,8 +46,9 @@ Do not use prototype predictions for medical decisions.
 
 ## Free shared backend configuration
 
-Project: AI Workspace, Mumbai, ref lfysbdtkysbomfgubofi.
+Supabase project (existing name): AI Workspace, Mumbai, ref lfysbdtkysbomfgubofi.
 The schema in backend/schema.sql and backend/workspace.sql has been applied.
+The language column migration in backend/preferences.sql has also been applied.
 The edge function medpredict-assistant is deployed, but requires Gemini
 secrets configured by the owner.
 

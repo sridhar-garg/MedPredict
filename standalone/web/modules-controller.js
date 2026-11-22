@@ -7,6 +7,12 @@
    kaamigo:new Set(['KaamigoQuiz','KaamigoReview'])
  };
  let user=null, states={}, privateListings=[], synced=false, loading=false, problem=false, frame=null, active=null, epoch=0, onUpdate=()=>{}, onLeave=()=>{};
+ let preferences={theme:'light',language:'en'}, onPreferences=()=>{};
+ function preferencePacket(){return {preferences:{...preferences},catalog:window.MPI18nCatalogs?.[preferences.language]||{}};}
+ function setPreferences(p,callback){
+   preferences={...p};if(callback)onPreferences=callback;
+   if(frame&&active?.initialized)frame.contentWindow.postMessage({channel:'workspace-v1',token:active.token,type:'preferences',...preferencePacket()},'*');
+ }
  const timers=new Map(), writes=new Map();
  const read=(s,key)=>{try{return JSON.parse(s?.[key]||'null');}catch{return null;}};
  const num=n=>Number.isFinite(Number(n))?Math.max(0,Math.min(100000,Math.floor(Number(n)))):0;
@@ -89,11 +95,12 @@
      a.initialized=true;
      let listings=[];
      if(a.id==='kaamigo'){try{listings=(await allListings()).map(convert);}catch{problem=true;publishUpdate();}}
-     send('init',{account:{id:user?.id||'demo',name:String(user?.name||'Demo user').slice(0,100)},storage:states[a.id]?.storage||{},listings,synced:!!user});return;
+     send('init',{account:{id:user?.id||'demo',name:String(user?.name||'Demo user').slice(0,100)},storage:states[a.id]?.storage||{},listings,synced:!!user,...preferencePacket()});return;
    }
    if(d.token!==a.token||!a.initialized)return;
    if(d.type==='state'){try{updateState(a.id,d.storage);}catch{problem=true;publishUpdate();}}
    else if(d.type==='leave'){onLeave();}
+   else if(d.type==='preferences'){const p={};if(['light','dark'].includes(d.preferences?.theme))p.theme=d.preferences.theme;if(Object.hasOwn(window.MPI18n?.languages||{},d.preferences?.language))p.language=d.preferences.language;if(Object.keys(p).length)onPreferences(p);}
    else if(d.type==='request'&&a.id==='kaamigo'&&Number.isInteger(d.id)){
      try{const data=await request(d.method,d.data);send('result',{id:d.id,ok:true,data});}catch(err){send('result',{id:d.id,ok:false,message:err.message||'Unable to complete the request.'});}
    }
@@ -109,5 +116,5 @@
    for(const [id,t] of timers){clearTimeout(t);timers.delete(id);if(user&&states[id]){const r=states[id];try{await MPCloud.add('workspace_module_state',{user_id:user.id,app_id:id,state:r.storage,summary:summarize(id,r.storage),updated_at:r.updated_at},true);}catch{problem=true;}}}
    await Promise.allSettled(writes.values());
  }
- window.MPModules=Object.freeze({start,stop,open,status,reset,flush});
+ window.MPModules=Object.freeze({start,stop,open,status,reset,flush,setPreferences});
 })();
