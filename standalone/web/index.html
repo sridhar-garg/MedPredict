@@ -5,14 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' https://*.supabase.co; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-  <title>MedPredict</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' https://*.supabase.co; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <link rel="icon" type="image/svg+xml" href="/workspace.svg">
+  <title>AI Workspace</title>
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/hub.css">
   <script defer src="/config.js"></script>
   <script defer src="/predict.js"></script>
   <script defer src="/cloud.js"></script>
+  <script defer src="/hub.js"></script>
+  <script defer src="/modules-controller.js"></script>
   <script defer src="/app.js"></script>
 </head>
-<body><div id="app" aria-live="off"><div class="loading-screen"><img src="/assets/favicon.svg" alt="" width="68" height="68"><h1>MedPredict.</h1><p>Opening your health workspace…</p></div></div><div id="toast" role="status" aria-live="polite"></div></body>
+<body><div id="app" aria-live="off"><div class="loading-screen"><h1>AI Workspace.</h1><p>Opening your connected workspace…</p></div></div><div id="toast" role="status" aria-live="polite"></div></body>
 </html>

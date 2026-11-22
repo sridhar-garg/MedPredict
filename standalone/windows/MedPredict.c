@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include "bundle.h"
 
-static const wchar_t *url=L"http://127.0.0.1:8765/";
+static const wchar_t *url=L"http://127.0.0.1:8766/";
 static SOCKET listener=INVALID_SOCKET;
 static HINSTANCE module;
 static HANDLE server_thread;
@@ -26,7 +26,7 @@ static int send_bytes(SOCKET sock,const void *buf,size_t length){
 }
 static void reply(SOCKET s,int status,const char *reason,const char *mime,const void *body,size_t len){
     char header[1024];
-    int n=snprintf(header,sizeof(header),"HTTP/1.1 %d %s\r\nContent-Type: %s\r\nContent-Length: %zu\r\nConnection: close\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\nReferrer-Policy: no-referrer\r\nX-Frame-Options: DENY\r\n\r\n",status,reason,mime,len);
+    int n=snprintf(header,sizeof(header),"HTTP/1.1 %d %s\r\nContent-Type: %s\r\nContent-Length: %zu\r\nConnection: close\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\nReferrer-Policy: no-referrer\r\nX-Frame-Options: SAMEORIGIN\r\n\r\n",status,reason,mime,len);
     if(n>0&&n<(int)sizeof(header)&&send_bytes(s,header,n))send_bytes(s,body,len);
 }
 static void serve_one(SOCKET s){
@@ -41,7 +41,7 @@ static void serve_one(SOCKET s){
     char *h=strstr(req,"\r\n");int hosts=0,good=0;
     while(h&&h[2]&&h[2]!='\r'){
         h+=2;char *end=strstr(h,"\r\n");if(!end)break;
-        if(_strnicmp(h,"Host:",5)==0){hosts++;char *v=h+5;while(*v==' '||*v=='\t')v++;good=(end-v==14&&memcmp(v,"127.0.0.1:8765",14)==0);}
+        if(_strnicmp(h,"Host:",5)==0){hosts++;char *v=h+5;while(*v==' '||*v=='\t')v++;good=(end-v==14&&memcmp(v,"127.0.0.1:8766",14)==0);}
         h=end;
     }
     if(hosts!=1||!good){reply(s,403,"Forbidden","text/plain","",0);return;}
@@ -69,7 +69,7 @@ static int start_server(){
     WSADATA w;if(WSAStartup(MAKEWORD(2,2),&w))return 0;
     listener=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);if(listener==INVALID_SOCKET)return 0;
     BOOL yes=TRUE;if(setsockopt(listener,SOL_SOCKET,SO_EXCLUSIVEADDRUSE,(char*)&yes,sizeof(yes)))return 0;
-    struct sockaddr_in a={0};a.sin_family=AF_INET;a.sin_port=htons(8765);a.sin_addr.s_addr=htonl(INADDR_LOOPBACK);
+    struct sockaddr_in a={0};a.sin_family=AF_INET;a.sin_port=htons(8766);a.sin_addr.s_addr=htonl(INADDR_LOOPBACK);
     if(bind(listener,(struct sockaddr*)&a,sizeof(a))||listen(listener,16))return 0;
     server_thread=CreateThread(NULL,0,worker,NULL,0,NULL);return server_thread!=NULL;
 }
@@ -87,15 +87,15 @@ static void open_workspace(){
         if((INT_PTR)ShellExecuteW(NULL,L"open",path,args,NULL,SW_SHOWNORMAL)>32)return;
     }
     if((INT_PTR)ShellExecuteW(NULL,L"open",url,NULL,NULL,SW_SHOWNORMAL)<=32)
-        MessageBoxW(NULL,L"Open http://127.0.0.1:8765 in your browser to use MedPredict.",L"MedPredict",MB_OK);
+        MessageBoxW(NULL,L"Open http://127.0.0.1:8766 in your browser to use AI Workspace.",L"AI Workspace",MB_OK);
 }
 static LRESULT CALLBACK wndproc(HWND wnd,UINT message,WPARAM w,LPARAM l){
     switch(message){
         case WM_CREATE:{
             HFONT font=(HFONT)GetStockObject(DEFAULT_GUI_FONT);
-            HWND a=CreateWindowW(L"STATIC",L"MedPredict is running on this device.\r\nKeep this window open while using the workspace.",WS_CHILD|WS_VISIBLE,20,18,370,55,wnd,NULL,module,NULL);
-            HWND b=CreateWindowW(L"BUTTON",L"Open MedPredict",WS_CHILD|WS_VISIBLE|BS_DEFPUSHBUTTON,20,80,170,38,wnd,(HMENU)1,module,NULL);
-            HWND c=CreateWindowW(L"BUTTON",L"Exit MedPredict",WS_CHILD|WS_VISIBLE,205,80,170,38,wnd,(HMENU)2,module,NULL);
+            HWND a=CreateWindowW(L"STATIC",L"AI Workspace is running on this device.\r\nKeep this window open while using the workspace.",WS_CHILD|WS_VISIBLE,20,18,370,55,wnd,NULL,module,NULL);
+            HWND b=CreateWindowW(L"BUTTON",L"Open AI Workspace",WS_CHILD|WS_VISIBLE|BS_DEFPUSHBUTTON,20,80,170,38,wnd,(HMENU)1,module,NULL);
+            HWND c=CreateWindowW(L"BUTTON",L"Exit AI Workspace",WS_CHILD|WS_VISIBLE,205,80,170,38,wnd,(HMENU)2,module,NULL);
             SendMessageW(a,WM_SETFONT,(WPARAM)font,TRUE);SendMessageW(b,WM_SETFONT,(WPARAM)font,TRUE);SendMessageW(c,WM_SETFONT,(WPARAM)font,TRUE);return 0;
         }
         case WM_COMMAND:if(LOWORD(w)==1)open_workspace();else if(LOWORD(w)==2)DestroyWindow(wnd);return 0;
@@ -104,16 +104,16 @@ static LRESULT CALLBACK wndproc(HWND wnd,UINT message,WPARAM w,LPARAM l){
 }
 int WINAPI wWinMain(HINSTANCE instance,HINSTANCE prev,PWSTR command,int show){
     (void)prev;(void)command;(void)show;module=instance;
-    HANDLE lock=CreateMutexW(NULL,TRUE,L"Local\\MedPredictStandalone-v2");
+    HANDLE lock=CreateMutexW(NULL,TRUE,L"Local\\AIWorkspaceStandalone-v2");
     if(!lock)return 1;
-    if(GetLastError()==ERROR_ALREADY_EXISTS){HWND old=FindWindowW(L"MedPredictStandaloneWindow",NULL);if(old){ShowWindow(old,SW_RESTORE);SetForegroundWindow(old);}CloseHandle(lock);return 0;}
+    if(GetLastError()==ERROR_ALREADY_EXISTS){HWND old=FindWindowW(L"AIWorkspaceStandaloneWindow",NULL);if(old){ShowWindow(old,SW_RESTORE);SetForegroundWindow(old);}CloseHandle(lock);return 0;}
     if(!start_server()){
-        MessageBoxW(NULL,L"MedPredict could not reserve its private local port. Close any other instance and retry.",L"MedPredict",MB_OK|MB_ICONERROR);
+        MessageBoxW(NULL,L"AI Workspace could not reserve its private local port. Close any other instance and retry.",L"AI Workspace",MB_OK|MB_ICONERROR);
         if(listener!=INVALID_SOCKET)closesocket(listener);WSACleanup();CloseHandle(lock);return 1;
     }
-    WNDCLASSW cls={0};cls.lpfnWndProc=wndproc;cls.hInstance=instance;cls.lpszClassName=L"MedPredictStandaloneWindow";cls.hIcon=LoadIconW(instance,MAKEINTRESOURCEW(1));cls.hCursor=LoadCursorW(NULL,IDC_ARROW);cls.hbrBackground=(HBRUSH)(COLOR_WINDOW+1);
+    WNDCLASSW cls={0};cls.lpfnWndProc=wndproc;cls.hInstance=instance;cls.lpszClassName=L"AIWorkspaceStandaloneWindow";cls.hIcon=LoadIconW(instance,MAKEINTRESOURCEW(1));cls.hCursor=LoadCursorW(NULL,IDC_ARROW);cls.hbrBackground=(HBRUSH)(COLOR_WINDOW+1);
     RegisterClassW(&cls);
-    HWND wnd=CreateWindowW(cls.lpszClassName,L"MedPredict",WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,425,182,NULL,NULL,instance,NULL);
+    HWND wnd=CreateWindowW(cls.lpszClassName,L"AI Workspace",WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,425,182,NULL,NULL,instance,NULL);
     if(!wnd)return 1;
     ShowWindow(wnd,SW_SHOWMINIMIZED);
     open_workspace();

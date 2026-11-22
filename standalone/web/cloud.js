@@ -10,7 +10,7 @@
  const storage=window.sessionStorage;
  const sessionKey='mp.session.v1';
  const verifierKey='mp.pkce.v1';
- const redirect=()=>root.MedPredictNative?'app.medpredict.mobile://auth-callback':'http://127.0.0.1:8765/auth/callback';
+ const redirect=()=>root.MedPredictNative?'app.aiworkspace.mobile://auth-callback':'http://127.0.0.1:8766/auth/callback';
  function errorMessage(status){return status===401?'Your Google sign-in has expired. Please sign in again.':status===403?'You do not have permission to access that record.':status===429?'Usage limit reached. Try again later.':'Cloud service is temporarily unavailable.';}
  async function request(path,opts={},token){
    if(!enabled)throw Error('Cloud synchronization has not been configured.');

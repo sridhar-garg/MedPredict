@@ -1,4 +1,4 @@
-package app.medpredict.mobile;
+package app.aiworkspace.mobile;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -98,13 +98,13 @@ public final class StandaloneActivity extends Activity {
     public final class AuthBridge{
         @JavascriptInterface public void openAuth(String url){
             Uri u=Uri.parse(url);
-            if(!"https".equals(u.getScheme())||!projectHost().equals(u.getHost())||u.getPort()!=-1||!"/auth/v1/authorize".equals(u.getPath())||!"google".equals(u.getQueryParameter("provider"))||!"app.medpredict.mobile://auth-callback".equals(u.getQueryParameter("redirect_to")))return;
+            if(!"https".equals(u.getScheme())||!projectHost().equals(u.getHost())||u.getPort()!=-1||!"/auth/v1/authorize".equals(u.getPath())||!"google".equals(u.getQueryParameter("provider"))||!"app.aiworkspace.mobile://auth-callback".equals(u.getQueryParameter("redirect_to")))return;
             runOnUiThread(()->openExternal(u));
         }
     }
     private void acceptCallback(Intent i){
         Uri u=i.getData();
-        if(u!=null&&"app.medpredict.mobile".equals(u.getScheme())&&"auth-callback".equals(u.getHost())&&(u.getPath()==null||u.getPath().isEmpty())&&u.toString().length()<=4096)pendingCallback=u.toString();
+        if(u!=null&&"app.aiworkspace.mobile".equals(u.getScheme())&&"auth-callback".equals(u.getHost())&&(u.getPath()==null||u.getPath().isEmpty())&&u.toString().length()<=4096)pendingCallback=u.toString();
     }
     private void dispatchCallback(){
         if(loaded&&pendingCallback!=null){String value=pendingCallback;pendingCallback=null;web.evaluateJavascript("window.MPAuthCallback && window.MPAuthCallback("+JSONObject.quote(value)+")",null);}

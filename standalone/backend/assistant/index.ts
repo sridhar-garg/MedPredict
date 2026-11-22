@@ -1,4 +1,4 @@
-const allowed = new Set(["http://127.0.0.1:8765", "https://appassets.androidplatform.net"]);
+const allowed = new Set(["http://127.0.0.1:8766", "https://appassets.androidplatform.net"]);
 const systemInstruction = "You are MedPredict's educational assistant. Explain general health concepts and medical terminology with uncertainty. Never diagnose, calculate an individual's disease risk, give dosing instructions, prescribe treatment, or replace a clinician. If a question indicates a possible emergency, advise seeking local emergency medical care. Do not ask for or repeat identifying information. Explain when evidence is insufficient.";
 
 Deno.serve(async (req) => {

@@ -18,7 +18,16 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "mobile" / "windows"))
-from build_windows import make_icon
+from PIL import Image, ImageDraw
+
+
+def make_icon(destination):
+    image=Image.new("RGBA",(512,512))
+    draw=ImageDraw.Draw(image)
+    draw.rounded_rectangle((0,0,511,511),radius=126,fill="#193b55")
+    for x,y,color in ((104,104,"#80e1c9"),(280,104,"#e5a3ee"),(104,280,"#f4bb7a"),(280,280,"#afb7ff")):
+        draw.rounded_rectangle((x,y,x+128,y+128),radius=35,outline=color,width=25)
+    image.save(destination,sizes=[(n,n) for n in (16,24,32,48,64,128,256)])
 
 
 def run(*args, **kwargs):
@@ -65,13 +74,14 @@ def android(work, web, host, args):
     for name in ["classes", "generated", "dex"]:
         (build/name).mkdir()
     shutil.copytree(ROOT/"mobile/android/app/src/main/res", build/"res")
+    (build/"res/drawable/medical_box.xml").write_text('<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108"><path android:fillColor="#193B55" android:pathData="M0,0H108V108H0Z"/><path android:fillColor="#80E1C9" android:pathData="M30,30H50V50H30Z"/><path android:fillColor="#E5A3EE" android:pathData="M58,30H78V50H58Z"/><path android:fillColor="#F4BB7A" android:pathData="M30,58H50V78H30Z"/><path android:fillColor="#AFB7FF" android:pathData="M58,58H78V78H58Z"/></vector>')
     (build/"res/values/standalone.xml").write_text('<resources><string name="mp_project_host" translatable="false">'+host+'</string></resources>')
     shutil.copytree(web, build/"assets/web")
     run(tools/"aapt2","compile","--dir",build/"res","-o",build/"resources.zip")
     run(tools/"aapt2","link","-o",build/"unsigned.apk","-I",jar,
         "--manifest",ROOT/"standalone/android/AndroidManifest.xml","--java",build/"generated",
-        "--min-sdk-version","26","--target-sdk-version","35","--version-code","4",
-        "--version-name","2.0.0","-A",build/"assets",build/"resources.zip")
+        "--min-sdk-version","26","--target-sdk-version","35","--version-code","1",
+        "--version-name","1.0.0","-A",build/"assets",build/"resources.zip")
     sources=list((build/"generated").rglob("*.java"))+[ROOT/"standalone/android/StandaloneActivity.java"]
     run("java","com.sun.tools.javac.Main","-encoding","UTF-8","-source","8","-target","8",
         "-Xlint:-options","-bootclasspath",os.pathsep.join([str(tools/"core-lambda-stubs.jar"),str(jar)]),
@@ -87,7 +97,7 @@ def android(work, web, host, args):
         raise RuntimeError("Existing private Android signing files required.")
     env=os.environ.copy()
     env["MEDPREDICT_SIGNING_PASSWORD"]=(signing/"signing-password.txt").read_text().strip()
-    output=args.out/"MedPredict.apk"
+    output=args.out/"AI-Workspace.apk"
     run("java","-jar",tools/"lib/apksigner.jar","sign","--ks",key,
         "--ks-key-alias","medpredict","--ks-pass","env:MEDPREDICT_SIGNING_PASSWORD",
         "--key-pass","env:MEDPREDICT_SIGNING_PASSWORD","--min-sdk-version","26",
@@ -105,7 +115,7 @@ def windows(work, web,args):
     shutil.copy(ROOT/"standalone/windows/MedPredict.c",build/"MedPredict.c")
     shutil.copy(ROOT/"mobile/windows/MedPredict.manifest",build/"MedPredict.manifest")
     make_icon(build/"MedPredict.ico")
-    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","2,0,0,0").replace("1.2.0","2.0.0")
+    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","1,0,0,0").replace("1.2.0","1.0.0").replace('MedPredict.exe','AI-Workspace.exe').replace('MedPredict\\0','AI Workspace\\0')
     mime={".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",".js":"text/javascript; charset=utf-8",".mjs":"text/javascript; charset=utf-8",".json":"application/json; charset=utf-8",".svg":"image/svg+xml",".webp":"image/webp",".txt":"text/plain; charset=utf-8"}
     lines=["static const struct {const char *path; const char *mime; int id;} bundle[] = {"]
     for i,file in enumerate(sorted(web.rglob("*")),100):
@@ -117,9 +127,9 @@ def windows(work, web,args):
     (build/"bundle.h").write_text("\n".join(lines))
     (build/"MedPredict.rc").write_text(rc)
     run(zig,"rc","/fo","MedPredict.res","MedPredict.rc",cwd=build)
-    output=args.out/"MedPredict.exe"
+    output=args.out/"AI-Workspace.exe"
     run(zig,"cc","-target","x86_64-windows-gnu","-O2","-s","-municode","-Wl,--subsystem,windows","MedPredict.c","MedPredict.res","-lws2_32","-lshell32","-luser32","-lgdi32","-o",output,cwd=build)
-    shutil.copy(build/"MedPredict.ico",args.out/"MedPredict.ico")
+    shutil.copy(build/"MedPredict.ico",args.out/"AI-Workspace.ico")
     print(output,hashlib.sha256(output.read_bytes()).hexdigest())
 
 
