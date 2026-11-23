@@ -136,7 +136,28 @@
   preferences:()=>({...preferences}),
   onPreferences:fn=>{preferenceListeners.push(fn);if(connected)fn({...preferences});},
   setPreferences:p=>send('preferences',{preferences:p})};
- window.addEventListener('DOMContentLoaded',()=>parent.postMessage({channel:'workspace-v1',type:'ready'},'*'));
+ window.addEventListener('DOMContentLoaded',()=>{
+   // The host still owns preferences; the controls live in each app's own UI.
+   const controls=[...document.querySelectorAll('select[data-workspace-preference]')];
+   for(const el of controls){
+     const key=el.dataset.workspacePreference;
+     if(key==='language'){
+       for(const [code,label] of Object.entries(MPI18n.languages)){
+         const option=document.createElement('option');option.value=code;option.textContent=label;option.setAttribute('translate','no');el.append(option);
+       }
+     }
+     el.value=preferences[key];
+     el.addEventListener('change',()=>Workspace.setPreferences({[key]:el.value}));
+   }
+   Workspace.onPreferences(p=>{for(const el of controls)el.value=p[el.dataset.workspacePreference];});
+   for(const button of document.querySelectorAll('[data-workspace-preferences-open]')){
+     button.addEventListener('click',()=>document.getElementById('workspacePreferences')?.showModal());
+   }
+   for(const button of document.querySelectorAll('[data-workspace-preferences-close]')){
+     button.addEventListener('click',()=>document.getElementById('workspacePreferences')?.close());
+   }
+   parent.postMessage({channel:'workspace-v1',type:'ready'},'*');
+ });
 })();
 const workspaceStorage=window.Workspace.storage;
 // Minimal local canvas renderer for Healthara's user-entered doughnut data.
@@ -269,6 +290,9 @@ button{cursor:pointer;border:0;color:inherit}
 .nav{display:flex;align-items:center;gap:12px;color:var(--muted);width:100%;padding:11px 10px;background:transparent;border-radius:9px;text-align:left;margin:2px 0;font-weight:600;transition:.2s}
 .nav .ico{font-size:17px;width:19px;text-align:center}
 .nav.active,.nav:hover{background:#4f46e512;color:var(--brand)}
+.nav .ico{flex-shrink:0}
+#workspacePreferences{width:min(360px,calc(100% - 32px));padding:24px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+#workspacePreferences::backdrop{background:#11131d88}
 .verify{padding:13px;background:linear-gradient(135deg,#312e81,#6d28d9);color:#fff;border-radius:12px;font-size:12px;line-height:1.5;margin-top:auto}
 .verify b{display:block}
 .verify button{background:#fff;color:#4f46e5;padding:7px 10px;border-radius:7px;font-weight:700;margin-top:10px;font-size:11px}
@@ -420,6 +444,7 @@ main{margin-left:240px;padding:0 38px 42px;max-width:1600px;min-height:100vh}
   .side .logo{font-size:0;padding:0 10px 27px;justify-content:center}
   .side .logo i{font-size:16px;margin:0}
   .navLabel,.nav span,.verify b,.verify button{display:none}
+  .nav .ico{display:block}
   .verify{padding:10px;text-align:center}
   .nav{justify-content:center;padding:12px}
   .nav .ico{width:auto}
@@ -440,6 +465,7 @@ main{margin-left:240px;padding:0 38px 42px;max-width:1600px;min-height:100vh}
   .navLabel{display:none}
   .nav{display:flex;flex:0 0 68px;flex-direction:column;justify-content:center;gap:3px;padding:5px 3px;margin:0;border-radius:8px;text-align:center;font-size:10px}
   .nav span{display:block!important}
+  .nav[data-workspace-home]{flex-basis:94px;white-space:normal}
   .nav .ico{width:auto;font-size:16px;line-height:1.1}
   .nav.active,.nav:hover{background:#4f46e512;color:var(--brand)}
   .top{height:68px}
@@ -503,6 +529,7 @@ main{margin-left:240px;padding:0 38px 42px;max-width:1600px;min-height:100vh}
     <div class="logo"><i>K</i><b>Kaamigo</b></div>
     <div class="sideNav">
       <div class="navLabel">WORKSPACE</div>
+      <button class="nav" type="button" data-workspace-home onclick="Workspace.leave()" aria-label="Combined dashboard" title="Combined dashboard"><span class="ico" aria-hidden="true">▦</span><span>Combined dashboard</span></button>
       <button class="nav active" data-p="dashboard" type="button"><span class="ico">⌂</span><span>Overview</span></button>
       <button class="nav" data-p="skills" type="button"><span class="ico">⇄</span><span>Skill for Skill</span></button>
       <button class="nav" data-p="dayjob" type="button"><span class="ico">🛠️</span><span>Job for a Day</span></button>
@@ -524,11 +551,16 @@ main{margin-left:240px;padding:0 38px 42px;max-width:1600px;min-height:100vh}
         <b id="crumb">Overview</b> <span> / Your workspace</span>
       </div>
       <div class="actions">
-        <button class="icon" id="lang" type="button">अ</button>
+        <button class="icon" id="lang" type="button" data-workspace-preferences-open aria-label="Language" title="Language">अ</button>
         <button class="icon" id="theme" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">◐</button>
         <div class="avatar" id="avatar">Y</div>
       </div>
     </header>
+    <dialog id="workspacePreferences" aria-labelledby="workspacePrefsTitle">
+      <h2 id="workspacePrefsTitle">Settings</h2>
+      <div class="field"><label for="workspaceLanguage">Language</label><select id="workspaceLanguage" data-workspace-preference="language"></select></div>
+      <button class="btnSmall" type="button" data-workspace-preferences-close>Close menu</button>
+    </dialog>
 
     <section class="page" id="dashboard">
       <div class="head">

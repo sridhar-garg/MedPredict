@@ -84,18 +84,31 @@ for(const app of ['healthara','namastey','kaamigo']){
  assert.ok(!/<input[^>]+type="password"/i.test(source),app+' old credential input removed');
  assert.ok(!/firebaseConfig|emailjs\.send/.test(source));
  assert.ok(!source.includes('<div id="workspaceNotice">'));
+ const menuClass=app==='kaamigo'?'nav':'nav-tab';
+ const homeButton=source.match(/<button\b[^>]*data-workspace-home[^>]*>[\s\S]*?<\/button>/);
+ assert.ok(homeButton,app+' has an in-menu combined dashboard button');
+ assert.ok(homeButton[0].includes('class="'+menuClass+'"'),app+' uses its native menu style');
+ assert.ok(homeButton[0].includes('Combined dashboard'));
+ assert.ok(!/\bdata-(tab|p)=/.test(homeButton[0]),app+' home does not activate an internal tab');
+ assert.ok(source.includes('data-workspace-preference="language"'));
  for(const m of source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi))new Script(m[1]);
 }
+assert.ok(!read('./web/app.js').includes('workspace-module-header'),'embedded apps have no duplicate outer header');
 await modules.flush();modules.reset();assert.equal(modules.status().summaries.healthara.journal,0);
 // Re-enter every module repeatedly with both modes and languages.
 await modules.start(account,()=>{});
 for(let pass=0;pass<4;pass++){
  modules.setPreferences({theme:pass%2?'dark':'light',language:pass%2?'hi':'fr'});
  for(const id of ['healthara','namastey','kaamigo']){
-  modules.open(id,children,()=>{});const launched=frame;
+  let returned=0;
+  modules.open(id,children,()=>{returned++;modules.stop();});const launched=frame;
   await msg({type:'ready'});const init=frame.messages.at(-1);
   assert.equal(init.preferences.language,pass%2?'hi':'fr');
-  modules.stop();assert.equal(launched.removed,true);
+  await msg({type:'leave',token:init.token});
+  assert.equal(returned,1,id+' returns to hub');
+  assert.equal(launched.removed,true);
+  assert.equal(modules.status().synced,true,'returning keeps signed-in session');
+  assert.equal(modules.status().summaries.healthara.water,6,'returning preserves module progress');
  }
 }
 modules.reset();

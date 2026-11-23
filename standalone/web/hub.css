@@ -77,23 +77,7 @@
 @media(max-width:1200px){.hub-app-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.hub-hero{grid-template-columns:1fr;padding:24px;gap:25px}.hub-orbit{width:150px;order:-1;margin:8px 0}.hub-orbit-node{width:40px;height:40px;border-radius:11px}.hub-orbit-node svg{width:23px;height:23px}.hub-orbit-center{width:56px;border-radius:15px}.hub-orbit-center svg{width:30px;height:30px}.hub-hero h1{font-size:2rem}.hub-app-grid,.hub-summary-grid{grid-template-columns:1fr}.hub-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.hub-metric{padding:13px}.hub-section-heading{align-items:flex-start}.hub-section-heading h2{font-size:1.4rem}.hub-feed-row{flex-wrap:wrap}.hub-feed-row time{margin-left:56px}.hub-login-orbit{display:none}}
 @media(max-width:360px){.hub-metrics{grid-template-columns:1fr}.hub-brand strong{font-size:1rem}.hub-brand small{font-size:.52rem}}
-.workspace-module{height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;background:var(--bg)}
-.workspace-module-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 16px;min-height:48px;background:var(--card);border-bottom:1px solid var(--line);z-index:50}
-.compact-home{border:0;background:transparent;display:flex;align-items:center;gap:8px;color:var(--ink);font-weight:800;white-space:nowrap;padding:5px 0}
-.compact-home .nav-icon{background:var(--accent);color:var(--card);width:27px;height:27px;border-radius:7px;display:grid;place-items:center}
-.compact-module-name{font-size:.96rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.compact-module-actions{display:flex;align-items:center;gap:7px;flex-shrink:0}
-.compact-module-actions .btn{min-height:33px;padding:5px 10px;font-size:.78rem;white-space:nowrap}
-.compact-settings{position:relative}
-.compact-settings summary{list-style:none;display:flex;align-items:center;gap:5px;cursor:pointer}
-.compact-settings summary::-webkit-details-marker{display:none}
-.compact-settings-panel{position:absolute;right:0;top:calc(100% + 8px);width:270px;max-width:calc(100vw - 24px);padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:0 12px 36px #0003}
-.compact-settings-panel .shared-preferences{display:grid;gap:9px}
-.compact-settings-panel .pref-control select{width:100%;max-width:none}
-.compact-settings-panel p{font-size:.8rem;margin-top:10px}
-.workspace-module-title{min-width:0;text-align:center}.workspace-module-title strong,.workspace-module-title small{display:block;overflow-wrap:anywhere}
-.workspace-module-header .btn{width:auto;flex:none}
-.workspace-module-notice{padding:8px 22px;color:var(--muted);font-size:.82rem;border-bottom:1px solid var(--line)}
+.workspace-module{height:100vh;height:100dvh;display:grid;grid-template-rows:minmax(0,1fr);overflow:hidden;background:var(--bg)}
 #module-frame-slot{min-height:0;min-width:0;position:relative}
 .workspace-frame{display:block;border:0;width:100%;height:100%;background:#fff}
 :root[data-theme=dark] .workspace-frame{background:#182e37}
@@ -102,6 +86,4 @@
 .pref-control select{background:var(--card);color:var(--ink);border:1px solid var(--line);min-height:38px;border-radius:9px;padding:7px 10px;font-size:.83rem;max-width:175px}
 .pref-control select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .login-top{gap:12px;flex-wrap:wrap}
-.workspace-module-header .shared-preferences{flex:none}
-@media(max-width:760px){.topbar .top-controls{display:block}.topbar{flex-wrap:wrap}.topbar .pill{display:none}.shared-preferences{gap:6px}.pref-control select{max-width:150px}.workspace-module-header .shared-preferences{width:100%}.workspace-module-header .shared-preferences .pref-control{flex:1}.workspace-module-header .pref-control select{width:100%;max-width:none}}
-@media(max-width:600px){.workspace-module-header{padding:5px 10px;gap:7px;min-height:46px}.compact-module-actions .compact-back{display:none}.compact-module-name{font-size:.78rem}.compact-home{font-size:.83rem;gap:5px}.compact-module-actions .btn{padding:5px 8px;min-height:34px}.compact-settings-panel .shared-preferences{width:100%}}
+@media(max-width:760px){.topbar .top-controls{display:block}.topbar{flex-wrap:wrap}.topbar .pill{display:none}.shared-preferences{gap:6px}.pref-control select{max-width:150px}}

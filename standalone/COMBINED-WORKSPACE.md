@@ -33,6 +33,13 @@ articles, source material and free-form user data remain in their original
 language. The footer shows the installed version so older builds are easy
 to recognize.
 
+Version 1.1.3 removes the extra workspace header over the embedded apps.
+Each integrated app's native navigation includes a Combined dashboard
+button using its existing menu classes. The button returns to the host
+without signing out and preserves the module snapshot. Shared preferences
+remain available in Healthara's Appearance Settings, Namastey's native
+Settings tab, and Kaamigo's language and theme controls.
+
 ## Identity and data
 
 Only the workspace authenticates (Google OAuth via Supabase PKCE). Module

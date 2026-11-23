@@ -56,7 +56,28 @@
   preferences:()=>({...preferences}),
   onPreferences:fn=>{preferenceListeners.push(fn);if(connected)fn({...preferences});},
   setPreferences:p=>send('preferences',{preferences:p})};
- window.addEventListener('DOMContentLoaded',()=>parent.postMessage({channel:'workspace-v1',type:'ready'},'*'));
+ window.addEventListener('DOMContentLoaded',()=>{
+   // The host still owns preferences; the controls live in each app's own UI.
+   const controls=[...document.querySelectorAll('select[data-workspace-preference]')];
+   for(const el of controls){
+     const key=el.dataset.workspacePreference;
+     if(key==='language'){
+       for(const [code,label] of Object.entries(MPI18n.languages)){
+         const option=document.createElement('option');option.value=code;option.textContent=label;option.setAttribute('translate','no');el.append(option);
+       }
+     }
+     el.value=preferences[key];
+     el.addEventListener('change',()=>Workspace.setPreferences({[key]:el.value}));
+   }
+   Workspace.onPreferences(p=>{for(const el of controls)el.value=p[el.dataset.workspacePreference];});
+   for(const button of document.querySelectorAll('[data-workspace-preferences-open]')){
+     button.addEventListener('click',()=>document.getElementById('workspacePreferences')?.showModal());
+   }
+   for(const button of document.querySelectorAll('[data-workspace-preferences-close]')){
+     button.addEventListener('click',()=>document.getElementById('workspacePreferences')?.close());
+   }
+   parent.postMessage({channel:'workspace-v1',type:'ready'},'*');
+ });
 })();
 const workspaceStorage=window.Workspace.storage;
 // Minimal local canvas renderer for Healthara's user-entered doughnut data.
