@@ -40,6 +40,10 @@ without signing out and preserves the module snapshot. Shared preferences
 remain available in Healthara's Appearance Settings, Namastey's native
 Settings tab, and Kaamigo's language and theme controls.
 
+Version 1.1.4 adds a bundled, responsive welcome-card illustration
+representing the four connected apps. The image is available offline,
+and the existing sign-in text and translations are unchanged.
+
 ## Identity and data
 
 Only the workspace authenticates (Google OAuth via Supabase PKCE). Module

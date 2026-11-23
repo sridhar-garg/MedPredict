@@ -86,4 +86,8 @@
 .pref-control select{background:var(--card);color:var(--ink);border:1px solid var(--line);min-height:38px;border-radius:9px;padding:7px 10px;font-size:.83rem;max-width:175px}
 .pref-control select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .login-top{gap:12px;flex-wrap:wrap}
+.login-art.workspace-welcome{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:0;gap:0}
+.login-art .workspace-welcome-image{display:block;position:relative;inset:auto;width:100%;height:auto;aspect-ratio:2/1;object-fit:contain;opacity:1;flex-shrink:0;mask-image:linear-gradient(to bottom,#000 82%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 82%,transparent 100%)}
+.login-art .workspace-welcome-copy{margin-top:auto;padding:4px 36px 36px;min-width:0}
+@media(max-width:760px){.login-art .workspace-welcome-copy{padding:4px 21px 21px}}
 @media(max-width:760px){.topbar .top-controls{display:block}.topbar{flex-wrap:wrap}.topbar .pill{display:none}.shared-preferences{gap:6px}.pref-control select{max-width:150px}}

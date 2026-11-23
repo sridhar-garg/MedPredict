@@ -94,6 +94,9 @@ for(const app of ['healthara','namastey','kaamigo']){
  for(const m of source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi))new Script(m[1]);
 }
 assert.ok(!read('./web/app.js').includes('workspace-module-header'),'embedded apps have no duplicate outer header');
+assert.ok(read('./web/app.js').includes('src="/aroham-welcome.webp"'),'welcome card uses the local illustration');
+const welcomeImage=readFileSync(new URL('./web/aroham-welcome.webp',import.meta.url));
+assert.equal(welcomeImage.subarray(8,12).toString(),'WEBP','welcome image is bundled as a real WebP asset');
 await modules.flush();modules.reset();assert.equal(modules.status().summaries.healthara.journal,0);
 // Re-enter every module repeatedly with both modes and languages.
 await modules.start(account,()=>{});
