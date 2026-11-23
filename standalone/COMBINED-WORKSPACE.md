@@ -24,6 +24,15 @@ translated. Healthara no longer presents sample hydration, sleep, steps
 or completed indicators as personal data; the shared snapshot updates both
 dashboards, with manually entered sleep/steps and saved water counts.
 
+Version 1.1.2 expands the same UI catalog to all 14 non-English languages
+across the combined dashboard and the four individual apps. The build
+rejects any missing catalog entries in any locale; the localization test
+also checks each dashboard state, representative module controls, language
+switching, and dynamic counts. Multiline labels are supported. Long original
+articles, source material and free-form user data remain in their original
+language. The footer shows the installed version so older builds are easy
+to recognize.
+
 ## Identity and data
 
 Only the workspace authenticates (Google OAuth via Supabase PKCE). Module

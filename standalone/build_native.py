@@ -81,6 +81,22 @@ def stage(work, args):
                     raise ValueError("Invalid extra localization row")
                 for code,translated in row.items():
                     if code in catalogs and translated: catalogs[code][row["key"]]=translated
+    # Every locale receives the broader module vocabulary. Existing Hindi /
+    # German translations remain available when a row omits those two cells.
+    with (ROOT / "standalone" / "workspace-all-languages.psv").open(encoding="utf-8", newline="") as stream:
+        for row in csv.DictReader(stream, delimiter="|"):
+            if not row.get("key") or None in row or any(not row.get(code) for code in catalogs if code not in ("en", "hi", "de")):
+                raise ValueError("Invalid multilingual localization row: " + str(row.get("key")))
+            for code,translated in row.items():
+                if code in catalogs and translated:
+                    catalogs[code][row["key"]]=translated
+    # Compare case-insensitively, exactly as the runtime translator does.
+    # Prevent future changes from expanding only a subset of the languages.
+    expected=set().union(*(set(k.casefold() for k in d) for code,d in catalogs.items() if code!="en"))
+    for code,d in catalogs.items():
+        if code=="en":continue
+        missing=expected-{k.casefold() for k,v in d.items() if v.strip()}
+        if missing:raise ValueError(f"Incomplete localization ({code}): {', '.join(sorted(missing))}")
     (web / "locale-data.js").write_text("window.MPI18nCatalogs="+json.dumps(catalogs,ensure_ascii=False,separators=(",",":"))+";\n",encoding="utf-8")
     vendor = web / "vendor"
     vendor.mkdir()
@@ -104,8 +120,8 @@ def android(work, web, host, args):
     run(tools/"aapt2","compile","--dir",build/"res","-o",build/"resources.zip")
     run(tools/"aapt2","link","-o",build/"unsigned.apk","-I",jar,
         "--manifest",ROOT/"standalone/android/AndroidManifest.xml","--java",build/"generated",
-        "--min-sdk-version","26","--target-sdk-version","35","--version-code","3",
-        "--version-name","1.1.1","-A",build/"assets",build/"resources.zip")
+        "--min-sdk-version","26","--target-sdk-version","35","--version-code","4",
+        "--version-name","1.1.2","-A",build/"assets",build/"resources.zip")
     sources=list((build/"generated").rglob("*.java"))+[ROOT/"standalone/android/StandaloneActivity.java"]
     run("java","com.sun.tools.javac.Main","-encoding","UTF-8","-source","8","-target","8",
         "-Xlint:-options","-bootclasspath",os.pathsep.join([str(tools/"core-lambda-stubs.jar"),str(jar)]),
@@ -139,7 +155,7 @@ def windows(work, web,args):
     shutil.copy(ROOT/"standalone/windows/MedPredict.c",build/"MedPredict.c")
     shutil.copy(ROOT/"mobile/windows/MedPredict.manifest",build/"MedPredict.manifest")
     make_icon(build/"MedPredict.ico")
-    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","1,1,1,0").replace("1.2.0","1.1.1").replace('MedPredict.exe','Aroham-AI.exe').replace('MedPredict\\0','Aroham AI\\0')
+    rc=(ROOT/"mobile/windows/MedPredict.rc").read_text().replace("1,2,0,0","1,1,2,0").replace("1.2.0","1.1.2").replace('MedPredict.exe','Aroham-AI.exe').replace('MedPredict\\0','Aroham AI\\0')
     mime={".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",".js":"text/javascript; charset=utf-8",".mjs":"text/javascript; charset=utf-8",".json":"application/json; charset=utf-8",".svg":"image/svg+xml",".webp":"image/webp",".txt":"text/plain; charset=utf-8"}
     lines=["static const struct {const char *path; const char *mime; int id;} bundle[] = {"]
     for i,file in enumerate(sorted(web.rglob("*")),100):

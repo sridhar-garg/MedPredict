@@ -11,11 +11,16 @@
  const actualSource=(node,map,key)=>{const val=key?node.getAttribute(key):node.data;const old=key?map.get(node)?.[key]:map.get(node);return old&&old.display===val?old.source:val;};
  function translate(value){
    if(language==='en'||typeof value!=='string')return value;
-   const stripped=value.trim(),lower=stripped.toLowerCase();
-   const direct=Object.hasOwn(catalog,stripped)?catalog[stripped]:catalog[lower];
+   const stripped=value.trim(),normalized=stripped.replace(/\s+/g,' '),lower=normalized.toLowerCase();
+   const direct=Object.hasOwn(catalog,normalized)?catalog[normalized]:catalog[lower];
    if(direct)return value.replace(stripped,direct);
+   // Localize only known numeric UI labels, leaving their numbers intact.
+   const quantity=normalized.match(/^(\d+(?:[.,]\d+)?(?:\/\d+)?)\s+(glasses|hrs|star|stars|meals)$/i);
+   if(quantity&&catalog[quantity[2].toLowerCase()])return value.replace(stripped,quantity[1]+' '+catalog[quantity[2].toLowerCase()]);
+   const rating=normalized.match(/^([★☆]+\s*[—–-]\s*)(.+)$/u);
+   if(rating&&catalog[rating[2].toLowerCase()])return value.replace(stripped,rating[1]+catalog[rating[2].toLowerCase()]);
    // Match decorative prefixes/suffixes without translating arbitrary user prose.
-   const m=stripped.match(/^([^\p{L}\p{N}]*)(.*?)([^\p{L}\p{N}]*$)/u);
+   const m=normalized.match(/^([^\p{L}\p{N}]*)(.*?)([^\p{L}\p{N}]*$)/u);
    if(m&&m[2]&&(catalog[m[2]]||catalog[m[2].toLowerCase()]))return value.replace(stripped,m[1]+(catalog[m[2]]||catalog[m[2].toLowerCase()])+m[3]);
    return value;
  }
@@ -48,7 +53,7 @@
    language=Object.hasOwn(languages,next)?next:'en';
    const raw=provided||window.MPI18nCatalogs?.[language]||{};
    catalog=Object.create(null);
-   for(const [k,v] of Object.entries(raw))if(typeof v==='string'){catalog[k]=v;catalog[k.toLowerCase()]=v;}
+   for(const [k,v] of Object.entries(raw))if(typeof v==='string'){const key=k.trim().replace(/\s+/g,' ');catalog[key]=v;catalog[key.toLowerCase()]=v;}
    document.documentElement.lang=language;document.documentElement.dataset.language=language;
    if(document.body)visit(document.body);
  }
